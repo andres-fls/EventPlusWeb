@@ -1,0 +1,44 @@
+﻿@model List<EventPlusWeb1.Models.Entities.Usuario>
+@{
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 style="color: #a78bfa;"><i class="bi bi-people"></i> Usuarios Registrados</h2>
+</div>
+
+<div class="card p-3">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.Id</td>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.Correo</td>
+                        <td>
+                            @if (usuario.Rol == "Admin")
+                            {
+                                <span class="badge" style="background-color: #7c3aed;">Admin</span>
+                            }
+                            else
+                            {
+                                <span class="badge" style="background-color: #059669;">Usuario</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

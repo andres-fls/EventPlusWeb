@@ -1,0 +1,428 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPlus - @ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #16213e !important;
+            border-bottom: 2px solid #7c3aed;
+            padding: 12px 0;
+        }
+
+        .navbar-brand {
+            color: #a78bfa !important;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+            .navbar-brand:hover {
+                color: #7c3aed !important;
+            }
+
+        .nav-link {
+            color: #e0e0e0 !important;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+
+            .nav-link:hover {
+                color: #a78bfa !important;
+            }
+
+            .nav-link.active {
+                color: #7c3aed !important;
+                font-weight: bold;
+            }
+
+        .container-main {
+            padding: 30px 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .btn-primary {
+            background-color: #7c3aed;
+            border-color: #7c3aed;
+        }
+
+            .btn-primary:hover {
+                background-color: #6d28d9;
+                border-color: #6d28d9;
+            }
+
+        .btn-danger {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-success {
+            background-color: #059669;
+            border-color: #059669;
+        }
+
+        .card {
+            background-color: #16213e;
+            border: 1px solid #2d2d44;
+            border-radius: 12px;
+        }
+
+        .table {
+            color: #e0e0e0;
+        }
+
+            .table thead {
+                background-color: #7c3aed;
+                color: white;
+            }
+
+            .table tbody tr {
+                background-color: #16213e;
+                border-bottom: 1px solid #2d2d44;
+            }
+
+                .table tbody tr:hover {
+                    background-color: #1e2a4a;
+                }
+
+        .form-control, .form-select {
+            background-color: #0f3460;
+            border: 1px solid #2d2d44;
+            color: #e0e0e0;
+        }
+
+            .form-control:focus, .form-select:focus {
+                background-color: #0f3460;
+                border-color: #7c3aed;
+                color: #e0e0e0;
+                box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+            }
+
+        .form-label {
+            color: #a78bfa;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background-color: #4a1515;
+            border-color: #dc2626;
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background-color: #0f3d2e;
+            border-color: #059669;
+            color: #6ee7b7;
+        }
+
+        .user-info {
+            color: #a78bfa;
+            font-size: 0.9rem;
+        }
+
+        /* ===== CHATBOT FLOTANTE ===== */
+        .chatbot-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            z-index: 9999;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .chatbot-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            }
+
+        .chatbot-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 370px;
+            height: 500px;
+            background-color: #16213e;
+            border: 1px solid #7c3aed;
+            border-radius: 16px;
+            display: none;
+            flex-direction: column;
+            z-index: 9999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+            .chatbot-panel.active {
+                display: flex;
+            }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .chatbot-header button {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+            }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .chatbot-messages::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .chatbot-messages::-webkit-scrollbar-thumb {
+                background: #7c3aed;
+                border-radius: 3px;
+            }
+
+        .chat-msg {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+            .chat-msg.user {
+                align-self: flex-end;
+                background-color: #7c3aed;
+                color: white;
+                border-bottom-right-radius: 4px;
+            }
+
+            .chat-msg.bot {
+                align-self: flex-start;
+                background-color: #0f3460;
+                color: #e0e0e0;
+                border-bottom-left-radius: 4px;
+            }
+
+        .chatbot-input {
+            display: flex;
+            padding: 12px;
+            border-top: 1px solid #2d2d44;
+            gap: 8px;
+        }
+
+            .chatbot-input input {
+                flex: 1;
+                background-color: #0f3460;
+                border: 1px solid #2d2d44;
+                color: #e0e0e0;
+                border-radius: 8px;
+                padding: 10px 12px;
+                outline: none;
+            }
+
+                .chatbot-input input:focus {
+                    border-color: #7c3aed;
+                }
+
+            .chatbot-input button {
+                background-color: #7c3aed;
+                border: none;
+                color: white;
+                border-radius: 8px;
+                padding: 10px 15px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+                .chatbot-input button:hover {
+                    background-color: #6d28d9;
+                }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 10px 14px;
+            background-color: #0f3460;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #a78bfa;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="@Url.Action("Index", "Eventos")">
+                <i class="bi bi-calendar-event"></i> EventPlus
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #7c3aed;">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                @if (Session["UsuarioId"] != null)
+                {
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+
+                            <a class="nav-link" href="@Url.Action("Index", "Eventos")"><i class="bi bi-calendar3"></i> Eventos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "Categorias")"><i class="bi bi-tags"></i> Categorías</a>
+                        </li>
+                        @if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="@Url.Action("Index", "Usuarios")"><i class="bi bi-people"></i> Usuarios</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <span class="nav-link user-info"><i class="bi bi-person-circle"></i> @Session["UsuarioNombre"]</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Logout", "Usuarios")"><i class="bi bi-box-arrow-right"></i> Salir</a>
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container-main">
+        @RenderBody()
+    </div>
+
+    <!-- CHATBOT FLOTANTE -->
+    @if (Session["UsuarioId"] != null)
+    {
+        <button class="chatbot-btn" id="chatbotBtn" title="Asistente EventBot">
+            <i class="bi bi-robot"></i>
+        </button>
+
+        <div class="chatbot-panel" id="chatbotPanel">
+            <div class="chatbot-header">
+                <span><i class="bi bi-robot"></i> EventBot</span>
+                <button id="chatbotClose"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="chat-msg bot">¡Hola! Soy EventBot, tu asistente de EventPlus. ¿En qué puedo ayudarte?</div>
+            </div>
+            <div class="typing-indicator" id="typingIndicator">EventBot está escribiendo...</div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Escribe tu mensaje..." />
+                <button id="chatbotSend"><i class="bi bi-send"></i></button>
+            </div>
+        </div>
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>// ===== CHATBOT SCRIPT =====
+        var chatbotBtn = document.getElementById('chatbotBtn');
+        var chatbotPanel = document.getElementById('chatbotPanel');
+        var chatbotClose = document.getElementById('chatbotClose');
+        var chatbotInput = document.getElementById('chatbotInput');
+        var chatbotSend = document.getElementById('chatbotSend');
+        var chatbotMessages = document.getElementById('chatbotMessages');
+        var typingIndicator = document.getElementById('typingIndicator');
+
+        if (chatbotBtn) {
+            chatbotBtn.addEventListener('click', function () {
+                chatbotPanel.classList.toggle('active');
+                if (chatbotPanel.classList.contains('active')) {
+                    chatbotInput.focus();
+                }
+            });
+
+            chatbotClose.addEventListener('click', function () {
+                chatbotPanel.classList.remove('active');
+            });
+
+            chatbotSend.addEventListener('click', enviarMensaje);
+            chatbotInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    enviarMensaje();
+                }
+            });
+        }
+
+        function enviarMensaje() {
+            var mensaje = chatbotInput.value.trim();
+            if (mensaje === '') return;
+
+            // Agregar mensaje del usuario
+            agregarMensaje(mensaje, 'user');
+            chatbotInput.value = '';
+
+            // Mostrar indicador de escritura
+
+typingIndicator.style.display = 'block';
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+            // Enviar al servidor
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/Chatbot/Enviar', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    typingIndicator.style.display = 'none';
+                    if (xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data.exito) {
+                            agregarMensaje(data.respuesta, 'bot');
+                        } else {
+                            agregarMensaje(data.respuesta, 'bot');
+                        }
+                    } else {
+                        agregarMensaje('Error de conexión. Intenta de nuevo.', 'bot');
+                    }
+                }
+            };
+            xhr.send('mensaje=' + encodeURIComponent(mensaje));
+        }
+
+        function agregarMensaje(texto, tipo) {
+            var div = document.createElement('div');
+            div.className = 'chat-msg ' + tipo;
+            div.textContent = texto;
+            chatbotMessages.appendChild(div);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }</script>
+</body>
+</html>
