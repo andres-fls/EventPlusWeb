@@ -212,6 +212,9 @@
     <Content Include="Views\Eventos\Detalle.cshtml" />
     <Content Include="Views\Eventos\Eliminar.cshtml" />
     <Content Include="Views\Categorias\Index.cshtml" />
+    <Content Include="Views\Eventos\Index.cshtml" />
+    <Content Include="Views\Eventos\Crear.cshtml" />
+    <Content Include="Views\Eventos\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

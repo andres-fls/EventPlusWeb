@@ -1,0 +1,98 @@
+﻿@model EventPlusWeb1.Models.Entities.Evento
+@{
+    ViewBag.Title = "Crear Evento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categorias = ViewBag.Categorias as List<EventPlusWeb1.Models.Entities.Categoria>;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h3 style="color: #a78bfa; margin-bottom: 20px;"><i class="bi bi-plus-circle"></i> Crear Nuevo Evento</h3>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle"></i> @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" action="@Url.Action("Crear", "Eventos")">
+                <div class="mb-3">
+                    <label class="form-label">Título del evento</label>
+                    <input type="text" name="Titulo" class="form-control" placeholder="Nombre del evento" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="Descripcion" id="txtDescripcion" class="form-control" rows="4" placeholder="Describe el evento..."></textarea>
+                    <button type="button" class="btn btn-sm mt-2" style="background-color: #0f3460; color: #a78bfa; border: 1px solid #7c3aed;" onclick="generarDescripcion()">
+                        <i class="bi bi-stars"></i> Generar con IA
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha del evento</label>
+                        <input type="date" name="FechaEvento" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select name="CategoriaId" class="form-select" required>
+                            <option value="">Selecciona una categoría</option>
+                            @if (categorias != null)
+                            {
+                                foreach (var cat in categorias)
+                                {
+                                    <option value="@cat.Id">@cat.Nombre</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ubicación</label>
+                    <input type="text" name="Ubicacion" class="form-control" placeholder="Lugar del evento" />
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Crear Evento
+                    </button>
+                    <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generarDescripcion() {
+        var titulo = document.querySelector('input[name="Titulo"]').value;
+        if (titulo === '') {
+            alert('Escribe primero el título del evento');
+            return;
+        }
+
+        var btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generando...';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/Chatbot/Enviar', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-stars"></i> Generar con IA';
+                if (xhr.status === 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.exito) {
+                        document.getElementById('txtDescripcion').value = data.respuesta;
+                    }
+                }
+            }
+        };
+        var mensaje = 'Genera una descripción atractiva y profesional de máximo 3 líneas para un evento llamado: ' + titulo;
+        xhr.send('mensaje=' + encodeURIComponent(mensaje));
+    }
+</script>
