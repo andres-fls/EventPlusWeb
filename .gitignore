@@ -8,3 +8,5 @@ packages/
 Debug/
 Release/
 Thumbs.db
+*.dll
+*.pdb

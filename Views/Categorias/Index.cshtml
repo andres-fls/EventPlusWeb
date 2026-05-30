@@ -1,0 +1,21 @@
+﻿@model List<EventPlusWeb1.Models.Entities.Categoria>
+@{
+    ViewBag.Title = "Categorías";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 style="color: #a78bfa;"><i class="bi bi-tags"></i> Categorías</h2>
+</div>
+
+<div class="row">
+    @foreach (var cat in Model)
+    {
+        <div class="col-md-4 col-lg-3 mb-3">
+            <div class="card p-3 text-center">
+                <i class="bi bi-tag" style="font-size: 2rem; color: #7c3aed;"></i>
+                <h5 style="color: #a78bfa; margin-top: 10px;">@cat.Nombre</h5>
+            </div>
+        </div>
+    }
+</div>
