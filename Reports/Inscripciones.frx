@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="2025-01-01" ReportInfo.Modified="2025-01-01" ReportInfo.CreatorVersion="1.0.0.0">
+	<Dictionary>
+		<BusinessObjectDataSource Name="Inscripciones" ReferenceName="Inscripciones" DataType="System.Int32" Enabled="true">
+			<Column Name="EventoTitulo" DataType="System.String"/>
+			<Column Name="UsuarioNombre" DataType="System.String"/>
+			<Column Name="FechaInscripcion" DataType="System.DateTime"/>
+		</BusinessObjectDataSource>
+	</Dictionary>
+	<ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+		<ReportTitleBand Name="ReportTitle1" Width="718.2" Height="60">
+			<TextObject Name="Text1" Width="718.2" Height="40" Text="REPORTE DE INSCRIPCIONES - EVENTPLUS" HorzAlign="Center" Font="Arial, 16pt, style=Bold"/>
+			<TextObject Name="Text2" Top="40" Width="718.2" Height="20" Text="[Date]" HorzAlign="Center" Font="Arial, 9pt"/>
+		</ReportTitleBand>
+		<DataBand Name="Data1" Width="718.2" Height="40" DataSource="Inscripciones">
+			<TextObject Name="Text3" Width="300" Height="20" Text="Evento: [Inscripciones.EventoTitulo]" Font="Arial, 10pt, style=Bold"/>
+			<TextObject Name="Text4" Top="20" Width="300" Height="20" Text="Inscrito: [Inscripciones.UsuarioNombre]" Font="Arial, 9pt"/>
+			<TextObject Name="Text5" Top="20" Left="300" Width="300" Height="20" Text="Fecha: [Inscripciones.FechaInscripcion]" Font="Arial, 9pt"/>
+		</DataBand>
+		<PageFooterBand Name="PageFooter1" Width="718.2" Height="30">
+			<TextObject Name="Text9" Width="718.2" Height="20" Text="Página [Page] de [TotalPages]" HorzAlign="Center" Font="Arial, 8pt"/>
+		</PageFooterBand>
+	</ReportPage>
+</Report>

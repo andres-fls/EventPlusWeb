@@ -10,7 +10,7 @@ namespace EventPlusWeb1.Controllers
 {
     public class ChatbotController : Controller
     {
-        private readonly string _apiKey = "AIzaSyAxHnTng1KwvB58MbbAbVCVZ92T3lVhaQ8";
+        private readonly string _apiKey = "AIzaSyBra9hvrgDwGF3f3IwccP3u69TYGFSnYnc";
         private readonly string _modelo = "gemini-2.5-flash";
 
         // POST: Chatbot/Enviar
