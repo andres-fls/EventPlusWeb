@@ -209,14 +209,15 @@
     <Content Include="Views\Usuarios\Login.cshtml" />
     <Content Include="Views\Usuarios\Registro.cshtml" />
     <Content Include="Views\Usuarios\Index.cshtml" />
+    <Content Include="Views\Eventos\Detalle.cshtml" />
+    <Content Include="Views\Eventos\Eliminar.cshtml" />
+    <Content Include="Views\Categorias\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ViewModels\" />
-    <Folder Include="Views\Categorias\" />
     <Folder Include="Views\Categoria\" />
     <Folder Include="Views\ChatBot\" />
-    <Folder Include="Views\Eventos\" />
     <Folder Include="Views\Inscripciones\" />
   </ItemGroup>
   <ItemGroup>

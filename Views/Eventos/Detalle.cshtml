@@ -1,0 +1,87 @@
+﻿@model EventPlusWeb1.Models.Entities.Evento
+@{
+    ViewBag.Title = "Detalle del Evento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var inscripciones = ViewBag.Inscripciones as List<EventPlusWeb1.Models.Entities.Inscripcion>;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <span class="badge mb-2" style="background-color: #7c3aed;">@Model.CategoriaNombre</span>
+                    <h2 style="color: #a78bfa;">@Model.Titulo</h2>
+                </div>
+                <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+
+            <div style="background-color: #0f3460; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                <p style="color: #ccc; line-height: 1.6;">@Model.Descripcion</p>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <p style="color: #888; margin-bottom: 5px;"><small>FECHA</small></p>
+                    <p style="color: #e0e0e0;"><i class="bi bi-calendar3" style="color: #7c3aed;"></i> @Model.FechaEvento.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div class="col-md-4">
+                    <p style="color: #888; margin-bottom: 5px;"><small>UBICACIÓN</small></p>
+                    <p style="color: #e0e0e0;"><i class="bi bi-geo-alt" style="color: #7c3aed;"></i> @Model.Ubicacion</p>
+                </div>
+                <div class="col-md-4">
+                    <p style="color: #888; margin-bottom: 5px;"><small>CREADO POR</small></p>
+                    <p style="color: #e0e0e0;"><i class="bi bi-person" style="color: #7c3aed;"></i> @Model.CreadorNombre</p>
+                </div>
+            </div>
+
+            <!-- Botón de inscripción -->
+            <div class="d-flex gap-2 mb-4">
+                <form method="post" action="@Url.Action("Inscribirse", "Eventos", new { id = Model.Id })">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Inscribirme
+                    </button>
+                </form>
+                <form method="post" action="@Url.Action("CancelarInscripcion", "Eventos", new { id = Model.Id })">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Cancelar Inscripción
+                    </button>
+                </form>
+            </div>
+
+            <!-- Lista de inscritos -->
+            <h5 style="color: #a78bfa; margin-bottom: 15px;">
+                <i class="bi bi-people"></i> Inscritos (@(inscripciones != null ? inscripciones.Count : 0))
+            </h5>
+
+            @if (inscripciones != null && inscripciones.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Fecha de Inscripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var insc in inscripciones)
+                            {
+                                <tr>
+                                    <td><i class="bi bi-person-circle" style="color: #7c3aed;"></i> @insc.UsuarioNombre</td>
+                                    <td>@insc.FechaInscripcion.ToString("dd/MM/yyyy HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                < p style = "color: #888;" > Aún no hay inscritos en este evento.</ p >
+            }
+        </div>
+    </div>
+</div>
