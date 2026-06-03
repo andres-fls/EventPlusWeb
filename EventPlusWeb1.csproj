@@ -167,6 +167,7 @@
     <Compile Include="Models\Entities\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CategoriaService.cs" />
+    <Compile Include="Services\ChatbotService.cs" />
     <Compile Include="Services\DataBaseService.cs" />
     <Compile Include="Services\EventoService.cs" />
     <Compile Include="Services\InscripcionService.cs" />
