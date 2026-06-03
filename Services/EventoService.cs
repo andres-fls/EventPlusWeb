@@ -136,19 +136,30 @@ namespace EventPlusWeb1.Services
             using (SqlConnection conn = _db.GetConnection())
             {
                 conn.Open();
-                // Primero eliminar inscripciones relacionadas
-                string queryInsc = "DELETE FROM Inscripciones WHERE EventoId = @id";
-                using (SqlCommand cmd = new SqlCommand(queryInsc, conn))
+                SqlTransaction transaction = conn.BeginTransaction();
+                try
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
+                    // Primero eliminar inscripciones relacionadas
+                    string queryInsc = "DELETE FROM Inscripciones WHERE EventoId = @id";
+                    using (SqlCommand cmd = new SqlCommand(queryInsc, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    // Luego eliminar el evento
+                    string query = "DELETE FROM Eventos WHERE Id = @id";
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        int resultado = cmd.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                    return true;
                 }
-                // Luego eliminar el evento
-                string query = "DELETE FROM Eventos WHERE Id = @id";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                catch
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
-                    return cmd.ExecuteNonQuery() > 0;
+                    transaction.Rollback();
+                    return false;
                 }
             }
         }
