@@ -42,6 +42,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Eventos/Crear
         [HttpPost]
+        [ValidateAntiForgeryToken]
 
         public ActionResult Crear(Evento evento)
         {
@@ -78,6 +79,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Eventos/Editar
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Editar(Evento evento)
         {
             if (Session["UsuarioId"] == null)
@@ -111,6 +113,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Eventos/EliminarConfirmado/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [ActionName("Eliminar")]
         public ActionResult EliminarConfirmado(int id)
         {
@@ -141,6 +144,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Eventos/Inscribirse/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Inscribirse(int id)
         {
             if (Session["UsuarioId"] == null)
@@ -154,6 +158,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Eventos/CancelarInscripcion/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult CancelarInscripcion(int id)
         {
             if (Session["UsuarioId"] == null)

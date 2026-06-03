@@ -25,7 +25,7 @@ namespace EventPlusWeb1.Services
                                  FROM Inscripciones i
                                  INNER JOIN Usuarios u ON i.UsuarioId = u.Id
 
-INNER JOIN Eventos e ON i.EventoId = e.Id
+                                 INNER JOIN Eventos e ON i.EventoId = e.Id
                                  WHERE i.EventoId = @eventoId";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

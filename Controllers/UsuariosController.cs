@@ -25,6 +25,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Usuarios/Login
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Login(string correo, string contrasena)
         {
             Usuario usuario = _usuarioService.Login(correo, contrasena);
@@ -47,6 +48,7 @@ namespace EventPlusWeb1.Controllers
 
         // POST: Usuarios/Registro
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Registro(Usuario usuario)
         {
             if (string.IsNullOrEmpty(usuario.Nombre) || string.IsNullOrEmpty(usuario.Correo) || string.IsNullOrEmpty(usuario.Contrasena))

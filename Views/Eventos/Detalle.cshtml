@@ -40,6 +40,7 @@
             <!-- Botón de inscripción -->
             <div class="d-flex gap-2 mb-4">
                 <form method="post" action="@Url.Action("Inscribirse", "Eventos", new { id = Model.Id })">
+                    @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-check-circle"></i> Inscribirme
                     </button>

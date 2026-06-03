@@ -17,57 +17,58 @@
                 </div>
             }
 
-            <form method="post" action="@Url.Action("Editar", "Eventos")">
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <div class="mb-3">
-                    <label class="form-label">Título del evento</label>
-                    <input type="text" name="Titulo" class="form-control" value="@Model.Titulo" required />
+        <form method="post" action="@Url.Action("Editar", "Eventos")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="mb-3">
+                <label class="form-label">Título del evento</label>
+                <input type="text" name="Titulo" class="form-control" value="@Model.Titulo" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <textarea name="Descripcion" id="txtDescripcion" class="form-control" rows="4">@Model.Descripcion</textarea>
+                <button type="button" class="btn btn-sm mt-2" style="background-color: #0f3460; color: #a78bfa; border: 1px solid #7c3aed;" onclick="generarDescripcion()">
+                    <i class="bi bi-stars"></i> Generar con IA
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha del evento</label>
+                    <input type="date" name="FechaEvento" class="form-control" value="@Model.FechaEvento.ToString("yyyy-MM-dd")" required />
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Descripción</label>
-                    <textarea name="Descripcion" id="txtDescripcion" class="form-control" rows="4">@Model.Descripcion</textarea>
-                    <button type="button" class="btn btn-sm mt-2" style="background-color: #0f3460; color: #a78bfa; border: 1px solid #7c3aed;" onclick="generarDescripcion()">
-                        <i class="bi bi-stars"></i> Generar con IA
-                    </button>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Fecha del evento</label>
-                        <input type="date" name="FechaEvento" class="form-control" value="@Model.FechaEvento.ToString("yyyy-MM-dd")" required />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Categoría</label>
-                        <select name="CategoriaId" class="form-select" required>
-                            @if (categorias != null)
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Categoría</label>
+                    <select name="CategoriaId" class="form-select" required>
+                        @if (categorias != null)
+                        {
+                            foreach (var cat in categorias)
                             {
-                                foreach (var cat in categorias)
+                                if (cat.Id == Model.CategoriaId)
                                 {
-                                    if (cat.Id == Model.CategoriaId)
-                                    {
-                                        <option value="@cat.Id" selected>@cat.Nombre</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@cat.Id">@cat.Nombre</option>
-                                    }
+                                    <option value="@cat.Id" selected>@cat.Nombre</option>
+                                }
+                                else
+                                {
+                                    <option value="@cat.Id">@cat.Nombre</option>
                                 }
                             }
-                        </select>
-                    </div>
+                        }
+                    </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Ubicación</label>
-                    <input type="text" name="Ubicacion" class="form-control" value="@Model.Ubicacion" />
-                </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Guardar Cambios
-                    </button>
-                    <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light">
-                        <i class="bi bi-arrow-left"></i> Cancelar
-                    </a>
-                </div>
-            </form>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ubicación</label>
+                <input type="text" name="Ubicacion" class="form-control" value="@Model.Ubicacion" />
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Guardar Cambios
+                </button>
+                <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+            </div>
+        </form>
         </div>
     </div>
 </div>

@@ -19,23 +19,24 @@
                 </div>
             }
 
-            <form method="post" action="@Url.Action("Registro", "Usuarios")">
-                <div class="mb-3">
-                    <label class="form-label">Nombre completo</label>
-                    <input type="text" name="Nombre" class="form-control" placeholder="Tu nombre" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Correo electrónico</label>
-                    <input type="email" name="Correo" class="form-control" placeholder="tucorreo@email.com" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="Contrasena" class="form-control" placeholder="••••••••" required />
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 1.1rem;">
-                    <i class="bi bi-person-plus"></i> Registrarse
-                </button>
-            </form>
+        <form method="post" action="@Url.Action("Registro", "Usuarios")">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" name="Nombre" class="form-control" placeholder="Tu nombre" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" name="Correo" class="form-control" placeholder="tucorreo@email.com" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="Contrasena" class="form-control" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 1.1rem;">
+                <i class="bi bi-person-plus"></i> Registrarse
+            </button>
+        </form>
 
             <div class="text-center mt-3">
                 <a href="@Url.Action("Login", "Usuarios")" style="color: #a78bfa;">¿Ya tienes cuenta? Inicia sesión</a>
