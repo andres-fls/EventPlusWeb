@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using EventPlusWeb1.Models.Entities;
+using BCrypt.Net;
 
 namespace EventPlusWeb1.Services
 {
@@ -18,27 +19,30 @@ namespace EventPlusWeb1.Services
             using (SqlConnection conn = _db.GetConnection())
             {
                 conn.Open();
-                string query = "SELECT Id, Nombre, Correo, Rol FROM Usuarios WHERE Correo = @correo AND Contrasena = @contrasena";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                string query = "SELECT * FROM Usuarios WHERE Correo = @Correo";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Correo", correo);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
                 {
-                    cmd.Parameters.AddWithValue("@correo", correo);
-                    cmd.Parameters.AddWithValue("@contrasena", contrasena);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    string hashAlmacenado = reader["Contrasena"].ToString();
+
+                    // Verificar si la contraseña coincide con el hash
+                    if (BCrypt.Net.BCrypt.Verify(contrasena, hashAlmacenado))
                     {
-                        if (reader.Read())
+                        return new Usuario
                         {
-                            return new Usuario
-                            {
-                                Id = (int)reader["Id"],
-                                Nombre = reader["Nombre"].ToString(),
-                                Correo = reader["Correo"].ToString(),
-                                Rol = reader["Rol"].ToString()
-                            };
-                        }
+                            Id = (int)reader["Id"],
+                            Nombre = reader["Nombre"].ToString(),
+                            Correo = reader["Correo"].ToString(),
+                            Contrasena = hashAlmacenado,
+                            Rol = reader["Rol"].ToString()
+                        };
                     }
                 }
+                return null;
             }
-            return null;
         }
 
         public bool Registrar(Usuario usuario)
@@ -51,7 +55,8 @@ namespace EventPlusWeb1.Services
                 {
                     cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
                     cmd.Parameters.AddWithValue("@correo", usuario.Correo);
-                    cmd.Parameters.AddWithValue("@contrasena", usuario.Contrasena);
+                    string hashContrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
+                    cmd.Parameters.AddWithValue("@Contrasena", hashContrasena);
                     cmd.Parameters.AddWithValue("@rol", "Usuario");
                     return cmd.ExecuteNonQuery() > 0;
                 }

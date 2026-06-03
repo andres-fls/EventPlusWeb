@@ -10,3 +10,4 @@ Release/
 Thumbs.db
 *.dll
 *.pdb
+AppSecrets.config
