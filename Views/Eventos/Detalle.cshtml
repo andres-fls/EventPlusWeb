@@ -37,20 +37,24 @@
                 </div>
             </div>
 
-            <!-- Botón de inscripción -->
-            <div class="d-flex gap-2 mb-4">
-                <form method="post" action="@Url.Action("Inscribirse", "Eventos", new { id = Model.Id })">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Inscribirme
-                    </button>
-                </form>
-                <form method="post" action="@Url.Action("CancelarInscripcion", "Eventos", new { id = Model.Id })">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-x-circle"></i> Cancelar Inscripción
-                    </button>
-                </form>
-            </div>
+            <!-- Botón de inscripción (solo para usuarios) -->
+            @if (Session["UsuarioRol"]?.ToString() == "Usuario")
+            {
+                <div class="d-flex gap-2 mb-4">
+                    <form method="post" action="@Url.Action("Inscribirse", "Eventos", new { id = Model.Id })">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Inscribirme
+                        </button>
+                    </form>
+                    <form method="post" action="@Url.Action("CancelarInscripcion", "Eventos", new { id = Model.Id })">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Cancelar Inscripción
+                        </button>
+                    </form>
+                </div>
+            }
 
             <!-- Lista de inscritos -->
             <h5 style="color: #a78bfa; margin-bottom: 15px;">
