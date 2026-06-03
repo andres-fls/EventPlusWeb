@@ -59,7 +59,7 @@ namespace EventPlusWeb1.Controllers
             {
                 return RedirectToAction("Login");
             }
-            ViewBag.Error = "Error al registrar. El correo puede estar en uso.";
+            ViewBag.Error = "El correo ya está registrado o hubo un error al registrar";
             return View();
         }
 

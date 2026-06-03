@@ -50,6 +50,19 @@ namespace EventPlusWeb1.Services
             using (SqlConnection conn = _db.GetConnection())
             {
                 conn.Open();
+
+                // Verificar si el correo ya existe
+                string queryVerificar = "SELECT COUNT(*) FROM Usuarios WHERE Correo = @correo";
+                using (SqlCommand cmdVerificar = new SqlCommand(queryVerificar, conn))
+                {
+                    cmdVerificar.Parameters.AddWithValue("@correo", usuario.Correo);
+                    int existe = (int)cmdVerificar.ExecuteScalar();
+                    if (existe > 0)
+                    {
+                        return false;
+                    }
+                }
+
                 string query = "INSERT INTO Usuarios (Nombre, Correo, Contrasena, Rol) VALUES (@nombre, @correo, @contrasena, @rol)";
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
