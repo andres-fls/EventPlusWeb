@@ -2,9 +2,11 @@
 using EventPlusWeb1.Services;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using EventPlusWeb1.Filters;
 
 namespace EventPlusWeb1.Controllers
 {
+    [AuthFilter]
     public class EventosController : Controller
     {
         private readonly EventoService _eventoService;
@@ -21,10 +23,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Eventos
         public ActionResult Index()
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             var eventos = _eventoService.ObtenerTodos();
             return View(eventos);
         }
@@ -32,10 +30,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Eventos/Crear
         public ActionResult Crear()
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             ViewBag.Categorias = _categoriaService.ObtenerTodas();
             return View();
         }
@@ -43,13 +37,8 @@ namespace EventPlusWeb1.Controllers
         // POST: Eventos/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public ActionResult Crear(Evento evento)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             evento.UsuarioCreadorId = (int)Session["UsuarioId"];
             bool resultado = _eventoService.Crear(evento);
             if (resultado)
@@ -64,10 +53,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Eventos/Editar/5
         public ActionResult Editar(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             var evento = _eventoService.ObtenerPorId(id);
             if (evento == null)
             {
@@ -82,10 +67,6 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Editar(Evento evento)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             bool resultado = _eventoService.Editar(evento);
             if (resultado)
             {
@@ -99,10 +80,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Eventos/Eliminar/5
         public ActionResult Eliminar(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             var evento = _eventoService.ObtenerPorId(id);
             if (evento == null)
             {
@@ -117,10 +94,6 @@ namespace EventPlusWeb1.Controllers
         [ActionName("Eliminar")]
         public ActionResult EliminarConfirmado(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             _eventoService.Eliminar(id);
             return RedirectToAction("Index");
         }
@@ -128,10 +101,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Eventos/Detalle/5
         public ActionResult Detalle(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             var evento = _eventoService.ObtenerPorId(id);
             if (evento == null)
             {
@@ -147,10 +116,6 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Inscribirse(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             int usuarioId = (int)Session["UsuarioId"];
             _inscripcionService.Inscribir(usuarioId, id);
             return RedirectToAction("Detalle", new { id = id });
@@ -161,10 +126,6 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CancelarInscripcion(int id)
         {
-            if (Session["UsuarioId"] == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
             int usuarioId = (int)Session["UsuarioId"];
             _inscripcionService.CancelarInscripcion(usuarioId, id);
             return RedirectToAction("Detalle", new { id = id });

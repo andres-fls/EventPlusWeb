@@ -1,6 +1,7 @@
 ﻿using EventPlusWeb1.Models.Entities;
 using EventPlusWeb1.Services;
 using System.Web.Mvc;
+using EventPlusWeb1.Filters;
 
 namespace EventPlusWeb1.Controllers
 {
@@ -73,11 +74,12 @@ namespace EventPlusWeb1.Controllers
         }
 
         // GET: Usuarios
+        [AuthFilter]
         public ActionResult Index()
         {
-            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+            if (Session["UsuarioRol"].ToString() != "Admin")
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Index", "Eventos");
             }
             var usuarios = _usuarioService.ObtenerTodos();
             return View(usuarios);
