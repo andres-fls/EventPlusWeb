@@ -8,7 +8,7 @@ namespace EventPlusWeb1.Services
 
         public DatabaseService()
         {
-            _connectionString = "Server=localhost;Database=EventPlusDB;Trusted_Connection=True;";
+            _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["EventPlusDB"].ConnectionString;
         }
 
         public SqlConnection GetConnection()
