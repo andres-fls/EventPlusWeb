@@ -116,6 +116,11 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Inscribirse(int id)
         {
+            var evento = _eventoService.ObtenerPorId(id);
+            if (evento == null)
+            {
+                return HttpNotFound();
+            }
             int usuarioId = (int)Session["UsuarioId"];
             _inscripcionService.Inscribir(usuarioId, id);
             return RedirectToAction("Detalle", new { id = id });
@@ -126,6 +131,11 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CancelarInscripcion(int id)
         {
+            var evento = _eventoService.ObtenerPorId(id);
+            if (evento == null)
+            {
+                return HttpNotFound();
+            }
             int usuarioId = (int)Session["UsuarioId"];
             _inscripcionService.CancelarInscripcion(usuarioId, id);
             return RedirectToAction("Detalle", new { id = id });
