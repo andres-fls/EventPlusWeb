@@ -8,11 +8,11 @@ using EventPlusWeb1.Services;
 namespace EventPlusWeb1.Controllers
 {
     [AuthFilter]
-    public class CategoriasController : Controller
+    public class ProgramasController : Controller
     {
-        private CategoriaService categoriaService = new CategoriaService();
+        private ProgramaService programaService = new ProgramaService();
 
-        // GET: Categorias
+        // GET: Programas
         public ActionResult Index()
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
@@ -20,11 +20,11 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            List<Categoria> categorias = categoriaService.ObtenerTodas();
-            return View(categorias);
+            List<Programa> programas = programaService.ObtenerTodos();
+            return View(programas);
         }
 
-        // GET: Categorias/Crear
+        // GET: Programas/Crear
         [HttpGet]
         public ActionResult Crear()
         {
@@ -36,10 +36,10 @@ namespace EventPlusWeb1.Controllers
             return View();
         }
 
-        // POST: Categorias/Crear
+        // POST: Programas/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Crear(Categoria categoria)
+        public ActionResult Crear(Programa programa)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
@@ -48,22 +48,22 @@ namespace EventPlusWeb1.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(categoria);
+                return View(programa);
             }
 
-            bool creado = categoriaService.Crear(categoria);
+            bool creado = programaService.Crear(programa);
 
             if (creado)
             {
-                TempData["Mensaje"] = "Categoría creada exitosamente.";
+                TempData["Mensaje"] = "Programa creado exitosamente.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Error = "Error al crear la categoría. Puede que ya exista.";
-            return View(categoria);
+            ViewBag.Error = "Error al crear el programa.";
+            return View(programa);
         }
 
-        // GET: Categorias/Editar/5
+        // GET: Programas/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
         {
@@ -72,20 +72,20 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            Categoria categoria = categoriaService.ObtenerPorId(id);
+            Programa programa = programaService.ObtenerPorId(id);
 
-            if (categoria == null)
+            if (programa == null)
             {
                 return HttpNotFound();
             }
 
-            return View(categoria);
+            return View(programa);
         }
 
-        // POST: Categorias/Editar
+        // POST: Programas/Editar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editar(Categoria categoria)
+        public ActionResult Editar(Programa programa)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
@@ -94,22 +94,22 @@ namespace EventPlusWeb1.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(categoria);
+                return View(programa);
             }
 
-            bool actualizado = categoriaService.Actualizar(categoria);
+            bool actualizado = programaService.Actualizar(programa);
 
             if (actualizado)
             {
-                TempData["Mensaje"] = "Categoría actualizada exitosamente.";
+                TempData["Mensaje"] = "Programa actualizado exitosamente.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Error = "Error al actualizar la categoría.";
-            return View(categoria);
+            ViewBag.Error = "Error al actualizar el programa.";
+            return View(programa);
         }
 
-        // POST: Categorias/Eliminar
+        // POST: Programas/Eliminar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Eliminar(int id)
@@ -119,15 +119,15 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            bool eliminado = categoriaService.Eliminar(id);
+            bool eliminado = programaService.Eliminar(id);
 
             if (eliminado)
             {
-                TempData["Mensaje"] = "Categoría eliminada exitosamente.";
+                TempData["Mensaje"] = "Programa eliminado exitosamente.";
             }
             else
             {
-                TempData["Error"] = "No se puede eliminar la categoría. Puede tener eventos asociados.";
+                TempData["Error"] = "No se puede eliminar el programa. Puede tener fichas asociadas.";
             }
 
             return RedirectToAction("Index");

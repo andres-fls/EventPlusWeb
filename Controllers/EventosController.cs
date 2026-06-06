@@ -1,36 +1,91 @@
-﻿using EventPlusWeb1.Models.Entities;
-using EventPlusWeb1.Services;
+﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using EventPlusWeb1.Filters;
+using EventPlusWeb1.Models.Entities;
+using EventPlusWeb1.Services;
 
 namespace EventPlusWeb1.Controllers
 {
     [AuthFilter]
     public class EventosController : Controller
     {
-        private readonly EventoService _eventoService;
-        private readonly CategoriaService _categoriaService;
-        private readonly InscripcionService _inscripcionService;
-
-        public EventosController()
-        {
-            _eventoService = new EventoService();
-            _categoriaService = new CategoriaService();
-            _inscripcionService = new InscripcionService();
-        }
+        private EventoService eventoService = new EventoService();
+        private CategoriaService categoriaService = new CategoriaService();
+        private InscripcionService inscripcionService = new InscripcionService();
+        private AprendizService aprendizService = new AprendizService();
+        private GrupoService grupoService = new GrupoService();
 
         // GET: Eventos
         public ActionResult Index()
         {
-            var eventos = _eventoService.ObtenerTodos();
+            List<Evento> eventos;
+
+            // Admin ve todos, Usuario ve solo activos
+            if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Admin")
+            {
+                eventos = eventoService.ObtenerTodos();
+            }
+            else
+            {
+                eventos = eventoService.ObtenerActivos();
+            }
+
             return View(eventos);
         }
 
-        // GET: Eventos/Crear
+        // GET: Eventos/Detalle/5
+        public ActionResult Detalle(int id)
+        {
+            Evento evento = eventoService.ObtenerPorId(id);
+
+            if (evento == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Obtener inscripciones del evento para mostrar
+            ViewBag.Inscripciones = inscripcionService.ObtenerPorEvento(id);
+
+            // Obtener grupos si es grupal
+            if (evento.TipoEvento == "Grupal")
+            {
+                ViewBag.Grupos = grupoService.ObtenerPorEvento(id);
+            }
+
+            // Verificar si el usuario actual ya está inscrito
+            if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Usuario")
+            {
+                int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+                Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+
+                if (aprendiz != null)
+                {
+                    ViewBag.YaInscrito = inscripcionService.YaEstaInscrito(aprendiz.IdAprendiz, id);
+                    ViewBag.AprendizId = aprendiz.IdAprendiz;
+                    ViewBag.TienePerfilAprendiz = true;
+                }
+                else
+                {
+                    ViewBag.YaInscrito = false;
+                    ViewBag.AprendizId = 0;
+                    ViewBag.TienePerfilAprendiz = false;
+                }
+            }
+
+            return View(evento);
+        }
+
+        // GET: Eventos/Crear (solo Admin)
+        [HttpGet]
         public ActionResult Crear()
         {
-            ViewBag.Categorias = _categoriaService.ObtenerTodas();
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+            {
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Categorias = categoriaService.ObtenerTodas();
             return View();
         }
 
@@ -39,26 +94,50 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Crear(Evento evento)
         {
-            evento.UsuarioCreadorId = (int)Session["UsuarioId"];
-            bool resultado = _eventoService.Crear(evento);
-            if (resultado)
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
                 return RedirectToAction("Index");
             }
-            ViewBag.Error = "Error al crear el evento";
-            ViewBag.Categorias = _categoriaService.ObtenerTodas();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = categoriaService.ObtenerTodas();
+                return View(evento);
+            }
+
+            evento.Usuario_idUsuario = Convert.ToInt32(Session["UsuarioId"]);
+            evento.EstadoEvento = "Activo";
+
+            bool creado = eventoService.Crear(evento);
+
+            if (creado)
+            {
+                TempData["Mensaje"] = "Evento creado exitosamente.";
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Error = "Error al crear el evento.";
+            ViewBag.Categorias = categoriaService.ObtenerTodas();
             return View(evento);
         }
 
-        // GET: Eventos/Editar/5
+        // GET: Eventos/Editar/5 (solo Admin)
+        [HttpGet]
         public ActionResult Editar(int id)
         {
-            var evento = _eventoService.ObtenerPorId(id);
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+            {
+                return RedirectToAction("Index");
+            }
+
+            Evento evento = eventoService.ObtenerPorId(id);
+
             if (evento == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Categorias = _categoriaService.ObtenerTodas();
+
+            ViewBag.Categorias = categoriaService.ObtenerTodas();
             return View(evento);
         }
 
@@ -67,78 +146,126 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Editar(Evento evento)
         {
-            bool resultado = _eventoService.Editar(evento);
-            if (resultado)
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
                 return RedirectToAction("Index");
             }
-            ViewBag.Error = "Error al editar el evento";
-            ViewBag.Categorias = _categoriaService.ObtenerTodas();
-            return View(evento);
-        }
 
-        // GET: Eventos/Eliminar/5
-        public ActionResult Eliminar(int id)
-        {
-            var evento = _eventoService.ObtenerPorId(id);
-            if (evento == null)
+            if (!ModelState.IsValid)
             {
-                return HttpNotFound();
+                ViewBag.Categorias = categoriaService.ObtenerTodas();
+                return View(evento);
             }
+
+            bool actualizado = eventoService.Actualizar(evento);
+
+            if (actualizado)
+            {
+                TempData["Mensaje"] = "Evento actualizado exitosamente.";
+                return RedirectToAction("Detalle", new { id = evento.IdEvento });
+            }
+
+            ViewBag.Error = "Error al actualizar el evento.";
+            ViewBag.Categorias = categoriaService.ObtenerTodas();
             return View(evento);
         }
 
-        // POST: Eventos/EliminarConfirmado/5
+        // POST: Eventos/Eliminar (solo Admin)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("Eliminar")]
-        public ActionResult EliminarConfirmado(int id)
+        public ActionResult Eliminar(int id)
         {
-            _eventoService.Eliminar(id);
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+            {
+                return RedirectToAction("Index");
+            }
+
+            bool eliminado = eventoService.Eliminar(id);
+
+            if (eliminado)
+            {
+                TempData["Mensaje"] = "Evento eliminado exitosamente.";
+            }
+            else
+            {
+                TempData["Error"] = "Error al eliminar el evento.";
+            }
+
             return RedirectToAction("Index");
         }
 
-        // GET: Eventos/Detalle/5
-        public ActionResult Detalle(int id)
-        {
-            var evento = _eventoService.ObtenerPorId(id);
-            if (evento == null)
-            {
-                return HttpNotFound();
-            }
-            var inscripciones = _inscripcionService.ObtenerPorEvento(id);
-            ViewBag.Inscripciones = inscripciones;
-            return View(evento);
-        }
-
-        // POST: Eventos/Inscribirse/5
+        // POST: Eventos/Inscribirse (solo Usuario con perfil de aprendiz)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Inscribirse(int id)
+        public ActionResult Inscribirse(int eventoId, int? grupoId)
         {
-            var evento = _eventoService.ObtenerPorId(id);
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+            {
+                return RedirectToAction("Index");
+            }
+
+            int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+            Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+
+            if (aprendiz == null)
+            {
+                TempData["Error"] = "Debes completar tu perfil de aprendiz antes de inscribirte.";
+                return RedirectToAction("Crear", "Aprendiz");
+            }
+
+            // Verificar si ya está inscrito
+            if (inscripcionService.YaEstaInscrito(aprendiz.IdAprendiz, eventoId))
+            {
+                TempData["Error"] = "Ya estás inscrito en este evento.";
+                return RedirectToAction("Detalle", new { id = eventoId });
+            }
+
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+
             if (evento == null)
             {
                 return HttpNotFound();
             }
-            int usuarioId = (int)Session["UsuarioId"];
-            _inscripcionService.Inscribir(usuarioId, id);
-            return RedirectToAction("Detalle", new { id = id });
+
+            // Verificar cupo
+            int inscritos = inscripcionService.ContarInscritosPorEvento(eventoId);
+            if (inscritos >= evento.CupoMaximo)
+            {
+                TempData["Error"] = "El evento ya alcanzó el cupo máximo.";
+                return RedirectToAction("Detalle", new { id = eventoId });
+            }
+
+            bool inscrito;
+
+            if (evento.TipoEvento == "Grupal" && grupoId.HasValue)
+            {
+                inscrito = inscripcionService.CrearGrupal(aprendiz.IdAprendiz, eventoId, grupoId.Value);
+            }
+            else
+            {
+                inscrito = inscripcionService.CrearIndividual(aprendiz.IdAprendiz, eventoId);
+            }
+
+            if (inscrito)
+            {
+                TempData["Mensaje"] = "Inscripción realizada exitosamente.";
+            }
+            else
+            {
+                TempData["Error"] = "Error al realizar la inscripción.";
+            }
+
+            return RedirectToAction("Detalle", new { id = eventoId });
         }
 
-        // POST: Eventos/CancelarInscripcion/5
+        // POST: Eventos/CancelarInscripcion
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CancelarInscripcion(int id)
+        public ActionResult CancelarInscripcion(int inscripcionId, int eventoId)
         {
-            var evento = _eventoService.ObtenerPorId(id);
-            if (evento == null)
-            {
-                return HttpNotFound();
-            }
-            int usuarioId = (int)Session["UsuarioId"];
-            _inscripcionService.CancelarInscripcion(usuarioId, id);
-            return RedirectToAction("Detalle", new { id = id });
+            inscripcionService.Cancelar(inscripcionId);
+            TempData["Mensaje"] = "Inscripción cancelada.";
+            return RedirectToAction("Detalle", new { id = eventoId });
         }
     }
 }

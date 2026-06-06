@@ -1,20 +1,19 @@
-﻿using EventPlusWeb1.Models.Entities;
-using EventPlusWeb1.Services;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using EventPlusWeb1.Filters;
+using EventPlusWeb1.Models.Entities;
+using EventPlusWeb1.Services;
 
 namespace EventPlusWeb1.Controllers
 {
     public class UsuariosController : Controller
     {
-        private readonly UsuarioService _usuarioService;
-
-        public UsuariosController()
-        {
-            _usuarioService = new UsuarioService();
-        }
+        private UsuarioService usuarioService = new UsuarioService();
+        private AprendizService aprendizService = new AprendizService();
 
         // GET: Usuarios/Login
+        [HttpGet]
         public ActionResult Login()
         {
             if (Session["UsuarioId"] != null)
@@ -29,41 +28,76 @@ namespace EventPlusWeb1.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(string correo, string contrasena)
         {
-            Usuario usuario = _usuarioService.Login(correo, contrasena);
-            if (usuario != null)
+            if (string.IsNullOrWhiteSpace(correo) || string.IsNullOrWhiteSpace(contrasena))
             {
-                Session["UsuarioId"] = usuario.Id;
-                Session["UsuarioNombre"] = usuario.Nombre;
-                Session["UsuarioRol"] = usuario.Rol;
-                return RedirectToAction("Index", "Eventos");
+                ViewBag.Error = "Debe ingresar correo y contraseña.";
+                return View();
             }
-            ViewBag.Error = "Correo o contraseña incorrectos";
-            return View();
+
+            Usuario usuario = usuarioService.Login(correo, contrasena);
+
+            if (usuario == null)
+            {
+                ViewBag.Error = "Correo o contraseña incorrectos, o la cuenta está inactiva.";
+                return View();
+            }
+
+            // Crear sesión
+            Session["UsuarioId"] = usuario.IdUsuario;
+            Session["UsuarioNombre"] = usuario.Nombre;
+            Session["UsuarioRol"] = usuario.Rol;
+            Session["UsuarioCorreo"] = usuario.Correo;
+
+            return RedirectToAction("Index", "Eventos");
         }
 
         // GET: Usuarios/Registro
+        [HttpGet]
         public ActionResult Registro()
         {
+            if (Session["UsuarioId"] != null)
+            {
+                return RedirectToAction("Index", "Eventos");
+            }
             return View();
         }
 
         // POST: Usuarios/Registro
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Registro(Usuario usuario)
+        public ActionResult Registro(Usuario usuario, string contrasena, string confirmarContrasena)
         {
-            if (string.IsNullOrEmpty(usuario.Nombre) || string.IsNullOrEmpty(usuario.Correo) || string.IsNullOrEmpty(usuario.Contrasena))
+            if (string.IsNullOrWhiteSpace(contrasena))
             {
-                ViewBag.Error = "Todos los campos son obligatorios";
-                return View();
+                ViewBag.Error = "La contraseña es obligatoria.";
+                return View(usuario);
             }
-            bool resultado = _usuarioService.Registrar(usuario);
-            if (resultado)
+
+            if (contrasena != confirmarContrasena)
             {
-                return RedirectToAction("Login");
+                ViewBag.Error = "Las contraseñas no coinciden.";
+                return View(usuario);
             }
-            ViewBag.Error = "El correo ya está registrado o hubo un error al registrar";
-            return View();
+
+            if (contrasena.Length < 6)
+            {
+                ViewBag.Error = "La contraseña debe tener al menos 6 caracteres.";
+                return View(usuario);
+            }
+
+            // Rol por defecto para registro público
+            usuario.Rol = "Usuario";
+
+            bool registrado = usuarioService.Registrar(usuario, contrasena);
+
+            if (!registrado)
+            {
+                ViewBag.Error = "El correo ya está registrado.";
+                return View(usuario);
+            }
+
+            TempData["Mensaje"] = "Registro exitoso. Ahora puedes iniciar sesión.";
+            return RedirectToAction("Login");
         }
 
         // GET: Usuarios/Logout
@@ -73,16 +107,33 @@ namespace EventPlusWeb1.Controllers
             return RedirectToAction("Login");
         }
 
-        // GET: Usuarios
+        // GET: Usuarios/Index (solo Admin - listado de usuarios)
         [AuthFilter]
         public ActionResult Index()
         {
-            if (Session["UsuarioRol"].ToString() != "Admin")
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
                 return RedirectToAction("Index", "Eventos");
             }
-            var usuarios = _usuarioService.ObtenerTodos();
+
+            List<Usuario> usuarios = usuarioService.ObtenerTodos();
             return View(usuarios);
+        }
+
+        // POST: Usuarios/CambiarEstado (solo Admin)
+        [HttpPost]
+        [AuthFilter]
+        [ValidateAntiForgeryToken]
+        public ActionResult CambiarEstado(int id, bool estado)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+            {
+                return RedirectToAction("Index", "Eventos");
+            }
+
+            usuarioService.CambiarEstado(id, estado);
+            TempData["Mensaje"] = "Estado del usuario actualizado.";
+            return RedirectToAction("Index");
         }
     }
 }

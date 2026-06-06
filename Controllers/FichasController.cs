@@ -8,11 +8,12 @@ using EventPlusWeb1.Services;
 namespace EventPlusWeb1.Controllers
 {
     [AuthFilter]
-    public class CategoriasController : Controller
+    public class FichasController : Controller
     {
-        private CategoriaService categoriaService = new CategoriaService();
+        private FichaService fichaService = new FichaService();
+        private ProgramaService programaService = new ProgramaService();
 
-        // GET: Categorias
+        // GET: Fichas
         public ActionResult Index()
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
@@ -20,11 +21,11 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            List<Categoria> categorias = categoriaService.ObtenerTodas();
-            return View(categorias);
+            List<Ficha> fichas = fichaService.ObtenerTodas();
+            return View(fichas);
         }
 
-        // GET: Categorias/Crear
+        // GET: Fichas/Crear
         [HttpGet]
         public ActionResult Crear()
         {
@@ -33,13 +34,14 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
+            ViewBag.Programas = programaService.ObtenerTodos();
             return View();
         }
 
-        // POST: Categorias/Crear
+        // POST: Fichas/Crear
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Crear(Categoria categoria)
+        public ActionResult Crear(Ficha ficha)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
@@ -48,22 +50,24 @@ namespace EventPlusWeb1.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(categoria);
+                ViewBag.Programas = programaService.ObtenerTodos();
+                return View(ficha);
             }
 
-            bool creado = categoriaService.Crear(categoria);
+            bool creado = fichaService.Crear(ficha);
 
             if (creado)
             {
-                TempData["Mensaje"] = "Categoría creada exitosamente.";
+                TempData["Mensaje"] = "Ficha creada exitosamente.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Error = "Error al crear la categoría. Puede que ya exista.";
-            return View(categoria);
+            ViewBag.Error = "Error al crear la ficha.";
+            ViewBag.Programas = programaService.ObtenerTodos();
+            return View(ficha);
         }
 
-        // GET: Categorias/Editar/5
+        // GET: Fichas/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
         {
@@ -72,20 +76,21 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            Categoria categoria = categoriaService.ObtenerPorId(id);
+            Ficha ficha = fichaService.ObtenerPorId(id);
 
-            if (categoria == null)
+            if (ficha == null)
             {
                 return HttpNotFound();
             }
 
-            return View(categoria);
+            ViewBag.Programas = programaService.ObtenerTodos();
+            return View(ficha);
         }
 
-        // POST: Categorias/Editar
+        // POST: Fichas/Editar
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Editar(Categoria categoria)
+        public ActionResult Editar(Ficha ficha)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
             {
@@ -94,22 +99,24 @@ namespace EventPlusWeb1.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(categoria);
+                ViewBag.Programas = programaService.ObtenerTodos();
+                return View(ficha);
             }
 
-            bool actualizado = categoriaService.Actualizar(categoria);
+            bool actualizado = fichaService.Actualizar(ficha);
 
             if (actualizado)
             {
-                TempData["Mensaje"] = "Categoría actualizada exitosamente.";
+                TempData["Mensaje"] = "Ficha actualizada exitosamente.";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Error = "Error al actualizar la categoría.";
-            return View(categoria);
+            ViewBag.Error = "Error al actualizar la ficha.";
+            ViewBag.Programas = programaService.ObtenerTodos();
+            return View(ficha);
         }
 
-        // POST: Categorias/Eliminar
+        // POST: Fichas/Eliminar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Eliminar(int id)
@@ -119,15 +126,15 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index", "Eventos");
             }
 
-            bool eliminado = categoriaService.Eliminar(id);
+            bool eliminado = fichaService.Eliminar(id);
 
             if (eliminado)
             {
-                TempData["Mensaje"] = "Categoría eliminada exitosamente.";
+                TempData["Mensaje"] = "Ficha eliminada exitosamente.";
             }
             else
             {
-                TempData["Error"] = "No se puede eliminar la categoría. Puede tener eventos asociados.";
+                TempData["Error"] = "No se puede eliminar la ficha. Puede tener aprendices asociados.";
             }
 
             return RedirectToAction("Index");
