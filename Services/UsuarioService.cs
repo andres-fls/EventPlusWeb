@@ -1,106 +1,172 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using EventPlusWeb1.Models.Entities;
-using BCrypt.Net;
 
 namespace EventPlusWeb1.Services
 {
     public class UsuarioService
     {
-        private readonly DatabaseService _db;
-
-        public UsuarioService()
+        // Obtener todos los usuarios
+        public List<Usuario> ObtenerTodos()
         {
-            _db = new DatabaseService();
+            List<Usuario> usuarios = new List<Usuario>();
+
+            using (SqlConnection conn = DatabaseService.GetConnection())
+            {
+                string query = "SELECT idUsuario, Nombre, Correo, ContrasenaHash, Rol, Estado FROM Usuario";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    usuarios.Add(MapearUsuario(reader));
+                }
+            }
+
+            return usuarios;
         }
 
-        public Usuario Login(string correo, string contrasena)
+        // Obtener usuario por ID
+        public Usuario ObtenerPorId(int id)
         {
-            using (SqlConnection conn = _db.GetConnection())
+            Usuario usuario = null;
+
+            using (SqlConnection conn = DatabaseService.GetConnection())
             {
-                conn.Open();
-                string query = "SELECT * FROM Usuarios WHERE Correo = @Correo";
+                string query = "SELECT idUsuario, Nombre, Correo, ContrasenaHash, Rol, Estado FROM Usuario WHERE idUsuario = @Id";
                 SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@Correo", correo);
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                conn.Open();
 
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    string hashAlmacenado = reader["Contrasena"].ToString();
-
-                    // Verificar si la contraseña coincide con el hash
-                    if (BCrypt.Net.BCrypt.Verify(contrasena, hashAlmacenado))
-                    {
-                        return new Usuario
-                        {
-                            Id = (int)reader["Id"],
-                            Nombre = reader["Nombre"].ToString(),
-                            Correo = reader["Correo"].ToString(),
-                            Contrasena = hashAlmacenado,
-                            Rol = reader["Rol"].ToString()
-                        };
-                    }
+                    usuario = MapearUsuario(reader);
                 }
+            }
+
+            return usuario;
+        }
+
+        // Obtener usuario por correo (para login)
+        public Usuario ObtenerPorCorreo(string correo)
+        {
+            Usuario usuario = null;
+
+            using (SqlConnection conn = DatabaseService.GetConnection())
+            {
+                string query = "SELECT idUsuario, Nombre, Correo, ContrasenaHash, Rol, Estado FROM Usuario WHERE Correo = @Correo";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.Add("@Correo", SqlDbType.VarChar, 100).Value = correo;
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    usuario = MapearUsuario(reader);
+                }
+            }
+
+            return usuario;
+        }
+
+        // Login con BCrypt
+        public Usuario Login(string correo, string contrasena)
+        {
+            Usuario usuario = ObtenerPorCorreo(correo);
+
+            if (usuario == null)
                 return null;
+
+            if (!usuario.Estado)
+                return null;
+
+            bool contrasenaValida = BCrypt.Net.BCrypt.Verify(contrasena, usuario.ContrasenaHash);
+
+            if (!contrasenaValida)
+                return null;
+
+            return usuario;
+        }
+
+        // Registrar nuevo usuario
+        public bool Registrar(Usuario usuario, string contrasena)
+        {
+            // Verificar si el correo ya existe
+            Usuario existente = ObtenerPorCorreo(usuario.Correo);
+            if (existente != null)
+                return false;
+
+            // Hashear contraseña con BCrypt
+            string hash = BCrypt.Net.BCrypt.HashPassword(contrasena);
+
+            using (SqlConnection conn = DatabaseService.GetConnection())
+            {
+                string query = @"INSERT INTO Usuario (Nombre, Correo, ContrasenaHash, Rol, Estado) 
+                                 VALUES (@Nombre, @Correo, @ContrasenaHash, @Rol, @Estado)";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.Add("@Nombre", SqlDbType.VarChar, 100).Value = usuario.Nombre;
+                cmd.Parameters.Add("@Correo", SqlDbType.VarChar, 100).Value = usuario.Correo;
+                cmd.Parameters.Add("@ContrasenaHash", SqlDbType.VarChar, 255).Value = hash;
+                cmd.Parameters.Add("@Rol", SqlDbType.VarChar, 20).Value = usuario.Rol;
+                cmd.Parameters.Add("@Estado", SqlDbType.Bit).Value = true;
+                conn.Open();
+
+                int resultado = cmd.ExecuteNonQuery();
+                return resultado > 0;
             }
         }
 
-        public bool Registrar(Usuario usuario)
+        // Actualizar usuario
+        public bool Actualizar(Usuario usuario)
         {
-            using (SqlConnection conn = _db.GetConnection())
+            using (SqlConnection conn = DatabaseService.GetConnection())
             {
+                string query = @"UPDATE Usuario SET Nombre = @Nombre, Correo = @Correo, 
+                                 Rol = @Rol, Estado = @Estado WHERE idUsuario = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.Add("@Nombre", SqlDbType.VarChar, 100).Value = usuario.Nombre;
+                cmd.Parameters.Add("@Correo", SqlDbType.VarChar, 100).Value = usuario.Correo;
+                cmd.Parameters.Add("@Rol", SqlDbType.VarChar, 20).Value = usuario.Rol;
+                cmd.Parameters.Add("@Estado", SqlDbType.Bit).Value = usuario.Estado;
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = usuario.IdUsuario;
                 conn.Open();
 
-                // Verificar si el correo ya existe
-                string queryVerificar = "SELECT COUNT(*) FROM Usuarios WHERE Correo = @correo";
-                using (SqlCommand cmdVerificar = new SqlCommand(queryVerificar, conn))
-                {
-                    cmdVerificar.Parameters.AddWithValue("@correo", usuario.Correo);
-                    int existe = (int)cmdVerificar.ExecuteScalar();
-                    if (existe > 0)
-                    {
-                        return false;
-                    }
-                }
-
-                string query = "INSERT INTO Usuarios (Nombre, Correo, Contrasena, Rol) VALUES (@nombre, @correo, @contrasena, @rol)";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
-                    cmd.Parameters.AddWithValue("@correo", usuario.Correo);
-                    string hashContrasena = BCrypt.Net.BCrypt.HashPassword(usuario.Contrasena);
-                    cmd.Parameters.AddWithValue("@Contrasena", hashContrasena);
-                    cmd.Parameters.AddWithValue("@rol", "Usuario");
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                int resultado = cmd.ExecuteNonQuery();
+                return resultado > 0;
             }
         }
 
-        public List<Usuario> ObtenerTodos()
+        // Cambiar estado (activar/desactivar)
+        public bool CambiarEstado(int id, bool estado)
         {
-            List<Usuario> usuarios = new List<Usuario>();
-            using (SqlConnection conn = _db.GetConnection())
+            using (SqlConnection conn = DatabaseService.GetConnection())
             {
+                string query = "UPDATE Usuario SET Estado = @Estado WHERE idUsuario = @Id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.Add("@Estado", SqlDbType.Bit).Value = estado;
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
                 conn.Open();
-                string query = "SELECT Id, Nombre, Correo, Rol FROM Usuarios";
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            usuarios.Add(new Usuario
-                            {
-                                Id = (int)reader["Id"],
-                                Nombre = reader["Nombre"].ToString(),
-                                Correo = reader["Correo"].ToString(),
-                                Rol = reader["Rol"].ToString()
-                            });
-                        }
-                    }
-                }
+
+                int resultado = cmd.ExecuteNonQuery();
+                return resultado > 0;
             }
-            return usuarios;
+        }
+
+        // Mapear reader a entidad
+        private Usuario MapearUsuario(SqlDataReader reader)
+        {
+            Usuario usuario = new Usuario();
+            usuario.IdUsuario = Convert.ToInt32(reader["idUsuario"]);
+            usuario.Nombre = reader["Nombre"].ToString();
+            usuario.Correo = reader["Correo"].ToString();
+            usuario.ContrasenaHash = reader["ContrasenaHash"].ToString();
+            usuario.Rol = reader["Rol"].ToString();
+            usuario.Estado = Convert.ToBoolean(reader["Estado"]);
+            return usuario;
         }
     }
 }
