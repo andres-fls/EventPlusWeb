@@ -1,24 +1,33 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventPlusWeb1.Models.Entities
 {
     public class Usuario
     {
-        public int Id { get; set; }
+        public int IdUsuario { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio")]
-        [StringLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
+        [Display(Name = "Nombre")]
         public string Nombre { get; set; }
 
         [Required(ErrorMessage = "El correo es obligatorio")]
-        [EmailAddress(ErrorMessage = "El formato del correo no es válido")]
-        [StringLength(150, ErrorMessage = "El correo no puede exceder 150 caracteres")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
+        [EmailAddress(ErrorMessage = "Correo no válido")]
+        [Display(Name = "Correo Electrónico")]
         public string Correo { get; set; }
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 100 caracteres")]
-        public string Contrasena { get; set; }
+        [StringLength(255)]
+        [Display(Name = "Contraseña")]
+        public string ContrasenaHash { get; set; }
 
+        [Required(ErrorMessage = "El rol es obligatorio")]
+        [StringLength(20)]
+        [Display(Name = "Rol")]
         public string Rol { get; set; }
+
+        public bool Estado { get; set; }
     }
 }

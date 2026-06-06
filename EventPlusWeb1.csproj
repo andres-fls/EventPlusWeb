@@ -162,9 +162,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Entities\Aprendiz.cs" />
     <Compile Include="Models\Entities\Categoria.cs" />
     <Compile Include="Models\Entities\Evento.cs" />
+    <Compile Include="Models\Entities\Ficha.cs" />
+    <Compile Include="Models\Entities\Grupo.cs" />
     <Compile Include="Models\Entities\Inscripcion.cs" />
+    <Compile Include="Models\Entities\Programa.cs" />
     <Compile Include="Models\Entities\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CategoriaService.cs" />
