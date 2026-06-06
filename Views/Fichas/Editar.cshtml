@@ -1,0 +1,75 @@
+
+@model EventPlusWeb1.Models.Entities.Ficha
+
+@{ 
+    ViewBag.Title = "Editar Ficha";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header" style="background-color: #16213e; border-bottom: 1px solid #2d2d44;">
+            <h3 class="mb-0" style="color: #a78bfa;"><i class="bi bi-pencil-square"></i> Editar Ficha</h3>
+        </div>
+        <div class="card-body">
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @using (Html.BeginForm("Editar", "Fichas", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.idFicha)
+
+                <div class="col-md-6">
+                    <label for="CodigoFicha" class="form-label">Código de Ficha</label>
+                    @Html.TextBoxFor(model => model.CodigoFicha, new { @class = "form-control", placeholder = "Ej: 2889795", required = "required" })
+                    @Html.ValidationMessageFor(model => model.CodigoFicha, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="Programa_idPrograma" class="form-label">Programa</label>
+                    @Html.DropDownListFor(model => model.Programa_idPrograma, (List<SelectListItem>)ViewBag.Programas, "-- Seleccione un Programa --", new { @class = "form-select", required = "required" })
+                    @Html.ValidationMessageFor(model => model.Programa_idPrograma, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="FechaInicio" class="form-label">Fecha de Inicio</label>
+                    @Html.TextBoxFor(model => model.FechaInicio, new { @class = "form-control", type = "date", required = "required", Value = Model.FechaInicio.ToString("yyyy-MM-dd") })
+                    @Html.ValidationMessageFor(model => model.FechaInicio, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="FechaFin" class="form-label">Fecha de Fin</label>
+                    @Html.TextBoxFor(model => model.FechaFin, new { @class = "form-control", type = "date", required = "required", Value = Model.FechaFin.ToString("yyyy-MM-dd") })
+                    @Html.ValidationMessageFor(model => model.FechaFin, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="Estado" class="form-label">Estado</label>
+                    @Html.DropDownListFor(model => model.Estado, new List<SelectListItem>
+                    {
+                        new SelectListItem { Text = "Activa", Value = "Activa" },
+                        new SelectListItem { Text = "Inactiva", Value = "Inactiva" }
+                    }, "-- Seleccione un Estado --", new { @class = "form-select", required = "required" })
+                    @Html.ValidationMessageFor(model => model.Estado, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-save me-2"></i> Guardar Cambios
+                    </button>
+                    <a href="@Url.Action("Index", "Fichas")" class="btn btn-secondary mt-2">
+                        <i class="bi bi-arrow-left-circle me-2"></i> Volver a la Lista
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

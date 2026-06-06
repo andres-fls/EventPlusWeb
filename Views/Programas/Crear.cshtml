@@ -1,0 +1,65 @@
+
+@model EventPlusWeb1.Models.Entities.Programa
+
+@{ 
+    ViewBag.Title = "Crear Programa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header" style="background-color: #16213e; border-bottom: 1px solid #2d2d44;">
+            <h3 class="mb-0" style="color: #a78bfa;"><i class="bi bi-plus-circle"></i> Crear Nuevo Programa</h3>
+        </div>
+        <div class="card-body">
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            @using (Html.BeginForm("Crear", "Programas", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="col-md-6">
+                    <label for="CodigoPrograma" class="form-label">Código del Programa</label>
+                    @Html.TextBoxFor(model => model.CodigoPrograma, new { @class = "form-control", placeholder = "Ej: ADSO228106", required = "required" })
+                    @Html.ValidationMessageFor(model => model.CodigoPrograma, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="NombrePrograma" class="form-label">Nombre del Programa</label>
+                    @Html.TextBoxFor(model => model.NombrePrograma, new { @class = "form-control", placeholder = "Ej: Análisis y Desarrollo de Software", required = "required" })
+                    @Html.ValidationMessageFor(model => model.NombrePrograma, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="DuracionMeses" class="form-label">Duración (Meses)</label>
+                    @Html.TextBoxFor(model => model.DuracionMeses, new { @class = "form-control", type = "number", min = "1", required = "required" })
+                    @Html.ValidationMessageFor(model => model.DuracionMeses, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label for="NivelPrograma" class="form-label">Nivel del Programa</label>
+                    @Html.TextBoxFor(model => model.NivelPrograma, new { @class = "form-control", placeholder = "Ej: Tecnólogo", required = "required" })
+                    @Html.ValidationMessageFor(model => model.NivelPrograma, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-save me-2"></i> Guardar Programa
+                    </button>
+                    <a href="@Url.Action("Index", "Programas")" class="btn btn-secondary mt-2">
+                        <i class="bi bi-arrow-left-circle me-2"></i> Volver a la Lista
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

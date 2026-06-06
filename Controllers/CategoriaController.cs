@@ -11,6 +11,7 @@ namespace EventPlusWeb1.Controllers
     public class CategoriasController : Controller
     {
         private CategoriaService categoriaService = new CategoriaService();
+        private EventoService eventoService = new EventoService();
 
         // GET: Categorias
         public ActionResult Index()
@@ -131,6 +132,18 @@ namespace EventPlusWeb1.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+        public ActionResult EventosPorCategoria(int id)
+        {
+            var categoria = categoriaService.ObtenerPorId(id);
+            if (categoria == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.NombreCategoria = categoria.NombreCategoria;
+            var eventos = eventoService.ObtenerPorCategoria(id);
+            return View(eventos);
         }
     }
 }

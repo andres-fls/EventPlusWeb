@@ -75,13 +75,13 @@ namespace EventPlusWeb1.Controllers
 
             foreach (var evento in eventos)
             {
-                var inscritos = _inscripcionService.ObtenerPorEvento(evento.Id);
+                var inscritos = _inscripcionService.ObtenerPorEvento(evento.IdEvento);
                 foreach (var ins in inscritos)
                 {
                     inscripciones.Add(new
                     {
-                        EventoTitulo = evento.Titulo,
-                        UsuarioNombre = ins.UsuarioNombre,
+                        EventoTitulo = evento.NombreEvento,
+                        UsuarioNombre = ins.NombreAprendiz,
                         FechaInscripcion = ins.FechaInscripcion
                     });
                 }

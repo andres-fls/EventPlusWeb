@@ -217,5 +217,35 @@ namespace EventPlusWeb1.Services
             evento.Inscritos = Convert.ToInt32(reader["Inscritos"]);
             return evento;
         }
+        // Obtener eventos por categoría
+        public List<Evento> ObtenerPorCategoria(int categoriaId)
+        {
+            List<Evento> eventos = new List<Evento>();
+
+            using (SqlConnection conn = DatabaseService.GetConnection())
+            {
+                string query = @"SELECT e.idEvento, e.Usuario_idUsuario, e.Categoria_idCategoria, e.NombreEvento, 
+                                 e.DescripcionEvento, e.LugarEvento, e.FechaInicioEvento, e.FechaFinEvento, 
+                                 e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento,
+                                 c.NombreCategoria, u.Nombre AS NombreCreador,
+                                 (SELECT COUNT(*) FROM Inscripcion i WHERE i.Evento_idEvento = e.idEvento AND i.EstadoInscripcion = 'Activa') AS Inscritos
+                                 FROM Evento e
+                                 INNER JOIN Categoria c ON e.Categoria_idCategoria = c.idCategoria
+                                 INNER JOIN Usuario u ON e.Usuario_idUsuario = u.idUsuario
+                                 WHERE e.Categoria_idCategoria = @CategoriaId
+                                 ORDER BY e.FechaInicioEvento DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.Add("@CategoriaId", SqlDbType.Int).Value = categoriaId;
+                conn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    eventos.Add(MapearEvento(reader));
+                }
+            }
+
+            return eventos;
+        }
     }
 }

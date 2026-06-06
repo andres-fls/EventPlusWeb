@@ -1,0 +1,51 @@
+@model EventPlusWeb1.Models.Entities.Grupo
+
+@{
+    ViewBag.Title = "Crear Grupo";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg p-4">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4" style="color: #a78bfa;"><i class="bi bi-plus-circle"></i> Crear Nuevo Grupo</h2>
+                <hr style="border-color: #2d2d44;">
+
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        @TempData["Mensaje"]
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @TempData["Error"]
+                    </div>
+                }
+
+                @using (Html.BeginForm("Crear", "Grupos", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.NombreGrupo, new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.NombreGrupo, new { @class = "form-control", required = "required" })
+                        @Html.ValidationMessageFor(model => model.NombreGrupo, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="mb-4">
+                        @Html.LabelFor(model => model.Evento_idEvento, "Evento", new { @class = "form-label" })
+                        @Html.DropDownListFor(model => model.Evento_idEvento, (List<SelectListItem>)ViewBag.Eventos, "Seleccione un evento", new { @class = "form-select", required = "required" })
+                        @Html.ValidationMessageFor(model => model.Evento_idEvento, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Index", "Grupos")" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Cancelar</a>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Crear Grupo</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

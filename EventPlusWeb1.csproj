@@ -251,12 +251,28 @@
     <Content Include="Views\Eventos\Crear.cshtml" />
     <Content Include="Views\Eventos\Editar.cshtml" />
     <Content Include="Views\Reportes\Index.cshtml" />
+    <Content Include="Views\Aprendiz\Crear.cshtml" />
+    <Content Include="Views\Aprendiz\Editar.cshtml" />
+    <Content Include="Views\Aprendiz\MiPerfil.cshtml" />
+    <Content Include="Views\Categorias\Crear.cshtml" />
+    <Content Include="Views\Categorias\Editar.cshtml" />
+    <Content Include="Views\Fichas\Crear.cshtml" />
+    <Content Include="Views\Fichas\Editar.cshtml" />
+    <Content Include="Views\Fichas\Index.cshtml" />
+    <Content Include="Views\Grupos\Crear.cshtml" />
+    <Content Include="Views\Grupos\Editar.cshtml" />
+    <Content Include="Views\Grupos\Index.cshtml" />
+    <Content Include="Views\Programas\Crear.cshtml" />
+    <Content Include="Views\Programas\Editar.cshtml" />
+    <Content Include="Views\Programas\Index.cshtml" />
+    <Content Include="Views\Inscripciones\Index.cshtml" />
+    <Content Include="Views\Inscripciones\MisInscripciones.cshtml" />
+    <Content Include="Views\Categorias\EventosPorCategoria.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Views\ChatBot\" />
-    <Folder Include="Views\Inscripciones\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

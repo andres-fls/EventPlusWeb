@@ -1,0 +1,76 @@
+@model IEnumerable<EventPlusWeb1.Models.Entities.Inscripcion>
+
+@{
+    ViewBag.Title = "Gestión de Inscripciones";
+}
+
+<div class="card shadow-lg p-4">
+    <div class="card-body">
+        <h2 class="card-title text-center mb-4" style="color: #a78bfa;"><i class="bi bi-card-checklist"></i> Gestión de Inscripciones</h2>
+        <hr style="border-color: #2d2d44;">
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @TempData["Mensaje"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["Error"]
+            </div>
+        }
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Aprendiz</th>
+                        <th>Evento</th>
+                        <th>Grupo</th>
+                        <th>Fecha de Inscripción</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @(item.NombreAprendiz != null ? item.NombreAprendiz : "N/A")
+                            </td>
+                            <td>
+                                @(item.NombreEvento != null ? item.NombreEvento : "N/A")
+                            </td>
+                            <td>
+                                @if (item.NombreGrupo != null)
+                                {
+                                    @item.NombreGrupo
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Individual</span>
+                                }
+                            </td>
+                            <td>
+                                @item.FechaInscripcion.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.EstadoInscripcion)
+                            </td>
+                            <td>
+                                @using (Html.BeginForm("Cancelar", "Inscripciones", new { id = item.idInscripcion }, FormMethod.Post, new { style = "display:inline;" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de que deseas cancelar esta inscripción?');" title="Cancelar Inscripción"><i class="bi bi-x-circle"></i> Cancelar</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

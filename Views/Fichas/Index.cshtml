@@ -1,0 +1,97 @@
+
+@model IEnumerable<EventPlusWeb1.Models.Entities.Ficha>
+
+@{ 
+    ViewBag.Title = "Fichas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #16213e; border-bottom: 1px solid #2d2d44;">
+            <h3 class="mb-0" style="color: #a78bfa;"><i class="bi bi-person-badge"></i> Gestión de Fichas</h3>
+            <a href="@Url.Action("Crear", "Fichas")" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-plus-circle me-2"></i> Nueva Ficha
+            </a>
+        </div>
+        <div class="card-body">
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="table-responsive mt-3">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.CodigoFicha)</th>
+                            <th>Programa</th>
+                            <th>@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                            <th>@Html.DisplayNameFor(model => model.FechaFin)</th>
+                            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.CodigoFicha)</td>
+                                <td>@Html.DisplayFor(modelItem => item.NombrePrograma)</td>
+                                <td>@item.FechaInicio.ToString("yyyy-MM-dd")</td>
+                                <td>@item.FechaFin.ToString("yyyy-MM-dd")</td>
+                                <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Editar", "Fichas", new { id = item.idFicha })" class="btn btn-sm btn-warning me-2" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmarEliminar(\'@item.idFicha\', \'Ficha @item.CodigoFicha\')" title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function confirmarEliminar(id, nombre) {
+            if (confirm(\'¿Estás seguro de que deseas eliminar \' + nombre + \'? Esta acción no se puede deshacer.\')) {
+                var form = document.createElement(\'form\');
+                form.method = \'post\';
+                form.action = \'@Url.Action("Eliminar", "Fichas")\';
+                form.style.display = \'none\';
+
+                var inputId = document.createElement(\'input\');
+                inputId.type = \'hidden\';
+                inputId.name = \'id\';
+                inputId.value = id;
+                form.appendChild(inputId);
+
+                var antiForgeryInput = document.createElement(\'input\');
+                antiForgeryInput.type = \'hidden\';
+                antiForgeryInput.name = \'__RequestVerificationToken\';
+                antiForgeryInput.value = \'@Html.AntiForgeryToken().ToHtmlString()\'.match(/value=\"([^\"]*)\"/)[1];
+                form.appendChild(antiForgeryInput);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
