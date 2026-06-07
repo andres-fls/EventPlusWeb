@@ -11,3 +11,4 @@ Thumbs.db
 *.dll
 *.pdb
 AppSecrets.config
+ConnectionStrings.config

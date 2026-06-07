@@ -16,11 +16,6 @@ namespace EventPlusWeb1.Controllers
         // GET: Categorias
         public ActionResult Index()
         {
-            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
-                return RedirectToAction("Index", "Eventos");
-            }
-
             List<Categoria> categorias = categoriaService.ObtenerTodas();
             return View(categorias);
         }
@@ -143,6 +138,28 @@ namespace EventPlusWeb1.Controllers
 
             ViewBag.NombreCategoria = categoria.NombreCategoria;
             var eventos = eventoService.ObtenerPorCategoria(id);
+
+            // Verificar inscripciones del aprendiz actual
+            if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Usuario")
+            {
+                int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+                AprendizService aprendizService = new AprendizService();
+                InscripcionService inscripcionService = new InscripcionService();
+                var aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+                if (aprendiz != null)
+                {
+                    var eventosInscritos = new List<int>();
+                    foreach (var ev in eventos)
+                    {
+                        if (inscripcionService.YaEstaInscrito(aprendiz.IdAprendiz, ev.IdEvento))
+                        {
+                            eventosInscritos.Add(ev.IdEvento);
+                        }
+                    }
+                    ViewBag.EventosInscritos = eventosInscritos;
+                }
+            }
+
             return View(eventos);
         }
     }

@@ -366,11 +366,11 @@
                                     <h6>@Session["UsuarioNombre"]</h6>
                                     <small>@Session["UsuarioCorreo"]</small>
                                     <br />
-                                    <span class="badge mt-2" style="background-color: #7c3aed;">@Session["UsuarioRol"]</span>
+                                    <span class="badge mt-2" style="background-color: #7c3aed;">@(Session["UsuarioRol"].ToString() == "Usuario" ? "Aprendiz" : Session["UsuarioRol"].ToString())</span>
                                 </div>
                                 <div class="profile-info">
                                     <p><i class="bi bi-envelope"></i> @Session["UsuarioCorreo"]</p>
-                                    <p><i class="bi bi-shield-check"></i> Rol: @Session["UsuarioRol"]</p>
+                                    <p><i class="bi bi-shield-check"></i> Rol: @(Session["UsuarioRol"].ToString() == "Usuario" ? "Aprendiz" : Session["UsuarioRol"].ToString())</p>
                                 </div>
                                 <hr style="border-color: #2d2d44; margin: 10px 0;" />
                                 <div class="text-center">
