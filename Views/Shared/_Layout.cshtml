@@ -288,6 +288,9 @@
 
             .chatbot-input input {
                 flex: 1;
+                min-width: 0;
+                width: 100%;
+                max-width: none;
                 background-color: #0f3460;
                 border: 1px solid #2d2d44;
                 color: #e0e0e0;
@@ -308,10 +311,16 @@
                 padding: 10px 15px;
                 cursor: pointer;
                 transition: background-color 0.3s;
+                min-width: 46px;
             }
 
                 .chatbot-input button:hover {
                     background-color: #6d28d9;
+                }
+
+                .chatbot-input button:disabled {
+                    cursor: not-allowed;
+                    opacity: 0.65;
                 }
 
         .typing-indicator {
@@ -322,6 +331,73 @@
             border-radius: 12px;
             font-size: 0.85rem;
             color: #a78bfa;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            padding: 10px 14px;
+            background-color: #0f3460;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #a78bfa;
+        }
+
+        /* ================================================================================= */
+        /* ===== CHATBOT RESPONSIVE (MÓVILES Y TABLETAS)                               ===== */
+        /* ================================================================================= */
+        @@media (max-width: 768px) {
+            /* 1. Ajustar el botón flotante para que no estorbe tanto en pantallas pequeñas */
+            .chatbot-btn {
+                bottom: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+
+            /* 2. Transformar el panel para que se adapte al ancho del celular */
+            .chatbot-panel {
+                bottom: 80px;
+                right: 15px;
+                left: 15px; /* Al darle left y right con el mismo valor, se centra automáticamente */
+                width: calc(100% - 30px); /* Ocupa todo el ancho disponible restando los márgenes */
+                height: 65vh; /* Ocupa el 65% de la altura de la pantalla del celular, ideal para que deje ver el fondo */
+                max-height: 450px; /* Evita que crezca de forma desmedida en teléfonos muy largos */
+                border-radius: 12px;
+            }
+
+            /* 3. Hacer los textos un poco más compactos para ganar espacio de lectura */
+            .chatbot-header {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+
+            .chatbot-messages {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            .chat-msg {
+                max-width: 85%; /* Permitimos que los globos de texto aprovechen mejor el ancho */
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            /* 4. Optimizar la barra de escritura para que los botones sean fáciles de presionar con el pulgar */
+            .chatbot-input {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .chatbot-input input {
+                padding: 8px 10px;
+                font-size: 0.9rem; /* Evita que iOS / Android hagan un zoom automático molesto al escribir */
+            }
+
+            .chatbot-input button {
+                padding: 8px 12px;
+            }
         }
     </style>
 </head>
