@@ -19,19 +19,20 @@
                 </div>
             }
 
-            <form method="post" action="@Url.Action("Login", "Usuarios")">
-                <div class="mb-3">
-                    <label class="form-label">Correo electrónico</label>
-                    <input type="email" name="correo" class="form-control" placeholder="tucorreo@email.com" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="contrasena" class="form-control" placeholder="••••••••" required />
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 1.1rem;">
-                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
-                </button>
-            </form>
+        <form method="post" action="@Url.Action("Login", "Usuarios")">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" name="correo" class="form-control" placeholder="tucorreo@email.com" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="contrasena" class="form-control" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2" style="font-size: 1.1rem;">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+            </button>
+        </form>
 
             <div class="text-center mt-3">
                 <a href="@Url.Action("Registro", "Usuarios")" style="color: #a78bfa;">¿No tienes cuenta? Regístrate</a>

@@ -1,105 +1,97 @@
 ﻿@model EventPlusWeb1.Models.Entities.Evento
 @{
     ViewBag.Title = "Editar Evento";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    var categorias = ViewBag.Categorias as List<EventPlusWeb1.Models.Entities.Categoria>;
+    IEnumerable<SelectListItem> categorias = ViewBag.Categorias;
+    List<SelectListItem> tiposEvento = new List<SelectListItem>
+{
+        new SelectListItem { Text = "Individual", Value = "Individual" },
+        new SelectListItem { Text = "Grupal", Value = "Grupal" }
+    };
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card p-4">
-            <h3 style="color: #a78bfa; margin-bottom: 20px;"><i class="bi bi-pencil"></i> Editar Evento</h3>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white"><i class="bi bi-pencil-square"></i> Editar Evento</h2>
+    </div>
 
-            @if (ViewBag.Error != null)
-            {
-                <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-circle"></i> @ViewBag.Error
-                </div>
-            }
-
-            <form method="post" action="@Url.Action("Editar", "Eventos")">
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <div class="mb-3">
-                    <label class="form-label">Título del evento</label>
-                    <input type="text" name="Titulo" class="form-control" value="@Model.Titulo" required />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Descripción</label>
-                    <textarea name="Descripcion" id="txtDescripcion" class="form-control" rows="4">@Model.Descripcion</textarea>
-                    <button type="button" class="btn btn-sm mt-2" style="background-color: #0f3460; color: #a78bfa; border: 1px solid #7c3aed;" onclick="generarDescripcion()">
-                        <i class="bi bi-stars"></i> Generar con IA
-                    </button>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Fecha del evento</label>
-                        <input type="date" name="FechaEvento" class="form-control" value="@Model.FechaEvento.ToString("yyyy-MM-dd")" required />
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Categoría</label>
-                        <select name="CategoriaId" class="form-select" required>
-                            @if (categorias != null)
-                            {
-                                foreach (var cat in categorias)
-                                {
-                                    if (cat.Id == Model.CategoriaId)
-                                    {
-                                        <option value="@cat.Id" selected>@cat.Nombre</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@cat.Id">@cat.Nombre</option>
-                                    }
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Ubicación</label>
-                    <input type="text" name="Ubicacion" class="form-control" value="@Model.Ubicacion" />
-                </div>
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Guardar Cambios
-                    </button>
-                    <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light">
-                        <i class="bi bi-arrow-left"></i> Cancelar
-                    </a>
-                </div>
-            </form>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+    }
+
+    <div class="card p-4">
+        @using (Html.BeginForm("Editar", "Eventos", FormMethod.Post, new { @class = "row g-3" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.IdEvento)
+
+            <div class="col-md-6">
+                <label for="NombreEvento" class="form-label">@Html.DisplayNameFor(model => model.NombreEvento)</label>
+                @Html.EditorFor(model => model.NombreEvento, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreEvento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-6">
+                <label for="Categoria_idCategoria" class="form-label">Categoría</label>
+                @Html.DropDownListFor(model => model.Categoria_idCategoria, categorias, "-- Seleccione una Categoría --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(model => model.Categoria_idCategoria, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-12">
+                <label for="DescripcionEvento" class="form-label">@Html.DisplayNameFor(model => model.DescripcionEvento)</label>
+                @Html.TextAreaFor(model => model.DescripcionEvento, new { @class = "form-control", rows = 5 })
+                @Html.ValidationMessageFor(model => model.DescripcionEvento, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label for="LugarEvento" class="form-label">@Html.DisplayNameFor(model => model.LugarEvento)</label>
+                @Html.EditorFor(model => model.LugarEvento, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.LugarEvento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-6">
+                <label for="CupoMaximo" class="form-label">@Html.DisplayNameFor(model => model.CupoMaximo)</label>
+                @Html.EditorFor(model => model.CupoMaximo, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.CupoMaximo, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label for="FechaInicioEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioEvento)</label>
+                @Html.EditorFor(model => model.FechaInicioEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", Value = Model.FechaInicioEvento.ToString("yyyy-MM-ddTHH:mm") } })
+                @Html.ValidationMessageFor(model => model.FechaInicioEvento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-6">
+                <label for="FechaFinEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaFinEvento)</label>
+                @Html.EditorFor(model => model.FechaFinEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", Value = Model.FechaFinEvento.ToString("yyyy-MM-ddTHH:mm") } })
+                @Html.ValidationMessageFor(model => model.FechaFinEvento, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label for="FechaInicioInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioInscripcion)</label>
+                @Html.EditorFor(model => model.FechaInicioInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", Value = Model.FechaInicioInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
+                @Html.ValidationMessageFor(model => model.FechaInicioInscripcion, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-6">
+                <label for="FechaFinInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaFinInscripcion)</label>
+                @Html.EditorFor(model => model.FechaFinInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", Value = Model.FechaFinInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
+                @Html.ValidationMessageFor(model => model.FechaFinInscripcion, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-md-6">
+                <label for="TipoEvento" class="form-label">@Html.DisplayNameFor(model => model.TipoEvento)</label>
+                @Html.DropDownListFor(model => model.TipoEvento, new SelectList(tiposEvento, "Value", "Text", Model.TipoEvento), "-- Seleccione Tipo --", new { @class = "form-select" })
+                @Html.ValidationMessageFor(model => model.TipoEvento, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="col-12 mt-4">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
+                <a href="@Url.Action("Index", "Eventos")" class="btn btn-secondary ms-2"><i class="bi bi-arrow-left"></i> Cancelar</a>
+            </div>
+        }
     </div>
 </div>
 
-<script>
-    function generarDescripcion() {
-        var titulo = document.querySelector('input[name="Titulo"]').value;
-        if (titulo === '') {
-            alert('Escribe primero el título del evento');
-            return;
-        }
-
-        var btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Generando...';
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/Chatbot/Enviar', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-stars"></i> Generar con IA';
-                if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText);
-                    if (data.exito) {
-                        document.getElementById('txtDescripcion').value = data.respuesta;
-                    }
-                }
-            }
-        };
-        var mensaje = 'Genera una descripción atractiva y profesional de máximo 3 líneas para un evento llamado: ' + titulo;
-        xhr.send('mensaje=' + encodeURIComponent(mensaje));
-    }
-</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

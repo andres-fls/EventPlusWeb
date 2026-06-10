@@ -1,33 +1,367 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool esDashboardAdmin = ViewBag.EsDashboardAdmin != null && (bool)ViewBag.EsDashboardAdmin;
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="color: #a78bfa;">
+            <i class="bi bi-speedometer2"></i> Dashboard
+            @if (esDashboardAdmin)
+            {
+                <small style="font-size: 0.6em; color: #888;">- Administrador</small>
+            }
+            else
+            {
+                <small style="font-size: 0.6em; color: #888;">- Aprendiz</small>
+            }
+        </h2>
+        <span style="color: #888;">
+            <i class="bi bi-calendar3"></i> @DateTime.Now.ToString("dd/MM/yyyy")
+        </span>
     </div>
-</main>
+
+    @if (esDashboardAdmin)
+    {
+        <!-- ===== DASHBOARD ADMIN ===== -->
+
+        <!-- Tarjetas de Resumen -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card p-3 text-center" style="border-left: 4px solid #7c3aed;">
+                    <i class="bi bi-calendar-event" style="font-size: 2rem; color: #7c3aed;"></i>
+                    <h3 style="color: #a78bfa; margin-top: 10px;">@ViewBag.TotalEventos</h3>
+                    <p style="color: #888; margin: 0;">Total Eventos</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card p-3 text-center" style="border-left: 4px solid #059669;">
+                    <i class="bi bi-person-check" style="font-size: 2rem; color: #059669;"></i>
+                    <h3 style="color: #6ee7b7; margin-top: 10px;">@ViewBag.TotalInscripciones</h3>
+                    <p style="color: #888; margin: 0;">Total Inscripciones</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card p-3 text-center" style="border-left: 4px solid #f59e0b;">
+                    <i class="bi bi-people" style="font-size: 2rem; color: #f59e0b;"></i>
+                    <h3 style="color: #fcd34d; margin-top: 10px;">@ViewBag.TotalUsuarios</h3>
+                    <p style="color: #888; margin: 0;">Usuarios Registrados</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card p-3 text-center" style="border-left: 4px solid #ef4444;">
+                    <i class="bi bi-tags" style="font-size: 2rem; color: #ef4444;"></i>
+                    <h3 style="color: #fca5a5; margin-top: 10px;">@ViewBag.TotalCategorias</h3>
+                    <p style="color: #888; margin: 0;">Categor&#237;as</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficas -->
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3">
+                <div class="card p-3">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-pie-chart"></i> Eventos por Categor&#237;a</h5>
+                    <canvas id="chartEventosCategoria" height="250"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card p-3">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-graph-up"></i> Inscripciones por Mes</h5>
+                    <canvas id="chartInscripcionesMes" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Segunda fila de gráficas -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card p-3">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-bar-chart"></i> Estado de Eventos</h5>
+                    <canvas id="chartEstadoEventos" height="200"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-3">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-bar-chart"></i> Estado de Inscripciones</h5>
+                    <canvas id="chartEstadoInscripciones" height="200"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card p-3">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-clock-history"></i> &#218;ltimos Eventos</h5>
+                    @if (ViewBag.UltimosEventos != null)
+                    {
+                        var ultimosEventos = (List<EventPlusWeb1.Models.Entities.Evento>)ViewBag.UltimosEventos;
+                        foreach (var ev in ultimosEventos)
+                        {
+                            <div style="padding: 8px 0; border-bottom: 1px solid #2d2d44;">
+                                <p style="color: #e0e0e0; margin: 0; font-size: 0.9rem;">
+                                    <i class="bi bi-calendar3" style="color: #7c3aed;"></i> @ev.NombreEvento
+                                </p>
+                                <small style="color: #888;">@ev.FechaInicioEvento.ToString("dd/MM/yyyy") - @ev.NombreCategoria</small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- ===== DASHBOARD APRENDIZ ===== -->
+
+        if (ViewBag.TienePerfilAprendiz != null && !(bool)ViewBag.TienePerfilAprendiz)
+        {
+            <div class="card p-4 text-center">
+                <i class="bi bi-person-exclamation" style="font-size: 3rem; color: #f59e0b;"></i>
+                <h4 style="color: #a78bfa; margin-top: 15px;">Completa tu perfil de Aprendiz</h4>
+                <p style="color: #888;">Para acceder a todas las funcionalidades, completa tu perfil.</p>
+                <a href="@Url.Action("Crear", "Aprendiz")" class="btn btn-primary">
+                    <i class="bi bi-person-plus"></i> Completar Perfil
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Tarjetas de Resumen Aprendiz -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center" style="border-left: 4px solid #059669;">
+                        <i class="bi bi-journal-check" style="font-size: 2rem; color: #059669;"></i>
+                        <h3 style="color: #6ee7b7; margin-top: 10px;">@ViewBag.MisInscripcionesActivas</h3>
+                        <p style="color: #888; margin: 0;">Inscripciones Activas</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center" style="border-left: 4px solid #7c3aed;">
+                        <i class="bi bi-calendar-event" style="font-size: 2rem; color: #7c3aed;"></i>
+                        <h3 style="color: #a78bfa; margin-top: 10px;">@ViewBag.EventosDisponibles</h3>
+                        <p style="color: #888; margin: 0;">Eventos Disponibles</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center" style="border-left: 4px solid #ef4444;">
+                        <i class="bi bi-x-circle" style="font-size: 2rem; color: #ef4444;"></i>
+                        <h3 style="color: #fca5a5; margin-top: 10px;">@ViewBag.MisInscripcionesCanceladas</h3>
+                        <p style="color: #888; margin: 0;">Inscripciones Canceladas</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfica y Próximos Eventos -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3">
+                        <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-pie-chart"></i> Eventos por Categor&#237;a</h5>
+                        <canvas id="chartEventosCategoria" height="250"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3">
+                        <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-calendar-week"></i> Pr&#243;ximos Eventos</h5>
+                        @if (ViewBag.ProximosEventos != null)
+                        {
+                            var proximosEventos = (List<EventPlusWeb1.Models.Entities.Evento>)ViewBag.ProximosEventos;
+                            if (proximosEventos.Count == 0)
+                            {
+                                <p style="color: #888; text-align: center;">No hay eventos pr&#243;ximos disponibles.</p>
+                            }
+                            else
+                            {
+                                foreach (var ev in proximosEventos)
+                                {
+                                    <div style="padding: 8px 0; border-bottom: 1px solid #2d2d44;">
+                                        <p style="color: #e0e0e0; margin: 0; font-size: 0.9rem;">
+                                            <i class="bi bi-calendar3" style="color: #7c3aed;"></i> @ev.NombreEvento
+                                        </p>
+                                        <small style="color: #888;">
+                                            @ev.FechaInicioEvento.ToString("dd/MM/yyyy") - @ev.LugarEvento
+                                            <span class="badge bg-success ms-2">@ev.Inscritos/@ev.CupoMaximo</span>
+                                        </small>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimas Inscripciones -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card p-3">
+                        <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-clock-history"></i> Mis &#218;ltimas Inscripciones</h5>
+                        @if (ViewBag.UltimasInscripciones != null)
+                        {
+                            var ultimasIns = (List<EventPlusWeb1.Models.Entities.Inscripcion>)ViewBag.UltimasInscripciones;
+                            if (ultimasIns.Count == 0)
+                            {
+                                <p style="color: #888; text-align: center;">A&#250;n no tienes inscripciones.</p>
+                            }
+                            else
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Evento</th>
+                                                <th>Fecha</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var ins in ultimasIns)
+                                            {
+                                                <tr>
+                                                    <td>@ins.NombreEvento</td>
+                                                    <td>@ins.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                                                    <td>
+                                                        @if (ins.EstadoInscripcion == "Activa")
+                                                        {
+                                                            <span class="badge bg-success">Activa</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-danger">Cancelada</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Colores para las gráficas
+        var colores = ['#7c3aed', '#059669', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#14b8a6', '#f97316'];
+        var coloresTransparentes = ['rgba(124,58,237,0.7)', 'rgba(5,150,105,0.7)', 'rgba(245,158,11,0.7)', 'rgba(239,68,68,0.7)', 'rgba(59,130,246,0.7)', 'rgba(236,72,153,0.7)', 'rgba(20,184,166,0.7)', 'rgba(249,115,22,0.7)'];
+
+        // Gráfica de Eventos por Categoría (Torta)
+        var ctxCategoria = document.getElementById('chartEventosCategoria');
+        if (ctxCategoria) {
+            new Chart(ctxCategoria.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: [@Html.Raw(ViewBag.CategoriasLabels != null ? ViewBag.CategoriasLabels : "")],
+                    datasets: [{
+                        data: [@Html.Raw(ViewBag.CategoriasData != null ? ViewBag.CategoriasData : "")],
+                        backgroundColor: colores,
+                        borderColor: '#16213e',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#e0e0e0' }
+                        }
+                    }
+                }
+            });
+        }
+
+        @if (esDashboardAdmin)
+        {
+            <text>
+        // Gráfica de Inscripciones por Mes (Líneas)
+        var ctxMes = document.getElementById('chartInscripcionesMes');
+        if (ctxMes) {
+            new Chart(ctxMes.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(ViewBag.MesesLabels != null ? ViewBag.MesesLabels : "")],
+                    datasets: [{
+                        label: 'Inscripciones',
+                        data: [@Html.Raw(ViewBag.MesesData != null ? ViewBag.MesesData : "")],
+                        borderColor: '#7c3aed',
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
+                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e0e0e0' } }
+                    }
+                }
+            });
+        }
+
+        // Gráfica Estado de Eventos (Barras)
+        var ctxEstadoEventos = document.getElementById('chartEstadoEventos');
+        if (ctxEstadoEventos) {
+            new Chart(ctxEstadoEventos.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Activos', 'Inactivos'],
+                    datasets: [{
+                        label: 'Eventos',
+                        data: [@ViewBag.EventosActivos, @ViewBag.EventosInactivos],
+                        backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
+                        borderColor: ['#059669', '#ef4444'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
+                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Gráfica Estado de Inscripciones (Barras)
+        var ctxEstadoIns = document.getElementById('chartEstadoInscripciones');
+        if (ctxEstadoIns) {
+            new Chart(ctxEstadoIns.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Activas', 'Canceladas'],
+                    datasets: [{
+                        label: 'Inscripciones',
+                        data: [@ViewBag.InscripcionesActivas, @ViewBag.InscripcionesCanceladas],
+                        backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
+                        borderColor: ['#059669', '#ef4444'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
+                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+            </text>
+        }
+    </script>
+}

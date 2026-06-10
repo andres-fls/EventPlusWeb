@@ -1,21 +1,93 @@
-﻿@model List<EventPlusWeb1.Models.Entities.Categoria>
+﻿@model IEnumerable<EventPlusWeb1.Models.Entities.Categoria>
 @{
     ViewBag.Title = "Categorías";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var isAdmin = Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Admin";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 style="color: #a78bfa;"><i class="bi bi-tags"></i> Categorías</h2>
-</div>
-
-<div class="row">
-    @foreach (var cat in Model)
+    @if (isAdmin)
     {
-        <div class="col-md-4 col-lg-3 mb-3">
-            <div class="card p-3 text-center">
-                <i class="bi bi-tag" style="font-size: 2rem; color: #7c3aed;"></i>
-                <h5 style="color: #a78bfa; margin-top: 10px;">@cat.Nombre</h5>
-            </div>
-        </div>
+        <a href="@Url.Action("Crear", "Categorias")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nueva Categoría
+        </a>
     }
 </div>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model == null || !Model.Any())
+{
+    <div class="card p-4 text-center">
+        <i class="bi bi-tags" style="font-size: 3rem; color: #7c3aed;"></i>
+        <p style="color: #888; margin-top: 15px;">No hay categorías registradas.</p>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card h-100" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(124, 58, 237, 0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    <a href="@Url.Action("EventosPorCategoria", "Categorias", new { id = item.IdCategoria })" style="text-decoration: none;">
+                        <div class="card-body text-center d-flex flex-column justify-content-center" style="min-height: 150px;">
+                            <i class="bi bi-bookmark-star" style="font-size: 2.5rem; color: #7c3aed;"></i>
+                            <h5 class="card-title mt-3" style="color: #a78bfa;">@item.NombreCategoria</h5>
+                        </div>
+                    </a>
+                    @if (isAdmin)
+                    {
+                        <div class="card-footer border-top-0 text-center" style="background: transparent;">
+                            <a href="@Url.Action("Editar", "Categorias", new { id = item.IdCategoria })" class="btn btn-sm btn-warning me-2" title="Editar" onclick="event.stopPropagation();">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal_@item.IdCategoria" onclick="event.stopPropagation();" title="Eliminar">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+            if (isAdmin)
+            {
+                <div class="modal fade" id="confirmDeleteModal_@item.IdCategoria" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content card">
+                            <div class="modal-header border-bottom-0">
+                                <h5 class="modal-title text-white">Confirmar Eliminación</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-white">
+                                ¿Estás seguro de que deseas eliminar la categoría "@item.NombreCategoria"?
+                            </div>
+                            <div class="modal-footer border-top-0">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                @using (Html.BeginForm("Eliminar", "Categorias", new { id = item.IdCategoria }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}

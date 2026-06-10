@@ -1,19 +1,16 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace EventPlusWeb1.Services
 {
     public class DatabaseService
     {
-        private readonly string _connectionString;
+        private static string connectionString = ConfigurationManager.ConnectionStrings["EventPlusDB"].ConnectionString;
 
-        public DatabaseService()
+        public static SqlConnection GetConnection()
         {
-            _connectionString = "Server=localhost;Database=EventPlusDB;Trusted_Connection=True;";
-        }
-
-        public SqlConnection GetConnection()
-        {
-            return new SqlConnection(_connectionString);
+            return new SqlConnection(connectionString);
         }
     }
 }

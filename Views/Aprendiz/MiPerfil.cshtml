@@ -1,0 +1,58 @@
+@model EventPlusWeb1.Models.Entities.Aprendiz
+
+@{
+    ViewBag.Title = "Mi Perfil";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg p-4">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4" style="color: #a78bfa;"><i class="bi bi-person-circle"></i> Mi Perfil</h2>
+                <hr style="border-color: #2d2d44;">
+
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        @TempData["Mensaje"]
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre:</label>
+                    <p class="form-control-static">@(Model.NombreUsuario != null ? Model.NombreUsuario : "N/A")</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Cédula:</label>
+                    <p class="form-control-static">@(Model.Cedula != null ? Model.Cedula : "N/A")</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teléfono:</label>
+                    <p class="form-control-static">@(Model.Telefono != null ? Model.Telefono : "N/A")</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Edad:</label>
+                    <p class="form-control-static">@Model.Edad</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Género:</label>
+                    <p class="form-control-static">@(Model.Genero != null ? Model.Genero : "N/A")</p>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Ficha:</label>
+                    <p class="form-control-static">@(Model.CodigoFicha != null ? Model.CodigoFicha : "N/A")</p>
+                </div>
+
+                <div class="d-grid">
+                    <a href="@Url.Action("Editar", "Aprendiz")" class="btn btn-primary"><i class="bi bi-pencil-square"></i> Editar Perfil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
