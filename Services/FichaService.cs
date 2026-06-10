@@ -2,146 +2,193 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using EventPlusWeb1.Models.Entities;
 
 namespace EventPlusWeb1.Services
 {
     public class FichaService
     {
-        // Obtener todas las fichas con nombre del programa
         public List<Ficha> ObtenerTodas()
         {
             List<Ficha> fichas = new List<Ficha>();
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
-                                 p.NombrePrograma
-                                 FROM Ficha f
-                                 INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
-                                 ORDER BY f.CodigoFicha";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    fichas.Add(MapearFicha(reader));
+                    string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
+                                     p.NombrePrograma
+                                     FROM Ficha f
+                                     INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
+                                     ORDER BY f.CodigoFicha";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                        fichas.Add(MapearFicha(reader));
                 }
             }
-
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerTodas] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerTodas] Error inesperado: {0}", ex.Message);
+            }
             return fichas;
         }
 
-        // Obtener ficha por ID
         public Ficha ObtenerPorId(int id)
         {
-            Ficha ficha = null;
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
-                                 p.NombrePrograma
-                                 FROM Ficha f
-                                 INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
-                                 WHERE f.idFicha = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    ficha = MapearFicha(reader);
+                    string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
+                                     p.NombrePrograma
+                                     FROM Ficha f
+                                     INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
+                                     WHERE f.idFicha = @Id";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                        return MapearFicha(reader);
                 }
             }
-
-            return ficha;
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerPorId] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerPorId] Error inesperado: {0}", ex.Message);
+            }
+            return null;
         }
 
-        // Obtener fichas activas (para dropdowns)
         public List<Ficha> ObtenerActivas()
         {
             List<Ficha> fichas = new List<Ficha>();
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
-                                 p.NombrePrograma
-                                 FROM Ficha f
-                                 INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
-                                 WHERE f.Estado = 'Activa'
-                                 ORDER BY f.CodigoFicha";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    fichas.Add(MapearFicha(reader));
+                    string query = @"SELECT f.idFicha, f.Programa_idPrograma, f.CodigoFicha, f.FechaInicio, f.FechaFin, f.Estado,
+                                     p.NombrePrograma
+                                     FROM Ficha f
+                                     INNER JOIN Programa p ON f.Programa_idPrograma = p.idPrograma
+                                     WHERE f.Estado = 'Activa'
+                                     ORDER BY f.CodigoFicha";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                        fichas.Add(MapearFicha(reader));
                 }
             }
-
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerActivas] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.ObtenerActivas] Error inesperado: {0}", ex.Message);
+            }
             return fichas;
         }
 
-        // Crear ficha
         public bool Crear(Ficha ficha)
         {
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"INSERT INTO Ficha (Programa_idPrograma, CodigoFicha, FechaInicio, FechaFin, Estado) 
-                                 VALUES (@Programa_idPrograma, @CodigoFicha, @FechaInicio, @FechaFin, @Estado)";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Programa_idPrograma", SqlDbType.Int).Value = ficha.Programa_idPrograma;
-                cmd.Parameters.Add("@CodigoFicha", SqlDbType.VarChar, 20).Value = ficha.CodigoFicha;
-                cmd.Parameters.Add("@FechaInicio", SqlDbType.DateTime).Value = ficha.FechaInicio;
-                cmd.Parameters.Add("@FechaFin", SqlDbType.DateTime).Value = ficha.FechaFin;
-                cmd.Parameters.Add("@Estado", SqlDbType.VarChar, 20).Value = ficha.Estado;
-                conn.Open();
-
-                int resultado = cmd.ExecuteNonQuery();
-                return resultado > 0;
+                using (SqlConnection conn = DatabaseService.GetConnection())
+                {
+                    string query = @"INSERT INTO Ficha (Programa_idPrograma, CodigoFicha, FechaInicio, FechaFin, Estado) 
+                                     VALUES (@Programa_idPrograma, @CodigoFicha, @FechaInicio, @FechaFin, @Estado)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Programa_idPrograma", SqlDbType.Int).Value = ficha.Programa_idPrograma;
+                    cmd.Parameters.Add("@CodigoFicha", SqlDbType.VarChar, 20).Value = ficha.CodigoFicha;
+                    cmd.Parameters.Add("@FechaInicio", SqlDbType.DateTime).Value = ficha.FechaInicio;
+                    cmd.Parameters.Add("@FechaFin", SqlDbType.DateTime).Value = ficha.FechaFin;
+                    cmd.Parameters.Add("@Estado", SqlDbType.VarChar, 20).Value = ficha.Estado;
+                    conn.Open();
+                    int resultado = cmd.ExecuteNonQuery();
+                    return resultado > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.Crear] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.Crear] Error inesperado: {0}", ex.Message);
+                return false;
             }
         }
 
-        // Actualizar ficha
         public bool Actualizar(Ficha ficha)
         {
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"UPDATE Ficha SET Programa_idPrograma = @Programa_idPrograma, CodigoFicha = @CodigoFicha, 
-                                 FechaInicio = @FechaInicio, FechaFin = @FechaFin, Estado = @Estado WHERE idFicha = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Programa_idPrograma", SqlDbType.Int).Value = ficha.Programa_idPrograma;
-                cmd.Parameters.Add("@CodigoFicha", SqlDbType.VarChar, 20).Value = ficha.CodigoFicha;
-                cmd.Parameters.Add("@FechaInicio", SqlDbType.DateTime).Value = ficha.FechaInicio;
-                cmd.Parameters.Add("@FechaFin", SqlDbType.DateTime).Value = ficha.FechaFin;
-                cmd.Parameters.Add("@Estado", SqlDbType.VarChar, 20).Value = ficha.Estado;
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = ficha.IdFicha;
-                conn.Open();
-
-                int resultado = cmd.ExecuteNonQuery();
-                return resultado > 0;
+                using (SqlConnection conn = DatabaseService.GetConnection())
+                {
+                    string query = @"UPDATE Ficha SET Programa_idPrograma = @Programa_idPrograma, CodigoFicha = @CodigoFicha, 
+                                     FechaInicio = @FechaInicio, FechaFin = @FechaFin, Estado = @Estado WHERE idFicha = @Id";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Programa_idPrograma", SqlDbType.Int).Value = ficha.Programa_idPrograma;
+                    cmd.Parameters.Add("@CodigoFicha", SqlDbType.VarChar, 20).Value = ficha.CodigoFicha;
+                    cmd.Parameters.Add("@FechaInicio", SqlDbType.DateTime).Value = ficha.FechaInicio;
+                    cmd.Parameters.Add("@FechaFin", SqlDbType.DateTime).Value = ficha.FechaFin;
+                    cmd.Parameters.Add("@Estado", SqlDbType.VarChar, 20).Value = ficha.Estado;
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = ficha.IdFicha;
+                    conn.Open();
+                    int resultado = cmd.ExecuteNonQuery();
+                    return resultado > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.Actualizar] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.Actualizar] Error inesperado: {0}", ex.Message);
+                return false;
             }
         }
 
-        // Eliminar ficha
         public bool Eliminar(int id)
         {
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = "DELETE FROM Ficha WHERE idFicha = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                conn.Open();
-
-                int resultado = cmd.ExecuteNonQuery();
-                return resultado > 0;
+                using (SqlConnection conn = DatabaseService.GetConnection())
+                {
+                    string query = "DELETE FROM Ficha WHERE idFicha = @Id";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                    conn.Open();
+                    int resultado = cmd.ExecuteNonQuery();
+                    return resultado > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[FichaService.Eliminar] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[FichaService.Eliminar] Error inesperado: {0}", ex.Message);
+                return false;
             }
         }
 
-        // Mapear reader a entidad
         private Ficha MapearFicha(SqlDataReader reader)
         {
             Ficha ficha = new Ficha();
