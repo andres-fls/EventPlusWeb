@@ -1,0 +1,549 @@
+﻿@{
+    ViewBag.Title = "Bienvenido";
+    Layout = "~/Views/Shared/_LandingLayout.cshtml";
+}
+
+<style>
+    /* ===== HERO ===== */
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 80px 0 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+    .hero-badge {
+        display: inline-block;
+        background-color: rgba(124,58,237,0.15);
+        border: 1px solid var(--borde-morado);
+        color: var(--morado-resaltado);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--texto-blanco);
+        margin-bottom: 24px;
+    }
+
+        .hero-title span {
+            color: var(--morado-resaltado);
+        }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--texto-mutado);
+        line-height: 1.7;
+        margin-bottom: 40px;
+        max-width: 520px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .hero-mockup {
+        background-color: var(--bg-tarjetas);
+        border: 1px solid var(--borde-morado);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 60px rgba(124,58,237,0.2);
+    }
+
+    .mockup-bar {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+
+    .mockup-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .mockup-screen {
+        background-color: var(--bg-principal);
+        border-radius: 8px;
+        padding: 16px;
+        min-height: 280px;
+    }
+
+    .mockup-navbar {
+        background-color: var(--bg-tarjetas);
+        border-radius: 6px;
+        padding: 10px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border: 1px solid rgba(124,58,237,0.3);
+    }
+
+    .mockup-card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .mockup-stat-card {
+        background-color: var(--bg-tarjetas);
+        border-radius: 6px;
+        padding: 12px;
+        border-left: 3px solid var(--borde-morado);
+        border: 1px solid rgba(124,58,237,0.2);
+    }
+
+    .mockup-event-card {
+        background-color: var(--bg-tarjetas);
+        border-radius: 6px;
+        padding: 10px;
+        border: 1px solid rgba(124,58,237,0.2);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    /* ===== FEATURES ===== */
+    .features-section {
+        padding: 100px 0;
+    }
+
+    .section-label {
+        color: var(--morado-resaltado);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 12px;
+    }
+
+    .section-title {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: var(--texto-blanco);
+        margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+        font-size: 1.1rem;
+        color: var(--texto-mutado);
+        max-width: 600px;
+        margin: 0 auto 60px;
+    }
+
+    .feature-card {
+        background-color: var(--bg-tarjetas);
+        border: 1px solid rgba(124,58,237,0.3);
+        border-radius: 16px;
+        padding: 32px 28px;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+        .feature-card:hover {
+            border-color: var(--borde-morado);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(124,58,237,0.2);
+        }
+
+    .feature-icon {
+        width: 56px;
+        height: 56px;
+        background-color: rgba(124,58,237,0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        color: var(--morado-resaltado);
+        margin-bottom: 20px;
+    }
+
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--texto-blanco);
+        margin-bottom: 10px;
+    }
+
+    .feature-desc {
+        font-size: 0.95rem;
+        color: var(--texto-mutado);
+        line-height: 1.6;
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+        padding: 100px 0;
+        background-color: var(--bg-tarjetas);
+        border-top: 1px solid rgba(124,58,237,0.2);
+        border-bottom: 1px solid rgba(124,58,237,0.2);
+    }
+
+    .step-number {
+        width: 48px;
+        height: 48px;
+        background-color: var(--borde-morado);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto 20px;
+        flex-shrink: 0;
+    }
+
+    .step-connector {
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, var(--borde-morado), transparent);
+        margin-top: -60px;
+    }
+
+    .step-card {
+        text-align: center;
+        padding: 0 16px;
+    }
+
+    .step-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--texto-blanco);
+        margin-bottom: 8px;
+    }
+
+    .step-desc {
+        font-size: 0.9rem;
+        color: var(--texto-mutado);
+        line-height: 1.6;
+    }
+
+    /* ===== STATS ===== */
+    .stats-section {
+        padding: 80px 0;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: var(--morado-resaltado);
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: var(--texto-mutado);
+    }
+
+    /* ===== CTA FINAL ===== */
+    .cta-section {
+        padding: 100px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+    .cta-title {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: var(--texto-blanco);
+        margin-bottom: 16px;
+    }
+
+    .cta-subtitle {
+        font-size: 1.1rem;
+        color: var(--texto-mutado);
+        margin-bottom: 40px;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+        }
+
+        .cta-title {
+            font-size: 2rem;
+        }
+
+        .hero-mockup {
+            margin-top: 40px;
+        }
+
+        .mockup-card-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="hero-badge">
+                    <i class="bi bi-stars"></i> Gestión inteligente de eventos
+                </div>
+                <h1 class="hero-title">
+                    Organiza tus eventos <span>sin complicaciones</span>
+                </h1>
+                <p class="hero-subtitle">
+                    EventPlus es la plataforma que te permite crear, gestionar e inscribir participantes en tus eventos desde un solo lugar. Simple, rápido y con inteligencia artificial integrada.
+                </p>
+                <div class="hero-buttons">
+                    <a href="@Url.Action("Registro", "Usuarios")" class="btn-cta">
+                        <i class="bi bi-rocket-takeoff"></i> Comenzar gratis
+                    </a>
+                    <a href="@Url.Action("Login", "Usuarios")" class="btn-cta-outline">
+                        <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-mockup">
+                    <div class="mockup-bar">
+                        <div class="mockup-dot" style="background:#ef4444;"></div>
+                        <div class="mockup-dot" style="background:#f59e0b;"></div>
+                        <div class="mockup-dot" style="background:#059669;"></div>
+                    </div>
+                    <div class="mockup-screen">
+                        <div class="mockup-navbar">
+                            <span style="color:var(--morado-resaltado); font-weight:600; font-size:0.9rem;">
+                                <i class="bi bi-calendar-event"></i> EventPlus
+                            </span>
+                            <div class="d-flex gap-3">
+                                <span style="color:var(--texto-mutado); font-size:0.8rem;">Eventos</span>
+                                <span style="color:var(--texto-mutado); font-size:0.8rem;">Categorías</span>
+                                <span style="color:var(--texto-mutado); font-size:0.8rem;">Reportes</span>
+                            </div>
+                        </div>
+                        <div class="mockup-card-grid">
+                            <div class="mockup-stat-card">
+                                <div style="color:var(--borde-morado); font-size:1.2rem; font-weight:700;">12</div>
+                                <div style="color:var(--texto-mutado); font-size:0.7rem;">Eventos</div>
+                            </div>
+                            <div class="mockup-stat-card" style="border-left-color:#059669;">
+                                <div style="color:#059669; font-size:1.2rem; font-weight:700;">48</div>
+                                <div style="color:var(--texto-mutado); font-size:0.7rem;">Inscritos</div>
+                            </div>
+                            <div class="mockup-stat-card" style="border-left-color:#f59e0b;">
+                                <div style="color:#f59e0b; font-size:1.2rem; font-weight:700;">5</div>
+                                <div style="color:var(--texto-mutado); font-size:0.7rem;">Categorías</div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="mockup-event-card">
+                                <div style="width:8px; height:8px; border-radius:50%; background:#059669; flex-shrink:0;"></div>
+                                <div>
+                                    <div style="color:var(--texto-blanco); font-size:0.8rem; font-weight:500;">Seminario de Ciberseguridad</div>
+                                    <div style="color:var(--texto-mutado); font-size:0.7rem;">15/07/2026 · Tecnología · 0/45</div>
+                                </div>
+                            </div>
+                            <div class="mockup-event-card">
+                                <div style="width:8px; height:8px; border-radius:50%; background:#7c3aed; flex-shrink:0;"></div>
+                                <div>
+                                    <div style="color:var(--texto-blanco); font-size:0.8rem; font-weight:500;">Noche de Talentos</div>
+                                    <div style="color:var(--texto-mutado); font-size:0.7rem;">12/07/2026 · Cultural · 0/40</div>
+                                </div>
+                            </div>
+                            <div class="mockup-event-card">
+                                <div style="width:8px; height:8px; border-radius:50%; background:#f59e0b; flex-shrink:0;"></div>
+                                <div>
+                                    <div style="color:var(--texto-blanco); font-size:0.8rem; font-weight:500;">Caminata Ecológica</div>
+                                    <div style="color:var(--texto-mutado); font-size:0.7rem;">10/07/2026 · Bienestar · 0/40</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="features-section">
+    <div class="container">
+        <div class="text-center">
+            <p class="section-label">Funcionalidades</p>
+            <h2 class="section-title">Todo lo que necesitas para gestionar eventos</h2>
+            <p class="section-subtitle">Desde la creación hasta los reportes, EventPlus cubre cada etapa del ciclo de vida de tus eventos.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-calendar-plus"></i>
+                    </div>
+                    <div class="feature-title">Crea eventos fácilmente</div>
+                    <p class="feature-desc">Define nombre, fecha, lugar, cupo y categoría en segundos. Soporte para eventos individuales y grupales.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color:rgba(5,150,105,0.15); color:#059669;">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <div class="feature-title">Gestiona inscripciones</div>
+                    <p class="feature-desc">Los aprendices se inscriben con un clic. Control automático de cupos, estados y cancelaciones.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color:rgba(245,158,11,0.15); color:#f59e0b;">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </div>
+                    <div class="feature-title">Reportes en PDF</div>
+                    <p class="feature-desc">Genera reportes detallados de eventos e inscripciones con un solo clic, listos para compartir.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background-color:rgba(59,130,246,0.15); color:#3b82f6;">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <div class="feature-title">Asistente con IA</div>
+                    <p class="feature-desc">EventBot responde preguntas sobre eventos, inscripciones y el uso de la plataforma en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how-section">
+    <div class="container">
+        <div class="text-center">
+            <p class="section-label">Proceso</p>
+            <h2 class="section-title">¿Cómo funciona?</h2>
+            <p class="section-subtitle">En tres pasos simples puedes tener tu primer evento publicado y listo para recibir inscripciones.</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4 class="step-title">Crea tu cuenta</h4>
+                    <p class="step-desc">Regístrate en segundos con tu correo. Sin tarjeta de crédito, sin complicaciones. Acceso inmediato a todas las funciones.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4 class="step-title">Crea tu primer evento</h4>
+                    <p class="step-desc">Define los detalles del evento: nombre, fecha, lugar, cupo máximo y categoría. En menos de un minuto está publicado.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4 class="step-title">Gestiona y reporta</h4>
+                    <p class="step-desc">Monitorea inscripciones en tiempo real desde el dashboard. Genera reportes PDF cuando los necesites.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Gratuito para usar</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Eventos que puedes crear</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Disponible en la nube</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-item">
+                    <div class="stat-number">IA</div>
+                    <div class="stat-label">Asistente integrado</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">¿Listo para organizar tu primer evento?</h2>
+        <p class="cta-subtitle">Únete a EventPlus y descubre lo simple que puede ser la gestión de eventos.</p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="@Url.Action("Registro", "Usuarios")" class="btn-cta">
+                <i class="bi bi-rocket-takeoff"></i> Comenzar ahora
+            </a>
+            <a href="@Url.Action("Login", "Usuarios")" class="btn-cta-outline">
+                <i class="bi bi-box-arrow-in-right"></i> Ya tengo cuenta
+            </a>
+        </div>
+    </div>
+</section>
