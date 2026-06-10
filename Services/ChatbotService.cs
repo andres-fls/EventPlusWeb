@@ -17,7 +17,10 @@ namespace EventPlusWeb1.Services
         Eres amable, conciso y profesional. Si te preguntan algo que no tiene que ver con eventos o la plataforma, 
         responde amablemente que solo puedes ayudar con temas relacionados a EventPlus.";
 
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(20)
+        };
 
         public ChatbotService()
         {
@@ -36,7 +39,7 @@ namespace EventPlusWeb1.Services
             }
         }
 
-        private async Task<string> ObtenerRespuestaAsync(string mensaje)
+        public async Task<string> ObtenerRespuestaAsync(string mensaje)
         {
             string url = $"https://generativelanguage.googleapis.com/v1beta/models/{_modelo}:generateContent?key={_apiKey}";
 

@@ -112,6 +112,11 @@ namespace EventPlusWeb1.Controllers
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
                 return RedirectToAction("Index");
 
+            evento.Usuario_idUsuario = Convert.ToInt32(Session["UsuarioId"]);
+            evento.EstadoEvento = "Activo";
+            ModelState.Remove("Usuario_idUsuario");
+            ModelState.Remove("EstadoEvento");
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");

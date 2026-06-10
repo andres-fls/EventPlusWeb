@@ -459,22 +459,33 @@
 
             // Enviar al servidor
             var xhr = new XMLHttpRequest();
+            xhr.timeout = 25000;
             xhr.open('POST', '/Chatbot/Enviar', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     typingIndicator.style.display = 'none';
+                    chatbotSend.disabled = false;
+                    chatbotInput.disabled = false;
+                    chatbotInput.focus();
                     if (xhr.status === 200) {
-                        var data = JSON.parse(xhr.responseText);
-                        if (data.exito) {
-                            agregarMensaje(data.respuesta, 'bot');
-                        } else {
-                            agregarMensaje(data.respuesta, 'bot');
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            agregarMensaje(data.respuesta || 'No recibí una respuesta válida.', 'bot');
+                        } catch (error) {
+                            agregarMensaje('El servidor respondió con un formato inesperado. Revisa la sesión o la configuración del chatbot.', 'bot');
                         }
                     } else {
                         agregarMensaje('Error de conexi\u00f3n. Intenta de nuevo.', 'bot');
                     }
                 }
+            };
+            xhr.ontimeout = function () {
+                typingIndicator.style.display = 'none';
+                chatbotSend.disabled = false;
+                chatbotInput.disabled = false;
+                chatbotInput.focus();
+                agregarMensaje('La respuesta tardó demasiado. Intenta de nuevo en unos segundos.', 'bot');
             };
             xhr.send('mensaje=' + encodeURIComponent(mensaje));
         }

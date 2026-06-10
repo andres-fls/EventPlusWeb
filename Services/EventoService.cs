@@ -9,6 +9,7 @@ namespace EventPlusWeb1.Services
 {
     public class EventoService
     {
+        public string UltimoError { get; private set; }
         public List<Evento> ObtenerTodos()
         {
             List<Evento> eventos = new List<Evento>();
