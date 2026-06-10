@@ -29,7 +29,7 @@
 
             <div class="col-md-6">
                 <label for="NombreEvento" class="form-label">@Html.DisplayNameFor(model => model.NombreEvento)</label>
-                @Html.EditorFor(model => model.NombreEvento, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.NombreEvento, new { htmlAttributes = new { @class = "form-control", oninput = "this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '')" } })
                 @Html.ValidationMessageFor(model => model.NombreEvento, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-6">
@@ -57,23 +57,23 @@
 
             <div class="col-md-6">
                 <label for="FechaInicioEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioEvento)</label>
-                @Html.EditorFor(model => model.FechaInicioEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                @Html.EditorFor(model => model.FechaInicioEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioEvento" } })
                 @Html.ValidationMessageFor(model => model.FechaInicioEvento, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-6">
                 <label for="FechaFinEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaFinEvento)</label>
-                @Html.EditorFor(model => model.FechaFinEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                @Html.EditorFor(model => model.FechaFinEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinEvento" } })
                 @Html.ValidationMessageFor(model => model.FechaFinEvento, "", new { @class = "text-danger" })
             </div>
 
             <div class="col-md-6">
                 <label for="FechaInicioInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioInscripcion)</label>
-                @Html.EditorFor(model => model.FechaInicioInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                @Html.EditorFor(model => model.FechaInicioInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioInscripcion" } })
                 @Html.ValidationMessageFor(model => model.FechaInicioInscripcion, "", new { @class = "text-danger" })
             </div>
             <div class="col-md-6">
                 <label for="FechaFinInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaFinInscripcion)</label>
-                @Html.EditorFor(model => model.FechaFinInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
+                @Html.EditorFor(model => model.FechaFinInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinInscripcion" } })
                 @Html.ValidationMessageFor(model => model.FechaFinInscripcion, "", new { @class = "text-danger" })
             </div>
 
@@ -93,4 +93,46 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Obtener el momento actual exacto en formato local (YYYY-MM-DDTHH:mm)
+            const ahora = new Date();
+            const yyyy = ahora.getFullYear();
+            let mm = ahora.getMonth() + 1;
+            let dd = ahora.getDate();
+            let hh = ahora.getHours();
+            let min = ahora.getMinutes();
+
+            if (mm < 10) mm = '0' + mm;
+            if (dd < 10) dd = '0' + dd;
+            if (hh < 10) hh = '0' + hh;
+            if (min < 10) min = '0' + min;
+
+            const fechaMinima = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+
+            // 2. Capturar los 4 inputs de fechas de tu formulario
+            const inputsFechas = [
+                document.getElementById("FechaInicioEvento"),
+                document.getElementById("FechaFinEvento"),
+                document.getElementById("FechaInicioInscripcion"),
+                document.getElementById("FechaFinInscripcion")
+            ];
+
+            // 3. Bloquear días pasados directamente en los calendarios flotantes
+            inputsFechas.forEach(input => {
+                if (input) {
+                    input.setAttribute("min", fechaMinima);
+
+                    // 4. Lanzar alerta inmediata si intentan digitar de forma manual una fecha vieja
+                    input.addEventListener("change", function () {
+                        if (this.value && this.value < fechaMinima) {
+                            alert("⚠️ Error: No se permite seleccionar fechas ni horas previas al momento actual.");
+                            this.value = ""; // Limpia el input de inmediato
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 }

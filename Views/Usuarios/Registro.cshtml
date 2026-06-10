@@ -19,100 +19,112 @@
                 </div>
             }
 
-        <form method="post" action="@Url.Action("Registro", "Usuarios")">
-            @Html.AntiForgeryToken()
+            <form method="post" action="@Url.Action("Registro", "Usuarios")">
+                @Html.AntiForgeryToken()
 
-            <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-person"></i> Datos de Usuario</h5>
+                <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-person"></i> Datos de Usuario</h5>
 
-            <div class="mb-3">
-                <label class="form-label">Nombre completo</label>
-                <input type="text" name="Nombre" class="form-control @(ViewBag.ErrorNombre != null ? "is-invalid" : "")"
-                       placeholder="Tu nombre completo" required />
-                @if (ViewBag.ErrorNombre != null)
-                {
-                    <div class="invalid-feedback">@ViewBag.ErrorNombre</div>
-                }
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Correo electrónico</label>
-                <input type="email" name="Correo" class="form-control @(ViewBag.ErrorCorreo != null ? "is-invalid" : "")"
-                       placeholder="tucorreo@email.com" required />
-                @if (ViewBag.ErrorCorreo != null)
-                {
-                    <div class="invalid-feedback">@ViewBag.ErrorCorreo</div>
-                }
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="Contrasena" class="form-control @(ViewBag.ErrorContrasena != null ? "is-invalid" : "")"
-                           placeholder="Mínimo 6 caracteres" required />
-                    @if (ViewBag.ErrorContrasena != null)
+                <div class="mb-3">
+                    <label class="form-label">Nombre completo</label>
+                    <input type="text" name="Nombre" class="form-control @(ViewBag.ErrorNombre != null ? "is-invalid" : "")"
+                           placeholder="Tu nombre completo" required
+                           oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '')" />
+                    @if (ViewBag.ErrorNombre != null)
                     {
-                        <div class="invalid-feedback">@ViewBag.ErrorContrasena</div>
+                        <div class="invalid-feedback">@ViewBag.ErrorNombre</div>
                     }
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Confirmar contraseña</label>
-                    <input type="password" name="ConfirmarContrasena" class="form-control"
-                           placeholder="Repite la contraseña" required />
+                <div class="mb-3">
+                    <label class="form-label">Correo electrónico</label>
+                    <input type="email" name="Correo" class="form-control @(ViewBag.ErrorCorreo != null ? "is-invalid" : "")"
+                           placeholder="tucorreo@email.com" required />
+                    @if (ViewBag.ErrorCorreo != null)
+                    {
+                        <div class="invalid-feedback">@ViewBag.ErrorCorreo</div>
+                    }
                 </div>
-            </div>
-
-            <hr style="border-color: #2d2d44;" class="my-4">
-            <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-mortarboard"></i> Datos de Aprendiz</h5>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Cédula</label>
-                <input type="text" name="Cedula" class="form-control @(ViewBag.ErrorCedula != null ? "is-invalid" : "")"
-                       placeholder="Número de cédula" required />
-                @if (ViewBag.ErrorCedula != null)
-                {
-                    <div class="invalid-feedback">@ViewBag.ErrorCedula</div>
-                }
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Edad</label>
-                    <input type="number" name="Edad" class="form-control" placeholder="Tu edad" min="14" max="99" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Género</label>
-                    <select name="Genero" class="form-select">
-                        <option value="">Seleccione...</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Femenino">Femenino</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Programa</label>
-                    <select name="ProgramaId" id="selectPrograma" class="form-select" required>
-                        <option value="">Seleccione programa...</option>
-                        @foreach (var programa in (List<EventPlusWeb1.Models.Entities.Programa>)ViewBag.Programas)
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="Contrasena" class="form-control @(ViewBag.ErrorContrasena != null ? "is-invalid" : "")"
+                               placeholder="Mínimo 6 caracteres" required />
+                        @if (ViewBag.ErrorContrasena != null)
                         {
-                            <option value="@programa.IdPrograma">@programa.NombrePrograma</option>
+                            <div class="invalid-feedback">@ViewBag.ErrorContrasena</div>
                         }
-                    </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Confirmar contraseña</label>
+                        <input type="password" name="ConfirmarContrasena" class="form-control"
+                               placeholder="Repite la contraseña" required />
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Ficha</label>
-                    <select name="Ficha_idFicha" id="selectFicha" class="form-select" required>
-                        <option value="">Seleccione ficha...</option>
-                        @foreach (var ficha in (List<EventPlusWeb1.Models.Entities.Ficha>)ViewBag.Fichas)
-                        {
-                            <option value="@ficha.IdFicha" data-programa="@ficha.Programa_idPrograma">@ficha.CodigoFicha - @ficha.NombrePrograma</option>
-                        }
-                    </select>
-                </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-2 mt-3" style="font-size: 1.1rem;">
-                <i class="bi bi-person-plus"></i> Registrarse
-            </button>
-        </form>
+                <hr style="border-color: #2d2d44;" class="my-4">
+                <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-mortarboard"></i> Datos de Aprendiz</h5>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Cédula</label>
+                        <input type="text" name="Cedula" class="form-control @(ViewBag.ErrorCedula != null ? "is-invalid" : "")"
+                               placeholder="Número de cédula" required
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                        @if (ViewBag.ErrorCedula != null)
+                        {
+                            <div class="invalid-feedback">@ViewBag.ErrorCedula</div>
+                        }
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="Telefono" class="form-control"
+                               placeholder="Ej: 3001234567" required maxlength="10"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Edad</label>
+                        <input type="number" name="Edad" class="form-control" placeholder="Tu edad" min="14" max="99"
+                               oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Género</label>
+                        <select name="Genero" class="form-select">
+                            <option value="">Seleccione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Programa</label>
+                        <select name="ProgramaId" id="selectPrograma" class="form-select" required>
+                            <option value="">Seleccione programa...</option>
+                            @foreach (var programa in (List<EventPlusWeb1.Models.Entities.Programa>)ViewBag.Programas)
+                            {
+                                <option value="@programa.IdPrograma">@programa.NombrePrograma</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ficha</label>
+                        <select name="Ficha_idFicha" id="selectFicha" class="form-select" required>
+                            <option value="">Seleccione ficha...</option>
+                            @foreach (var ficha in (List<EventPlusWeb1.Models.Entities.Ficha>)ViewBag.Fichas)
+                            {
+                                <option value="@ficha.IdFicha" data-programa="@ficha.Programa_idPrograma">@ficha.CodigoFicha - @ficha.NombrePrograma</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3" style="font-size: 1.1rem;">
+                    <i class="bi bi-person-plus"></i> Registrarse
+                </button>
+            </form>
 
             <div class="text-center mt-3">
                 <a href="@Url.Action("Login", "Usuarios")" style="color: #a78bfa;">¿Ya tienes cuenta? Inicia sesión</a>
