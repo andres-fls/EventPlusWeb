@@ -96,9 +96,14 @@ else
                                 }
                                 else if (evento.EstadoEvento == "Activo" && evento.FechaFinInscripcion >= DateTime.Now)
                                 {
-                                    <a href="@Url.Action("Inscribirse", "Eventos", new { id = evento.IdEvento })" class="btn btn-sm btn-success">
-                                        <i class="bi bi-person-plus"></i> Inscribirse
-                                    </a>
+                                    using (Html.BeginForm("Inscribirse", "Eventos", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="eventoId" value="@evento.IdEvento" />
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="bi bi-person-plus"></i> Inscribirse
+                                        </button>
+                                    }
                                 }
                             </div>
                         </div>

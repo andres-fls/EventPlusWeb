@@ -1,7 +1,7 @@
 ﻿@model EventPlusWeb1.Models.Entities.Evento
 @{
     ViewBag.Title = "Crear Evento";
-    List<SelectListItem> categorias = ViewBag.Categorias as List<SelectListItem>;
+    IEnumerable<SelectListItem> categorias = ViewBag.Categorias;
     List<SelectListItem> tiposEvento = new List<SelectListItem>
 {
         new SelectListItem { Text = "Individual", Value = "Individual" },

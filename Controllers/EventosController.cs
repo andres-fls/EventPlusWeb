@@ -76,16 +76,14 @@ namespace EventPlusWeb1.Controllers
             return View(evento);
         }
 
-        // GET: Eventos/Crear (solo Admin)
+        // GET: Eventos/Crear
         [HttpGet]
         public ActionResult Crear()
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index");
-            }
 
-            ViewBag.Categorias = categoriaService.ObtenerTodas();
+            ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View();
         }
 
@@ -95,13 +93,11 @@ namespace EventPlusWeb1.Controllers
         public ActionResult Crear(Evento evento)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index");
-            }
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Categorias = categoriaService.ObtenerTodas();
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
                 return View(evento);
             }
 
@@ -117,27 +113,23 @@ namespace EventPlusWeb1.Controllers
             }
 
             ViewBag.Error = "Error al crear el evento.";
-            ViewBag.Categorias = categoriaService.ObtenerTodas();
+            ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
 
-        // GET: Eventos/Editar/5 (solo Admin)
+        // GET: Eventos/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index");
-            }
 
             Evento evento = eventoService.ObtenerPorId(id);
 
             if (evento == null)
-            {
                 return HttpNotFound();
-            }
 
-            ViewBag.Categorias = categoriaService.ObtenerTodas();
+            ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
 
@@ -147,13 +139,11 @@ namespace EventPlusWeb1.Controllers
         public ActionResult Editar(Evento evento)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index");
-            }
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Categorias = categoriaService.ObtenerTodas();
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
                 return View(evento);
             }
 
@@ -166,7 +156,7 @@ namespace EventPlusWeb1.Controllers
             }
 
             ViewBag.Error = "Error al actualizar el evento.";
-            ViewBag.Categorias = categoriaService.ObtenerTodas();
+            ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
 

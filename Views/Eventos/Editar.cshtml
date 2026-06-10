@@ -1,7 +1,7 @@
 ﻿@model EventPlusWeb1.Models.Entities.Evento
 @{
     ViewBag.Title = "Editar Evento";
-    List<SelectListItem> categorias = ViewBag.Categorias as List<SelectListItem>;
+    IEnumerable<SelectListItem> categorias = ViewBag.Categorias;
     List<SelectListItem> tiposEvento = new List<SelectListItem>
 {
         new SelectListItem { Text = "Individual", Value = "Individual" },
@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-6">
                 <label for="Categoria_idCategoria" class="form-label">Categoría</label>
-                @Html.DropDownListFor(model => model.Categoria_idCategoria, new SelectList(categorias, "Value", "Text", Model.Categoria_idCategoria), "-- Seleccione una Categoría --", new { @class = "form-select" })
+                @Html.DropDownListFor(model => model.Categoria_idCategoria, categorias, "-- Seleccione una Categoría --", new { @class = "form-select" })
                 @Html.ValidationMessageFor(model => model.Categoria_idCategoria, "", new { @class = "text-danger" })
             </div>
 
