@@ -40,6 +40,7 @@ EventPlus es una plataforma web para crear, gestionar e inscribir participantes 
 
 ## Estructura del Proyecto
 
+```
 EventPlusWeb1/
 ├── Controllers/
 │   ├── HomeController.cs
@@ -88,7 +89,8 @@ EventPlusWeb1/
 │   ├── Eventos.frx
 │   └── Inscripciones.frx
 └── Content/
-└── Site.css
+    └── Site.css
+```
 
 ## Base de Datos
 
