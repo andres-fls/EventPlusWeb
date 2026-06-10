@@ -1,20 +1,288 @@
-﻿/* Set padding to keep content from hitting the edges */
+﻿/* ================================================================================= */
+/* ===== ESTILOS BASE Y CONFIGURACIÓN DE LA PLANTILLA                          ===== */
+/* ================================================================================= */
+
+/* Ajuste de margen superior y padding para el contenedor principal de contenido */
 .body-content {
     margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
+/* Evita que los términos largos se corten en listas de descripción horizontales de Bootstrap */
 .dl-horizontal dt {
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+/* Configuración de entradas de formularios. 
+   Se usa .form-control y .form-select para no romper componentes externos como el Chatbot
+*/
+.form-control,
+.form-select,
+textarea.form-control {
+    max-width: 100%; /* Cambiado a 100% para que herede el tamaño del sistema de grillas de Bootstrap */
+}
+
+
+/* ================================================================================= */
+/* ===== PALETA DE COLORES CENTRALIZADA (SISTEMA DE TEMAS)                     ===== */
+/* ================================================================================= */
+
+:root {
+    /* --- Tema Oscuro (Por Defecto) --- */
+    --bg-principal: #121214;
+    --bg-tarjetas: #16213e;
+    --borde-morado: #7c3aed;
+    --texto-blanco: #ffffff;
+    --texto-mutado: #888888;
+    --morado-resaltado: #a78bfa;
+}
+
+[data-theme="light"] {
+    --bg-principal: #dde1e7;
+    --bg-tarjetas: #c8cdd6;
+    --borde-morado: #5b21b6;
+    --texto-blanco: #1a1a2e;
+    --texto-mutado: #3d3d5c;
+    --morado-resaltado: #4c1d95;
+}
+
+    /* ================================================================================= */
+    /* ===== CORRECCIONES DE CONTRASTE MODO CLARO                                  ===== */
+    /* ================================================================================= */
+
+    /* Títulos de página (h2, h3 con color morado) */
+    [data-theme="light"] h2,
+    [data-theme="light"] h3,
+    [data-theme="light"] h4 {
+        color: #4c1d95 !important;
+    }
+
+    /* Títulos dentro de tarjetas de eventos */
+    [data-theme="light"] .card-title,
+    [data-theme="light"] .card h5 {
+        color: #3b0764 !important;
+        font-weight: 600;
+    }
+
+    /* Texto descriptivo dentro de tarjetas */
+    [data-theme="light"] .card-text,
+    [data-theme="light"] .card p {
+        color: #1e1b4b !important;
+    }
+
+        /* Metadatos de tarjetas (lugar, inscritos, tipo) */
+        [data-theme="light"] .card p[style*="color: #888"],
+        [data-theme="light"] .card p[style*="color:#888"] {
+            color: #374151 !important;
+        }
+
+    /* Forzar color en textos con style inline */
+    [data-theme="light"] .card [style*="color: #ccc"],
+    [data-theme="light"] .card [style*="color:#ccc"],
+    [data-theme="light"] .card [style*="color: #888"],
+    [data-theme="light"] .card [style*="color:#888"] {
+        color: #374151 !important;
+    }
+
+    /* Fecha en esquina superior de tarjetas de eventos */
+    [data-theme="light"] .card small,
+    [data-theme="light"] small[style*="color: #888"] {
+        color: #374151 !important;
+    }
+
+    /* Tarjetas — fondo más oscuro y bordes bien definidos */
+    [data-theme="light"] .card {
+        background-color: #b8bec9 !important;
+        border: 1.5px solid #5b21b6 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 2px 8px rgba(91, 33, 182, 0.15) !important;
+    }
+
+    /* Navbar */
+    [data-theme="light"] .navbar {
+        background-color: #b8bec9 !important;
+        border-bottom: 2px solid #5b21b6 !important;
+    }
+
+    /* Links de navbar */
+    [data-theme="light"] .nav-link {
+        color: #1a1a2e !important;
+    }
+
+        [data-theme="light"] .nav-link:hover {
+            color: #4c1d95 !important;
+        }
+
+    /* Tabla de usuarios */
+    [data-theme="light"] .table {
+        color: #1a1a2e !important;
+    }
+
+        [data-theme="light"] .table thead {
+            background-color: #5b21b6 !important;
+            color: #ffffff !important;
+        }
+
+        [data-theme="light"] .table tbody tr {
+            background-color: #c8cdd6 !important;
+            border-bottom: 1px solid #9ca3af !important;
+        }
+
+            [data-theme="light"] .table tbody tr:hover {
+                background-color: #b0b7c3 !important;
+            }
+
+        [data-theme="light"] .table td,
+        [data-theme="light"] .table th {
+            color: #1a1a2e !important;
+        }
+
+    /* Formularios y selects */
+    [data-theme="light"] .form-select,
+    [data-theme="light"] .form-control {
+        background-color: #b8bec9 !important;
+        color: #1a1a2e !important;
+        border-color: #5b21b6 !important;
+    }
+
+        [data-theme="light"] .form-select option {
+            background-color: #c8cdd6;
+            color: #1a1a2e;
+        }
+
+    [data-theme="light"] .form-label {
+        color: #4c1d95 !important;
+    }
+
+    /* Modal */
+    [data-theme="light"] .modal-content {
+        background-color: #c8cdd6 !important;
+        color: #1a1a2e !important;
+        border: 1px solid #5b21b6 !important;
+    }
+
+    [data-theme="light"] .modal-body,
+    [data-theme="light"] .modal-title {
+        color: #1a1a2e !important;
+    }
+
+    /* Dropdown perfil */
+    [data-theme="light"] .profile-dropdown .dropdown-menu {
+        background-color: #c8cdd6 !important;
+        border: 1px solid #5b21b6 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+    }
+
+        [data-theme="light"] .profile-dropdown .dropdown-menu .profile-header h6 {
+            color: #4c1d95 !important;
+        }
+
+        [data-theme="light"] .profile-dropdown .dropdown-menu .profile-info p {
+            color: #1a1a2e !important;
+        }
+
+        [data-theme="light"] .profile-dropdown .dropdown-menu small {
+            color: #3d3d5c !important;
+        }
+
+    /* Chatbot */
+    [data-theme="light"] .chatbot-panel {
+        background-color: #c8cdd6 !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.25) !important;
+    }
+
+    [data-theme="light"] .chat-msg.bot {
+        background-color: #b8bec9 !important;
+        color: #1a1a2e !important;
+        border: 1px solid #9ca3af;
+    }
+
+    [data-theme="light"] .chatbot-input input {
+        background-color: #b8bec9 !important;
+        color: #1a1a2e !important;
+        border-color: #5b21b6 !important;
+    }
+
+    [data-theme="light"] .chatbot-messages {
+        background-color: #c8cdd6 !important;
+    }
+
+    /* Alertas */
+    [data-theme="light"] .alert-success {
+        background-color: #d1fae5 !important;
+        border-color: #059669 !important;
+        color: #065f46 !important;
+    }
+
+    [data-theme="light"] .alert-danger {
+        background-color: #fee2e2 !important;
+        border-color: #dc2626 !important;
+        color: #991b1b !important;
+    }
+
+    /* Gráficas del dashboard — fondo de tarjeta */
+    [data-theme="light"] .card canvas {
+        background-color: transparent !important;
+    }
+
+    /* Dashboard - textos de gráficas */
+    [data-theme="light"] .card h5[style],
+    [data-theme="light"] .card .card-body h5,
+    [data-theme="light"] .card .card-body p,
+    [data-theme="light"] .card .card-body span {
+        color: #1a1a2e !important;
+    }
+
+    /* Etiquetas y títulos de las gráficas Chart.js */
+    [data-theme="light"] canvas {
+        filter: none;
+    }
+
+    /* Tarjetas del dashboard con títulos de sección */
+    [data-theme="light"] .card-body {
+        color: #1a1a2e !important;
+    }
+
+    /* Corregir esquinas cortadas - el border-radius debe coincidir */
+    [data-theme="light"] .card {
+        border-radius: 12px !important;
+        overflow: hidden;
+        border: 1.5px solid #5b21b6 !important;
+    }
+
+    /* Botón Editar en modo claro */
+    [data-theme="light"] .btn-outline-light {
+        color: #1a1a2e !important;
+        border-color: #4c1d95 !important;
+        background-color: transparent !important;
+    }
+
+        [data-theme="light"] .btn-outline-light:hover {
+            background-color: #4c1d95 !important;
+            color: #ffffff !important;
+            border-color: #4c1d95 !important;
+        }
+
+/* ================================================================================= */
+/* ===== APLICACIÓN DE LAS VARIABLES EN COMPONENTES                            ===== */
+/* ================================================================================= */
+
+body {
+    background-color: var(--bg-principal);
+    color: var(--texto-blanco);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Forzamos a que las tarjetas muten de color dinámicamente según el tema seleccionado */
+.card {
+    background-color: var(--bg-tarjetas) !important;
+    border: 1px solid var(--borde-morado) !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Clase utilitaria global para títulos, enlaces destacados o iconos con identidad morada */
+.text-purple-custom {
+    color: var(--morado-resaltado) !important;
+    transition: color 0.3s ease;
 }
