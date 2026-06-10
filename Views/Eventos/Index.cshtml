@@ -31,11 +31,41 @@
     </div>
 }
 
+<div class="row mb-4">
+    <div class="col-md-4 col-sm-6">
+        <div class="card p-3" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(167, 139, 250, 0.2);">
+
+            @using (Html.BeginForm("Index", "Eventos", FormMethod.Get))
+            {
+                <label for="filtroMes" class="form-label font-weight-bold text-white mb-2">
+                    <i class="bi bi-filter"></i> Filtrar por Mes:
+                </label>
+                <select id="filtroMes" name="mes" class="form-select bg-dark text-white border-secondary" onchange="this.form.submit()">
+                    <option value="0" @(ViewBag.MesSeleccionado == 0 ? "selected" : "")>-- Todos los meses --</option>
+                    <option value="1" @(ViewBag.MesSeleccionado == 1 ? "selected" : "")>Enero</option>
+                    <option value="2" @(ViewBag.MesSeleccionado == 2 ? "selected" : "")>Febrero</option>
+                    <option value="3" @(ViewBag.MesSeleccionado == 3 ? "selected" : "")>Marzo</option>
+                    <option value="4" @(ViewBag.MesSeleccionado == 4 ? "selected" : "")>Abril</option>
+                    <option value="5" @(ViewBag.MesSeleccionado == 5 ? "selected" : "")>Mayo</option>
+                    <option value="6" @(ViewBag.MesSeleccionado == 6 ? "selected" : "")>Junio</option>
+                    <option value="7" @(ViewBag.MesSeleccionado == 7 ? "selected" : "")>Julio</option>
+                    <option value="8" @(ViewBag.MesSeleccionado == 8 ? "selected" : "")>Agosto</option>
+                    <option value="9" @(ViewBag.MesSeleccionado == 9 ? "selected" : "")>Septiembre</option>
+                    <option value="10" @(ViewBag.MesSeleccionado == 10 ? "selected" : "")>Octubre</option>
+                    <option value="11" @(ViewBag.MesSeleccionado == 11 ? "selected" : "")>Noviembre</option>
+                    <option value="12" @(ViewBag.MesSeleccionado == 12 ? "selected" : "")>Diciembre</option>
+                </select>
+            }
+
+        </div>
+    </div>
+</div>
+
 @if (Model == null || Model.Count == 0)
 {
     <div class="card p-4 text-center">
         <i class="bi bi-calendar-x" style="font-size: 3rem; color: #7c3aed;"></i>
-        <p style="color: #888; margin-top: 15px;">No hay eventos registrados.</p>
+        <p style="color: #888; margin-top: 15px;">No hay eventos registrados para este criterio.</p>
     </div>
 }
 else
@@ -110,6 +140,7 @@ else
                     </div>
                 </div>
             </div>
+
             if (isAdmin)
             {
                 <div class="modal fade" id="confirmDeleteModal_@evento.IdEvento" tabindex="-1" aria-labelledby="confirmDeleteModalLabel_@evento.IdEvento" aria-hidden="true">

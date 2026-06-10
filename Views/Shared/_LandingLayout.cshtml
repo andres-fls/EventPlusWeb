@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPlus - @ViewBag.Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    <style>
+        :root {
+            --bg-principal: #121214;
+            --bg-tarjetas: #16213e;
+            --borde-morado: #7c3aed;
+            --texto-blanco: #ffffff;
+            --texto-mutado: #888888;
+            --morado-resaltado: #a78bfa;
+        }
+
+        [data-theme="light"] {
+            --bg-principal: #dde1e7;
+            --bg-tarjetas: #c8cdd6;
+            --borde-morado: #5b21b6;
+            --texto-blanco: #1a1a2e;
+            --texto-mutado: #3d3d5c;
+            --morado-resaltado: #4c1d95;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-blanco);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .landing-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--bg-principal);
+            border-bottom: 1px solid var(--borde-morado);
+            padding: 14px 0;
+            transition: background-color 0.3s ease;
+        }
+
+            .landing-nav .brand {
+                color: var(--morado-resaltado);
+                font-weight: bold;
+                font-size: 1.4rem;
+                text-decoration: none;
+            }
+
+                .landing-nav .brand:hover {
+                    color: var(--borde-morado);
+                }
+
+        .btn-theme {
+            background: none;
+            border: none;
+            color: var(--morado-resaltado);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            transition: color 0.3s;
+        }
+
+            .btn-theme:hover {
+                color: var(--borde-morado);
+            }
+
+        .btn-login {
+            background-color: transparent;
+            border: 1.5px solid var(--borde-morado);
+            color: var(--morado-resaltado);
+            padding: 8px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+            .btn-login:hover {
+                background-color: var(--borde-morado);
+                color: #ffffff;
+            }
+
+        .btn-cta {
+            background-color: var(--borde-morado);
+            color: #ffffff;
+            padding: 12px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+            .btn-cta:hover {
+                background-color: var(--morado-resaltado);
+                color: #ffffff;
+                transform: translateY(-2px);
+            }
+
+        .btn-cta-outline {
+            background-color: transparent;
+            color: var(--morado-resaltado);
+            padding: 12px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 1.5px solid var(--borde-morado);
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+            .btn-cta-outline:hover {
+                background-color: var(--borde-morado);
+                color: #ffffff;
+            }
+
+        .landing-content {
+            padding-top: 80px;
+        }
+
+        .landing-footer {
+            background-color: var(--bg-tarjetas);
+            border-top: 1px solid var(--borde-morado);
+            padding: 40px 0 20px;
+            margin-top: 80px;
+        }
+
+        .footer-link {
+            color: var(--texto-mutado);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+            .footer-link:hover {
+                color: var(--morado-resaltado);
+            }
+    </style>
+</head>
+<body>
+    <nav class="landing-nav">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a class="brand" href="@Url.Action("Landing", "Home")">
+                <i class="bi bi-calendar-event"></i> EventPlus
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn-theme" id="btnThemeToggle" title="Cambiar tema">
+                    <i id="themeIcon" class="bi bi-moon-stars-fill"></i>
+                </button>
+                <a href="@Url.Action("Login", "Usuarios")" class="btn-login">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="landing-content">
+        @RenderBody()
+    </div>
+
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <h5 style="color: var(--morado-resaltado);">
+                        <i class="bi bi-calendar-event"></i> EventPlus
+                    </h5>
+                    <p style="color: var(--texto-mutado); font-size: 0.9rem; margin-top: 8px;">
+                        La plataforma inteligente para gestionar eventos y inscripciones de forma simple y eficiente.
+                    </p>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <h6 style="color: var(--texto-blanco); margin-bottom: 12px;">Producto</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="@Url.Action("Login", "Usuarios")" class="footer-link">Iniciar sesión</a>
+                        <a href="@Url.Action("Registro", "Usuarios")" class="footer-link">Registrarse</a>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 style="color: var(--texto-blanco); margin-bottom: 12px;">Funcionalidades</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <span class="footer-link">Gestión de eventos</span>
+                        <span class="footer-link">Inscripciones</span>
+                        <span class="footer-link">Reportes PDF</span>
+                        <span class="footer-link">Asistente IA</span>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h6 style="color: var(--texto-blanco); margin-bottom: 12px;">Desarrollado con</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <span class="footer-link">ASP.NET MVC 5</span>
+                        <span class="footer-link">Azure App Service</span>
+                        <span class="footer-link">Azure SQL</span>
+                        <span class="footer-link">Gemini AI</span>
+                    </div>
+                </div>
+            </div>
+            <hr style="border-color: var(--borde-morado); opacity: 0.3;" />
+            <div class="d-flex justify-content-between align-items-center">
+                <small style="color: var(--texto-mutado);">© 2026 EventPlus. Proyecto académico SENA.</small>
+                <small style="color: var(--texto-mutado);">Desarrollado por Andrés Leal</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const btnToggle = document.getElementById('btnThemeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+
+        const temaGuardado = localStorage.getItem('theme') || 'dark';
+        if (temaGuardado === 'light') {
+            html.setAttribute('data-theme', 'light');
+            themeIcon.className = 'bi bi-sun-fill';
+        } else {
+            html.removeAttribute('data-theme');
+            themeIcon.className = 'bi bi-moon-stars-fill';
+        }
+
+        btnToggle.addEventListener('click', function () {
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'bi bi-moon-stars-fill';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'bi bi-sun-fill';
+            }
+        });
+    </script>
+</body>
+</html>

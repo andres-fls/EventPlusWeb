@@ -2,136 +2,169 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using EventPlusWeb1.Models.Entities;
 
 namespace EventPlusWeb1.Services
 {
     public class GrupoService
     {
-        // Obtener todos los grupos con nombre del evento
         public List<Grupo> ObtenerTodos()
         {
             List<Grupo> grupos = new List<Grupo>();
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
-                                 FROM Grupo g
-                                 INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
-                                 ORDER BY e.NombreEvento, g.NombreGrupo";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    grupos.Add(MapearGrupo(reader));
+                    string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
+                                     FROM Grupo g
+                                     INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
+                                     ORDER BY e.NombreEvento, g.NombreGrupo";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                        grupos.Add(MapearGrupo(reader));
                 }
             }
-
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerTodos] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerTodos] Error inesperado: {0}", ex.Message);
+            }
             return grupos;
         }
 
-        // Obtener grupos por evento
         public List<Grupo> ObtenerPorEvento(int eventoId)
         {
             List<Grupo> grupos = new List<Grupo>();
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
-                                 FROM Grupo g
-                                 INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
-                                 WHERE g.Evento_idEvento = @EventoId
-                                 ORDER BY g.NombreGrupo";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    grupos.Add(MapearGrupo(reader));
+                    string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
+                                     FROM Grupo g
+                                     INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
+                                     WHERE g.Evento_idEvento = @EventoId
+                                     ORDER BY g.NombreGrupo";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@EventoId", SqlDbType.Int).Value = eventoId;
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                        grupos.Add(MapearGrupo(reader));
                 }
             }
-
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerPorEvento] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerPorEvento] Error inesperado: {0}", ex.Message);
+            }
             return grupos;
         }
 
-        // Obtener grupo por ID
         public Grupo ObtenerPorId(int id)
         {
-            Grupo grupo = null;
-
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
-                                 FROM Grupo g
-                                 INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
-                                 WHERE g.idGrupo = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
-                conn.Open();
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection conn = DatabaseService.GetConnection())
                 {
-                    grupo = MapearGrupo(reader);
+                    string query = @"SELECT g.idGrupo, g.Evento_idEvento, g.NombreGrupo, e.NombreEvento
+                                     FROM Grupo g
+                                     INNER JOIN Evento e ON g.Evento_idEvento = e.idEvento
+                                     WHERE g.idGrupo = @Id";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+                    conn.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                        return MapearGrupo(reader);
                 }
             }
-
-            return grupo;
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerPorId] Error SQL ({0}): {1}", ex.Number, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[GrupoService.ObtenerPorId] Error inesperado: {0}", ex.Message);
+            }
+            return null;
         }
 
-        // Crear grupo
         public bool Crear(Grupo grupo)
         {
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = "INSERT INTO Grupo (Evento_idEvento, NombreGrupo) VALUES (@Evento_idEvento, @NombreGrupo)";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Evento_idEvento", SqlDbType.Int).Value = grupo.Evento_idEvento;
-                cmd.Parameters.Add("@NombreGrupo", SqlDbType.VarChar, 45).Value = grupo.NombreGrupo;
-                conn.Open();
-
-                int resultado = cmd.ExecuteNonQuery();
-                return resultado > 0;
+                using (SqlConnection conn = DatabaseService.GetConnection())
+                {
+                    string query = "INSERT INTO Grupo (Evento_idEvento, NombreGrupo) VALUES (@Evento_idEvento, @NombreGrupo)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Evento_idEvento", SqlDbType.Int).Value = grupo.Evento_idEvento;
+                    cmd.Parameters.Add("@NombreGrupo", SqlDbType.VarChar, 45).Value = grupo.NombreGrupo;
+                    conn.Open();
+                    int resultado = cmd.ExecuteNonQuery();
+                    return resultado > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[GrupoService.Crear] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[GrupoService.Crear] Error inesperado: {0}", ex.Message);
+                return false;
             }
         }
 
-        // Actualizar grupo
         public bool Actualizar(Grupo grupo)
         {
-            using (SqlConnection conn = DatabaseService.GetConnection())
+            try
             {
-                string query = "UPDATE Grupo SET Evento_idEvento = @Evento_idEvento, NombreGrupo = @NombreGrupo WHERE idGrupo = @Id";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.Add("@Evento_idEvento", SqlDbType.Int).Value = grupo.Evento_idEvento;
-                cmd.Parameters.Add("@NombreGrupo", SqlDbType.VarChar, 45).Value = grupo.NombreGrupo;
-                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = grupo.IdGrupo;
-                conn.Open();
-
-                int resultado = cmd.ExecuteNonQuery();
-                return resultado > 0;
+                using (SqlConnection conn = DatabaseService.GetConnection())
+                {
+                    string query = "UPDATE Grupo SET Evento_idEvento = @Evento_idEvento, NombreGrupo = @NombreGrupo WHERE idGrupo = @Id";
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.Add("@Evento_idEvento", SqlDbType.Int).Value = grupo.Evento_idEvento;
+                    cmd.Parameters.Add("@NombreGrupo", SqlDbType.VarChar, 45).Value = grupo.NombreGrupo;
+                    cmd.Parameters.Add("@Id", SqlDbType.Int).Value = grupo.IdGrupo;
+                    conn.Open();
+                    int resultado = cmd.ExecuteNonQuery();
+                    return resultado > 0;
+                }
+            }
+            catch (SqlException ex)
+            {
+                Trace.TraceError("[GrupoService.Actualizar] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[GrupoService.Actualizar] Error inesperado: {0}", ex.Message);
+                return false;
             }
         }
 
-        // Eliminar grupo (elimina inscripciones asociadas primero)
         public bool Eliminar(int id)
         {
             using (SqlConnection conn = DatabaseService.GetConnection())
             {
                 conn.Open();
                 SqlTransaction transaction = conn.BeginTransaction();
-
                 try
                 {
-                    // Eliminar inscripciones del grupo
                     SqlCommand cmdInscripciones = new SqlCommand("DELETE FROM Inscripcion WHERE Grupo_idGrupo = @Id", conn, transaction);
                     cmdInscripciones.Parameters.Add("@Id", SqlDbType.Int).Value = id;
                     cmdInscripciones.ExecuteNonQuery();
 
-                    // Eliminar el grupo
                     SqlCommand cmdGrupo = new SqlCommand("DELETE FROM Grupo WHERE idGrupo = @Id", conn, transaction);
                     cmdGrupo.Parameters.Add("@Id", SqlDbType.Int).Value = id;
                     cmdGrupo.ExecuteNonQuery();
@@ -139,15 +172,21 @@ namespace EventPlusWeb1.Services
                     transaction.Commit();
                     return true;
                 }
-                catch
+                catch (SqlException ex)
                 {
                     transaction.Rollback();
+                    Trace.TraceError("[GrupoService.Eliminar] Error SQL ({0}): {1}", ex.Number, ex.Message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Trace.TraceError("[GrupoService.Eliminar] Error inesperado: {0}", ex.Message);
                     return false;
                 }
             }
         }
 
-        // Mapear reader a entidad
         private Grupo MapearGrupo(SqlDataReader reader)
         {
             Grupo grupo = new Grupo();

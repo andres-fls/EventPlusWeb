@@ -17,11 +17,21 @@ namespace EventPlusWeb1.Controllers
         private InscripcionService inscripcionService = new InscripcionService();
         private AprendizService aprendizService = new AprendizService();
 
+        // GET: Landing page pública
+        public ActionResult Landing()
+        {
+            if (Session["UsuarioId"] != null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
         public ActionResult Index()
         {
             if (Session["UsuarioId"] == null)
             {
-                return RedirectToAction("Login", "Usuarios");
+                return RedirectToAction("Landing");
             }
 
             string rol = Session["UsuarioRol"] != null ? Session["UsuarioRol"].ToString() : "";

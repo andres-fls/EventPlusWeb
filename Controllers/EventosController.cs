@@ -17,7 +17,8 @@ namespace EventPlusWeb1.Controllers
         private GrupoService grupoService = new GrupoService();
 
         // GET: Eventos
-        public ActionResult Index()
+        // 1. Agregamos el parámetro opcional 'int? mes'
+        public ActionResult Index(int? mes)
         {
             List<Evento> eventos;
 
@@ -31,6 +32,22 @@ namespace EventPlusWeb1.Controllers
                 eventos = eventoService.ObtenerActivos();
             }
 
+            // 2. Aplicamos el filtro por mes si el usuario seleccionó uno válido (mayor a 0)
+            if (mes.HasValue && mes.Value > 0)
+            {
+                // Filtramos usando la propiedad FechaInicioEvento
+                eventos = eventos.FindAll(e => e.FechaInicioEvento.Month == mes.Value);
+
+                // Enviamos el mes de vuelta a la vista mediante el ViewBag
+                ViewBag.MesSeleccionado = mes.Value;
+            }
+            else
+            {
+                // Si no se selecciona un mes o es "Todos", enviamos un 0
+                ViewBag.MesSeleccionado = 0;
+            }
+
+            // Retornamos la lista (ya filtrada si aplica) a la vista
             return View(eventos);
         }
 
@@ -95,6 +112,45 @@ namespace EventPlusWeb1.Controllers
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
                 return RedirectToAction("Index");
 
+            evento.Usuario_idUsuario = Convert.ToInt32(Session["UsuarioId"]);
+            evento.EstadoEvento = "Activo";
+            ModelState.Remove("Usuario_idUsuario");
+            ModelState.Remove("EstadoEvento");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
+                return View(evento);
+            }
+
+            // Validar fechas
+            DateTime ahora = DateTime.Now;
+
+            if (evento.FechaInicioEvento < ahora)
+            {
+                ModelState.AddModelError("FechaInicioEvento", "La fecha de inicio del evento no puede ser en el pasado.");
+            }
+
+            if (evento.FechaFinEvento <= evento.FechaInicioEvento)
+            {
+                ModelState.AddModelError("FechaFinEvento", "La fecha de fin debe ser posterior a la fecha de inicio.");
+            }
+
+            if (evento.FechaInicioInscripcion < ahora)
+            {
+                ModelState.AddModelError("FechaInicioInscripcion", "La fecha de inicio de inscripción no puede ser en el pasado.");
+            }
+
+            if (evento.FechaFinInscripcion <= evento.FechaInicioInscripcion)
+            {
+                ModelState.AddModelError("FechaFinInscripcion", "La fecha de fin de inscripción debe ser posterior a la fecha de inicio.");
+            }
+
+            if (evento.FechaFinInscripcion > evento.FechaInicioEvento)
+            {
+                ModelState.AddModelError("FechaFinInscripcion", "El período de inscripción debe cerrar antes de que inicie el evento.");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
@@ -116,7 +172,6 @@ namespace EventPlusWeb1.Controllers
             ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
-
         // GET: Eventos/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
@@ -257,5 +312,6 @@ namespace EventPlusWeb1.Controllers
             TempData["Mensaje"] = "Inscripción cancelada.";
             return RedirectToAction("Detalle", new { id = eventoId });
         }
+
     }
 }

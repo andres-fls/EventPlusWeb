@@ -244,124 +244,145 @@
 @section scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Colores para las gráficas
         var colores = ['#7c3aed', '#059669', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#14b8a6', '#f97316'];
-        var coloresTransparentes = ['rgba(124,58,237,0.7)', 'rgba(5,150,105,0.7)', 'rgba(245,158,11,0.7)', 'rgba(239,68,68,0.7)', 'rgba(59,130,246,0.7)', 'rgba(236,72,153,0.7)', 'rgba(20,184,166,0.7)', 'rgba(249,115,22,0.7)'];
 
-        // Gráfica de Eventos por Categoría (Torta)
-        var ctxCategoria = document.getElementById('chartEventosCategoria');
-        if (ctxCategoria) {
-            new Chart(ctxCategoria.getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: [@Html.Raw(ViewBag.CategoriasLabels != null ? ViewBag.CategoriasLabels : "")],
-                    datasets: [{
-                        data: [@Html.Raw(ViewBag.CategoriasData != null ? ViewBag.CategoriasData : "")],
-                        backgroundColor: colores,
-                        borderColor: '#16213e',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#e0e0e0' }
+        // Instancias de los charts para poder destruirlos
+        var chartCategoria, chartMes, chartEstadoEventos, chartEstadoIns;
+
+        function getChartColors() {
+            var esLight = localStorage.getItem('theme') === 'light';
+            return {
+                tick: esLight ? '#1a1a2e' : '#888888',
+                grid: esLight ? '#9ca3af' : '#2d2d44',
+                legend: esLight ? '#1a1a2e' : '#e0e0e0',
+                border: esLight ? '#c8cdd6' : '#16213e'
+            };
+        }
+
+        function initCharts() {
+            var c = getChartColors();
+
+            // Destruir charts existentes antes de recrear
+            if (chartCategoria) chartCategoria.destroy();
+            if (chartMes) chartMes.destroy();
+            if (chartEstadoEventos) chartEstadoEventos.destroy();
+            if (chartEstadoIns) chartEstadoIns.destroy();
+
+            var ctxCategoria = document.getElementById('chartEventosCategoria');
+            if (ctxCategoria) {
+                chartCategoria = new Chart(ctxCategoria.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: [@Html.Raw(ViewBag.CategoriasLabels != null ? ViewBag.CategoriasLabels : "")],
+                        datasets: [{
+                            data: [@Html.Raw(ViewBag.CategoriasData != null ? ViewBag.CategoriasData : "")],
+                            backgroundColor: colores,
+                            borderColor: c.border,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: c.legend }
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+
+            @if (esDashboardAdmin)
+            {
+                <text>
+            var ctxMes = document.getElementById('chartInscripcionesMes');
+            if (ctxMes) {
+                chartMes = new Chart(ctxMes.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: [@Html.Raw(ViewBag.MesesLabels != null ? ViewBag.MesesLabels : "")],
+                        datasets: [{
+                            label: 'Inscripciones',
+                            data: [@Html.Raw(ViewBag.MesesData != null ? ViewBag.MesesData : "")],
+                            borderColor: '#7c3aed',
+                            backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { ticks: { color: c.tick }, grid: { color: c.grid } },
+                            y: { ticks: { color: c.tick }, grid: { color: c.grid }, beginAtZero: true }
+                        },
+                        plugins: {
+                            legend: { labels: { color: c.legend } }
+                        }
+                    }
+                });
+            }
+
+            var ctxEstadoEventos = document.getElementById('chartEstadoEventos');
+            if (ctxEstadoEventos) {
+                chartEstadoEventos = new Chart(ctxEstadoEventos.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Activos', 'Inactivos'],
+                        datasets: [{
+                            label: 'Eventos',
+                            data: [@ViewBag.EventosActivos, @ViewBag.EventosInactivos],
+                            backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
+                            borderColor: ['#059669', '#ef4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { ticks: { color: c.tick }, grid: { color: c.grid } },
+                            y: { ticks: { color: c.tick }, grid: { color: c.grid }, beginAtZero: true }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            var ctxEstadoIns = document.getElementById('chartEstadoInscripciones');
+            if (ctxEstadoIns) {
+                chartEstadoIns = new Chart(ctxEstadoIns.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['Activas', 'Canceladas'],
+                        datasets: [{
+                            label: 'Inscripciones',
+                            data: [@ViewBag.InscripcionesActivas, @ViewBag.InscripcionesCanceladas],
+                            backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
+                            borderColor: ['#059669', '#ef4444'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { ticks: { color: c.tick }, grid: { color: c.grid } },
+                            y: { ticks: { color: c.tick }, grid: { color: c.grid }, beginAtZero: true }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+                </text>
+            }
         }
 
-        @if (esDashboardAdmin)
-        {
-            <text>
-        // Gráfica de Inscripciones por Mes (Líneas)
-        var ctxMes = document.getElementById('chartInscripcionesMes');
-        if (ctxMes) {
-            new Chart(ctxMes.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: [@Html.Raw(ViewBag.MesesLabels != null ? ViewBag.MesesLabels : "")],
-                    datasets: [{
-                        label: 'Inscripciones',
-                        data: [@Html.Raw(ViewBag.MesesData != null ? ViewBag.MesesData : "")],
-                        borderColor: '#7c3aed',
-                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
-                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { labels: { color: '#e0e0e0' } }
-                    }
-                }
-            });
-        }
+        // Inicializar al cargar
+        initCharts();
 
-        // Gráfica Estado de Eventos (Barras)
-        var ctxEstadoEventos = document.getElementById('chartEstadoEventos');
-        if (ctxEstadoEventos) {
-            new Chart(ctxEstadoEventos.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Activos', 'Inactivos'],
-                    datasets: [{
-                        label: 'Eventos',
-                        data: [@ViewBag.EventosActivos, @ViewBag.EventosInactivos],
-                        backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
-                        borderColor: ['#059669', '#ef4444'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
-                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-
-        // Gráfica Estado de Inscripciones (Barras)
-        var ctxEstadoIns = document.getElementById('chartEstadoInscripciones');
-        if (ctxEstadoIns) {
-            new Chart(ctxEstadoIns.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Activas', 'Canceladas'],
-                    datasets: [{
-                        label: 'Inscripciones',
-                        data: [@ViewBag.InscripcionesActivas, @ViewBag.InscripcionesCanceladas],
-                        backgroundColor: ['rgba(5,150,105,0.7)', 'rgba(239,68,68,0.7)'],
-                        borderColor: ['#059669', '#ef4444'],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { ticks: { color: '#888' }, grid: { color: '#2d2d44' } },
-                        y: { ticks: { color: '#888' }, grid: { color: '#2d2d44' }, beginAtZero: true }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-        }
-            </text>
-        }
+        // Reinicializar cuando cambia el tema
+        document.getElementById('btnThemeToggle').addEventListener('click', function () {
+            setTimeout(initCharts, 50);
+        });
     </script>
 }

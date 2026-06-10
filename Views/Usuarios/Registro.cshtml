@@ -26,20 +26,37 @@
 
                 <div class="mb-3">
                     <label class="form-label">Nombre completo</label>
-                    <input type="text" name="Nombre" class="form-control" placeholder="Tu nombre completo" required />
+                    <input type="text" name="Nombre" class="form-control @(ViewBag.ErrorNombre != null ? "is-invalid" : "")"
+                           placeholder="Tu nombre completo" required
+                           oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '')" />
+                    @if (ViewBag.ErrorNombre != null)
+                    {
+                        <div class="invalid-feedback">@ViewBag.ErrorNombre</div>
+                    }
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Correo electrónico</label>
-                    <input type="email" name="Correo" class="form-control" placeholder="tucorreo@email.com" required />
+                    <input type="email" name="Correo" class="form-control @(ViewBag.ErrorCorreo != null ? "is-invalid" : "")"
+                           placeholder="tucorreo@email.com" required />
+                    @if (ViewBag.ErrorCorreo != null)
+                    {
+                        <div class="invalid-feedback">@ViewBag.ErrorCorreo</div>
+                    }
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Contraseña</label>
-                        <input type="password" name="Contrasena" class="form-control" placeholder="Mínimo 6 caracteres" required />
+                        <input type="password" name="Contrasena" class="form-control @(ViewBag.ErrorContrasena != null ? "is-invalid" : "")"
+                               placeholder="Mínimo 6 caracteres" required />
+                        @if (ViewBag.ErrorContrasena != null)
+                        {
+                            <div class="invalid-feedback">@ViewBag.ErrorContrasena</div>
+                        }
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Confirmar contraseña</label>
-                        <input type="password" name="ConfirmarContrasena" class="form-control" placeholder="Repite la contraseña" required />
+                        <input type="password" name="ConfirmarContrasena" class="form-control"
+                               placeholder="Repite la contraseña" required />
                     </div>
                 </div>
 
@@ -49,17 +66,27 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Cédula</label>
-                        <input type="text" name="Cedula" class="form-control" placeholder="Número de cédula" required />
+                        <input type="text" name="Cedula" class="form-control @(ViewBag.ErrorCedula != null ? "is-invalid" : "")"
+                               placeholder="Número de cédula" required
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                        @if (ViewBag.ErrorCedula != null)
+                        {
+                            <div class="invalid-feedback">@ViewBag.ErrorCedula</div>
+                        }
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Teléfono</label>
-                        <input type="text" name="Telefono" class="form-control" placeholder="Número de teléfono" />
+                        <input type="text" name="Telefono" class="form-control"
+                               placeholder="Ej: 3001234567" required maxlength="10"
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Edad</label>
-                        <input type="number" name="Edad" class="form-control" placeholder="Tu edad" min="14" max="99" />
+                        <input type="number" name="Edad" class="form-control" placeholder="Tu edad" min="14" max="99"
+                               oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Género</label>
