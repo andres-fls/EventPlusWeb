@@ -72,58 +72,94 @@ namespace EventPlusWeb1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Registro(string Nombre, string Correo, string Contrasena, string ConfirmarContrasena,
-            string Cedula, string Telefono, int? Edad, string Genero, int Ficha_idFicha)
+    string Cedula, string Telefono, int? Edad, string Genero, int Ficha_idFicha)
         {
-            // Cargar datos para dropdowns en caso de error
             ViewBag.Fichas = fichaService.ObtenerActivas();
             ViewBag.Programas = programaService.ObtenerTodos();
 
+            // Validar Nombre
+            if (string.IsNullOrWhiteSpace(Nombre))
+            {
+                ViewBag.ErrorNombre = "El nombre es obligatorio.";
+            }
+            else if (Nombre.Trim().Length < 3)
+            {
+                ViewBag.ErrorNombre = "El nombre debe tener al menos 3 caracteres.";
+            }
+            else if (Nombre.Trim().Length > 100)
+            {
+                ViewBag.ErrorNombre = "El nombre no puede superar los 100 caracteres.";
+            }
+
+            // Validar Correo
+            if (string.IsNullOrWhiteSpace(Correo))
+            {
+                ViewBag.ErrorCorreo = "El correo es obligatorio.";
+            }
+            else if (!Correo.Contains("@") || !Correo.Contains("."))
+            {
+                ViewBag.ErrorCorreo = "El correo no tiene un formato válido.";
+            }
+            else if (Correo.Length > 100)
+            {
+                ViewBag.ErrorCorreo = "El correo no puede superar los 100 caracteres.";
+            }
+
+            // Validar Contraseña
             if (string.IsNullOrWhiteSpace(Contrasena))
             {
-                ViewBag.Error = "La contraseña es obligatoria.";
-                return View();
+                ViewBag.ErrorContrasena = "La contraseña es obligatoria.";
             }
-
-            if (Contrasena != ConfirmarContrasena)
+            else if (Contrasena.Length < 6)
             {
-                ViewBag.Error = "Las contraseñas no coinciden.";
-                return View();
+                ViewBag.ErrorContrasena = "La contraseña debe tener al menos 6 caracteres.";
             }
-
-            if (Contrasena.Length < 6)
+            else if (Contrasena.Length > 50)
             {
-                ViewBag.Error = "La contraseña debe tener al menos 6 caracteres.";
-                return View();
+                ViewBag.ErrorContrasena = "La contraseña no puede superar los 50 caracteres.";
+            }
+            else if (Contrasena != ConfirmarContrasena)
+            {
+                ViewBag.ErrorContrasena = "Las contraseñas no coinciden.";
             }
 
+            // Validar Cédula
             if (string.IsNullOrWhiteSpace(Cedula))
             {
-                ViewBag.Error = "La cédula es obligatoria.";
+                ViewBag.ErrorCedula = "La cédula es obligatoria.";
+            }
+            else if (Cedula.Trim().Length < 6 || Cedula.Trim().Length > 15)
+            {
+                ViewBag.ErrorCedula = "La cédula debe tener entre 6 y 15 caracteres.";
+            }
+
+            // Si hay algún error, regresar la vista
+            if (ViewBag.ErrorNombre != null || ViewBag.ErrorCorreo != null ||
+                ViewBag.ErrorContrasena != null || ViewBag.ErrorCedula != null)
+            {
                 return View();
             }
 
             // Crear usuario
             Usuario usuario = new Usuario();
-            usuario.Nombre = Nombre;
-            usuario.Correo = Correo;
+            usuario.Nombre = Nombre.Trim();
+            usuario.Correo = Correo.Trim();
             usuario.Rol = "Usuario";
 
             bool registrado = usuarioService.Registrar(usuario, Contrasena);
 
             if (!registrado)
             {
-                ViewBag.Error = "El correo ya está registrado.";
+                ViewBag.ErrorCorreo = "El correo ya está registrado.";
                 return View();
             }
 
-            // Obtener el usuario recién creado para tener su ID
             Usuario usuarioCreado = usuarioService.ObtenerPorCorreo(Correo);
 
-            // Crear aprendiz
             Aprendiz aprendiz = new Aprendiz();
             aprendiz.Usuario_idUsuario = usuarioCreado.IdUsuario;
             aprendiz.Ficha_idFicha = Ficha_idFicha;
-            aprendiz.Cedula = Cedula;
+            aprendiz.Cedula = Cedula.Trim();
             aprendiz.Telefono = Telefono;
             aprendiz.Edad = Edad;
             aprendiz.Genero = Genero;
