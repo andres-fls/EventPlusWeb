@@ -207,6 +207,8 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="AppSecrets.config" />
+    <Content Include="ConnectionStrings.config" />
     <None Include="Properties\PublishProfiles\eventplusweb - Web Deploy.pubxml" />
     <Content Include="Reports\Eventos.frx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
