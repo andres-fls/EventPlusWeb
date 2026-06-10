@@ -101,6 +101,40 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
+            // Validar fechas
+            DateTime ahora = DateTime.Now;
+
+            if (evento.FechaInicioEvento < ahora)
+            {
+                ModelState.AddModelError("FechaInicioEvento", "La fecha de inicio del evento no puede ser en el pasado.");
+            }
+
+            if (evento.FechaFinEvento <= evento.FechaInicioEvento)
+            {
+                ModelState.AddModelError("FechaFinEvento", "La fecha de fin debe ser posterior a la fecha de inicio.");
+            }
+
+            if (evento.FechaInicioInscripcion < ahora)
+            {
+                ModelState.AddModelError("FechaInicioInscripcion", "La fecha de inicio de inscripción no puede ser en el pasado.");
+            }
+
+            if (evento.FechaFinInscripcion <= evento.FechaInicioInscripcion)
+            {
+                ModelState.AddModelError("FechaFinInscripcion", "La fecha de fin de inscripción debe ser posterior a la fecha de inicio.");
+            }
+
+            if (evento.FechaFinInscripcion > evento.FechaInicioEvento)
+            {
+                ModelState.AddModelError("FechaFinInscripcion", "El período de inscripción debe cerrar antes de que inicie el evento.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
+                return View(evento);
+            }
+
             evento.Usuario_idUsuario = Convert.ToInt32(Session["UsuarioId"]);
             evento.EstadoEvento = "Activo";
 
@@ -116,7 +150,6 @@ namespace EventPlusWeb1.Controllers
             ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
-
         // GET: Eventos/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
