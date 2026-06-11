@@ -4,6 +4,8 @@ using System.Web.Mvc;
 using EventPlusWeb1.Filters;
 using EventPlusWeb1.Models.Entities;
 using EventPlusWeb1.Services;
+using EventPlusWeb1.Helpers;
+
 
 namespace EventPlusWeb1.Controllers
 {
@@ -124,7 +126,7 @@ namespace EventPlusWeb1.Controllers
             }
 
             // Validar fechas
-            DateTime ahora = DateTime.Now;
+            DateTime ahora = DateTimeHelper.AhoraEnColombia();
 
             if (evento.FechaInicioEvento < ahora)
             {

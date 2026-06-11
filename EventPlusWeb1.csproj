@@ -167,6 +167,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Models\Entities\Aprendiz.cs" />
     <Compile Include="Models\Entities\Categoria.cs" />
     <Compile Include="Models\Entities\Evento.cs" />
