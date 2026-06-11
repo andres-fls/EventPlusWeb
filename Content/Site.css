@@ -286,3 +286,9 @@ body {
     color: var(--morado-resaltado) !important;
     transition: color 0.3s ease;
 }
+
+/* Tabla de usuarios - fix modo oscuro */
+.table td,
+.table th {
+    color: var(--texto-blanco) !important;
+}
