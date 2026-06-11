@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web.Mvc;
 using EventPlusWeb1.Models.Entities;
 using EventPlusWeb1.Services;
+using EventPlusWeb1.Helpers;
 
 namespace EventPlusWeb1.Controllers
 {
@@ -75,7 +76,7 @@ namespace EventPlusWeb1.Controllers
             var mesesData = new List<int>();
             for (int i = 5; i >= 0; i--)
             {
-                var fecha = DateTime.Now.AddMonths(-i);
+                var fecha = DateTimeHelper.AhoraEnColombia().AddMonths(-i);
                 mesesLabels.Add(fecha.ToString("MMM yyyy"));
                 int count = inscripciones.Count(ins => ins.FechaInscripcion.Month == fecha.Month && ins.FechaInscripcion.Year == fecha.Year);
                 mesesData.Add(count);

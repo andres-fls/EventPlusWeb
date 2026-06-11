@@ -124,7 +124,7 @@ else
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 }
-                                else if (evento.EstadoEvento == "Activo" && evento.FechaFinInscripcion >= DateTime.Now)
+                                else if (evento.EstadoEvento == "Activo" && evento.FechaFinInscripcion >= EventPlusWeb1.Helpers.DateTimeHelper.AhoraEnColombia())
                                 {
                                     using (Html.BeginForm("Inscribirse", "Eventos", FormMethod.Post))
                                     {

@@ -127,36 +127,43 @@
             </form>
 
             <div class="text-center mt-3">
-                <a href="@Url.Action("Login", "Usuarios")" style="color: #a78bfa;">¿Ya tienes cuenta? Inicia sesión</a>
+                <a href="@Url.Action("Login", "Usuarios")" style="color: #6d28d9; font-weight: 500;">
+                    ¿Ya tienes cuenta? Inicia sesi&#243;n
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Filtrar fichas según programa seleccionado
-    var selectPrograma = document.getElementById('selectPrograma');
-    var selectFicha = document.getElementById('selectFicha');
-    var todasLasFichas = selectFicha.innerHTML;
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectPrograma = document.getElementById('selectPrograma');
+        var selectFicha = document.getElementById('selectFicha');
 
-    selectPrograma.addEventListener('change', function () {
-        var programaId = this.value;
-        selectFicha.innerHTML = '<option value="">Seleccione ficha...</option>';
+        // Guardar todas las fichas reales al cargar
+        var todasLasFichas = Array.from(selectFicha.querySelectorAll('option')).filter(function (op) {
+            return op.value !== '';
+        });
 
-        if (programaId === '') {
-            selectFicha.innerHTML = todasLasFichas;
-            return;
-        }
+        selectPrograma.addEventListener('change', function () {
+            var programaId = this.value;
 
-        var tempDiv = document.createElement('div');
-        tempDiv.innerHTML = todasLasFichas;
-        var opciones = tempDiv.querySelectorAll('option');
+            // Limpiar y poner placeholder
+            selectFicha.innerHTML = '<option value="">Seleccione ficha...</option>';
 
-        for (var i = 0; i < opciones.length; i++) {
-            var opcion = opciones[i];
-            if (opcion.getAttribute('data-programa') === programaId || opcion.value === '') {
-                selectFicha.appendChild(opcion.cloneNode(true));
+            if (programaId === '') {
+                // Sin filtro — mostrar todas
+                todasLasFichas.forEach(function (op) {
+                    selectFicha.appendChild(op.cloneNode(true));
+                });
+            } else {
+                // Filtrar por programa
+                todasLasFichas.forEach(function (op) {
+                    if (op.getAttribute('data-programa') === programaId) {
+                        selectFicha.appendChild(op.cloneNode(true));
+                    }
+                });
             }
-        }
+        });
     });
 </script>
