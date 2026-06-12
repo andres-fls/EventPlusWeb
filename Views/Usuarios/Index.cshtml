@@ -1,41 +1,184 @@
-﻿@model List<EventPlusWeb1.Models.Entities.Usuario>
-@{
+﻿@{
     ViewBag.Title = "Usuarios";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var administradores = ViewBag.Administradores as List<EventPlusWeb1.Models.Entities.Usuario>;
+    var aprendices = ViewBag.Aprendices as List<EventPlusWeb1.Models.Entities.Usuario>;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 style="color: #a78bfa;"><i class="bi bi-people"></i> Usuarios Registrados</h2>
+    <h2 style="color: #a78bfa;"><i class="bi bi-people"></i> Gesti&#243;n de Usuarios</h2>
+    <a href="@Url.Action("CrearAdmin", "Usuarios")" class="btn btn-primary">
+        <i class="bi bi-person-gear"></i> Nuevo Administrador
+    </a>
 </div>
 
-<div class="card p-3">
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Mensaje"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- ===== TABLA ADMINISTRADORES ===== -->
+<div class="card p-3 mb-4">
+    <h5 style="color: #a78bfa;" class="mb-3">
+        <i class="bi bi-shield-check"></i> Administradores
+        <span class="badge ms-2" style="background-color: #7c3aed;">@(administradores != null ? administradores.Count : 0)</span>
+    </h5>
     <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Correo</th>
-                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Creado por</th>
+                    <th>Fecha creaci&#243;n</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var usuario in Model)
+                @if (administradores != null && administradores.Count > 0)
+                {
+                    foreach (var admin in administradores)
+                    {
+                        <tr>
+                            <td>@admin.Nombre</td>
+                            <td>@admin.Correo</td>
+                            <td>
+                                @if (admin.Estado)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>@(admin.NombreCreador ?? "—")</td>
+                            <td>@(admin.FechaCreacion.HasValue ? admin.FechaCreacion.Value.ToString("dd/MM/yyyy") : "—")</td>
+                            <td>
+                                @using (Html.BeginForm("CambiarEstado", "Usuarios", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@admin.IdUsuario" />
+                                    <input type="hidden" name="estado" value="@(!admin.Estado)" />
+                                    <button type="submit" class="btn btn-sm @(admin.Estado ? "btn-warning" : "btn-success")">
+                                        <i class="bi @(admin.Estado ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                        @(admin.Estado ? "Desactivar" : "Activar")
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
                 {
                     <tr>
-                        <td>@usuario.IdUsuario</td>
-                        <td>@usuario.Nombre</td>
-                        <td>@usuario.Correo</td>
-                        <td>
-                            @if (usuario.Rol == "Admin")
-                            {
-                                <span class="badge" style="background-color: #7c3aed;">Admin</span>
-                            }
-                            else
-                            {
-                                <span class="badge" style="background-color: #059669;">Usuario</span>
-                            }
-                        </td>
+                        <td colspan="6" class="text-center" style="color: #888;">No hay administradores registrados.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ===== FILTROS APRENDICES ===== -->
+<div class="card p-3 mb-3" style="border: 1px solid rgba(124,58,237,0.3);">
+    <h6 style="color: #a78bfa;" class="mb-3"><i class="bi bi-filter"></i> Filtrar Aprendices</h6>
+    @using (Html.BeginForm("Index", "Usuarios", FormMethod.Get))
+    {
+        <div class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Programa</label>
+                @Html.DropDownList("programaId", ViewBag.Programas as SelectList,
+                    "-- Todos los programas --",
+                    new { @class = "form-select" })
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Ficha</label>
+                @Html.DropDownList("fichaId", ViewBag.Fichas as SelectList,
+                    "-- Todas las fichas --",
+                    new { @class = "form-select" })
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index", "Usuarios")" class="btn btn-secondary w-100">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- ===== TABLA APRENDICES ===== -->
+<div class="card p-3">
+    <h5 style="color: #a78bfa;" class="mb-3">
+        <i class="bi bi-mortarboard"></i> Aprendices
+        <span class="badge ms-2" style="background-color: #059669;">@(aprendices != null ? aprendices.Count : 0)</span>
+    </h5>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Fecha registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (aprendices != null && aprendices.Count > 0)
+                {
+                    foreach (var aprendiz in aprendices)
+                    {
+                        <tr>
+                            <td>@aprendiz.Nombre</td>
+                            <td>@aprendiz.Correo</td>
+                            <td>
+                                @if (aprendiz.Estado)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </td>
+                            <td>@(aprendiz.FechaCreacion.HasValue ? aprendiz.FechaCreacion.Value.ToString("dd/MM/yyyy") : "—")</td>
+                            <td>
+                                @using (Html.BeginForm("CambiarEstado", "Usuarios", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@aprendiz.IdUsuario" />
+                                    <input type="hidden" name="estado" value="@(!aprendiz.Estado)" />
+                                    <button type="submit" class="btn btn-sm @(aprendiz.Estado ? "btn-warning" : "btn-success")">
+                                        <i class="bi @(aprendiz.Estado ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                        @(aprendiz.Estado ? "Desactivar" : "Activar")
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center" style="color: #888;">No hay aprendices registrados con ese criterio.</td>
                     </tr>
                 }
             </tbody>
