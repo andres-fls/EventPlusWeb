@@ -76,35 +76,37 @@
         </div>
 
         <!-- Segunda fila de gráficas -->
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card p-3">
+        <div class="row mb-4 align-items-stretch">
+            <div class="col-md-4 mb-3 d-flex">
+                <div class="card p-3 w-100">
                     <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-bar-chart"></i> Estado de Eventos</h5>
                     <canvas id="chartEstadoEventos" height="200"></canvas>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card p-3">
+            <div class="col-md-4 mb-3 d-flex">
+                <div class="card p-3 w-100">
                     <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-bar-chart"></i> Estado de Inscripciones</h5>
                     <canvas id="chartEstadoInscripciones" height="200"></canvas>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card p-3">
-                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-clock-history"></i> &#218;ltimos Eventos</h5>
-                    @if (ViewBag.UltimosEventos != null)
-                    {
-                        var ultimosEventos = (List<EventPlusWeb1.Models.Entities.Evento>)ViewBag.UltimosEventos;
-                        foreach (var ev in ultimosEventos)
+            <div class="col-md-4 mb-3 d-flex">
+                <div class="card p-3 w-100 d-flex flex-column">
+                    <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-clock-history"></i> Últimos Eventos</h5>
+                    <div style="flex: 1; overflow-y: auto; max-height: 250px; padding-right: 5px;">
+                        @if (ViewBag.UltimosEventos != null)
                         {
-                            <div style="padding: 8px 0; border-bottom: 1px solid #2d2d44;">
-                                <p style="color: #e0e0e0; margin: 0; font-size: 0.9rem;">
-                                    <i class="bi bi-calendar3" style="color: #7c3aed;"></i> @ev.NombreEvento
-                                </p>
-                                <small style="color: #888;">@ev.FechaInicioEvento.ToString("dd/MM/yyyy") - @ev.NombreCategoria</small>
-                            </div>
+                            var ultimosEventos = (List<EventPlusWeb1.Models.Entities.Evento>)ViewBag.UltimosEventos;
+                            foreach (var ev in ultimosEventos)
+                            {
+                                <div style="padding: 8px 0; border-bottom: 1px solid #2d2d44;">
+                                    <p style="color: #e0e0e0; margin: 0; font-size: 0.9rem;">
+                                        <i class="bi bi-calendar3" style="color: #7c3aed;"></i> @ev.NombreEvento
+                                    </p>
+                                    <small style="color: #888;">@ev.FechaInicioEvento.ToString("dd/MM/yyyy") - @ev.NombreCategoria</small>
+                                </div>
+                            }
                         }
-                    }
+                    </div>
                 </div>
             </div>
         </div>
