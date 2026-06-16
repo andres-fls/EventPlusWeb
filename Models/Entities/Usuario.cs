@@ -29,5 +29,11 @@ namespace EventPlusWeb1.Models.Entities
         public string Rol { get; set; }
 
         public bool Estado { get; set; }
+
+        public int? CreadoPor { get; set; }
+
+        public DateTime? FechaCreacion { get; set; }
+
+        public string NombreCreador { get; set; }
     }
 }

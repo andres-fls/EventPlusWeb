@@ -59,17 +59,18 @@
         </div>
 
         <!-- Gráficas -->
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3">
-                <div class="card p-3">
+        <!-- Gráficas superiores -->
+        <div class="row mb-4 align-items-stretch">
+            <div class="col-md-5 mb-3 d-flex">
+                <div class="card p-3 w-100">
                     <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-pie-chart"></i> Eventos por Categor&#237;a</h5>
-                    <canvas id="chartEventosCategoria" height="250"></canvas>
+                    <canvas id="chartEventosCategoria"></canvas>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card p-3">
+            <div class="col-md-7 mb-3 d-flex">
+                <div class="card p-3 w-100">
                     <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-graph-up"></i> Inscripciones por Mes</h5>
-                    <canvas id="chartInscripcionesMes" height="250"></canvas>
+                    <canvas id="chartInscripcionesMes"></canvas>
                 </div>
             </div>
         </div>
@@ -152,14 +153,14 @@
 
             <!-- Gráfica y Próximos Eventos -->
             <div class="row mb-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card p-3">
+                <div class="col-md-5 mb-3">
+                    <div class="card p-3 h-100">
                         <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-pie-chart"></i> Eventos por Categor&#237;a</h5>
                         <canvas id="chartEventosCategoria" height="250"></canvas>
                     </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card p-3">
+                <div class="col-md-7 mb-3">
+                    <div class="card p-3 h-100">
                         <h5 style="color: #a78bfa;" class="mb-3"><i class="bi bi-calendar-week"></i> Pr&#243;ximos Eventos</h5>
                         @if (ViewBag.ProximosEventos != null)
                         {
@@ -172,14 +173,27 @@
                             {
                                 foreach (var ev in proximosEventos)
                                 {
-                                    <div style="padding: 8px 0; border-bottom: 1px solid #2d2d44;">
-                                        <p style="color: #e0e0e0; margin: 0; font-size: 0.9rem;">
-                                            <i class="bi bi-calendar3" style="color: #7c3aed;"></i> @ev.NombreEvento
+                                    <div style="padding: 22px 0; border-bottom: 1px solid #2d2d44;">
+
+                                        <p style="color: #e0e0e0; margin-bottom: 10px; font-size: 1.05rem; font-weight: 600;">
+                                            <i class="bi bi-calendar3"
+                                               style="color: #7c3aed; font-size: 1.2rem;">
+                                            </i>
+                                            @ev.NombreEvento
                                         </p>
-                                        <small style="color: #888;">
-                                            @ev.FechaInicioEvento.ToString("dd/MM/yyyy") - @ev.LugarEvento
-                                            <span class="badge bg-success ms-2">@ev.Inscritos/@ev.CupoMaximo</span>
-                                        </small>
+
+                                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                                            <small style="color: #aaa; font-size: 0.95rem;">
+                                                @ev.FechaInicioEvento.ToString("dd/MM/yyyy")
+                                                - @ev.LugarEvento
+                                            </small>
+
+                                            <span class="badge bg-success"
+                                                  style="font-size: 0.85rem; padding: 6px 12px;">
+                                                @ev.Inscritos/@ev.CupoMaximo
+                                            </span>
+                                        </div>
+
                                     </div>
                                 }
                             }

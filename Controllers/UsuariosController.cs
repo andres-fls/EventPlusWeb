@@ -19,9 +19,7 @@ namespace EventPlusWeb1.Controllers
         public ActionResult Login()
         {
             if (Session["UsuarioId"] != null)
-            {
                 return RedirectToAction("Index", "Eventos");
-            }
             return View();
         }
 
@@ -44,7 +42,6 @@ namespace EventPlusWeb1.Controllers
                 return View();
             }
 
-            // Crear sesión
             Session["UsuarioId"] = usuario.IdUsuario;
             Session["UsuarioNombre"] = usuario.Nombre;
             Session["UsuarioRol"] = usuario.Rol;
@@ -58,13 +55,10 @@ namespace EventPlusWeb1.Controllers
         public ActionResult Registro()
         {
             if (Session["UsuarioId"] != null)
-            {
                 return RedirectToAction("Index", "Eventos");
-            }
 
             ViewBag.Fichas = fichaService.ObtenerActivas();
             ViewBag.Programas = programaService.ObtenerTodos();
-
             return View();
         }
 
@@ -72,79 +66,46 @@ namespace EventPlusWeb1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Registro(string Nombre, string Correo, string Contrasena, string ConfirmarContrasena,
-    string Cedula, string Telefono, int? Edad, string Genero, int Ficha_idFicha)
+            string Cedula, string Telefono, int? Edad, string Genero, int Ficha_idFicha)
         {
             ViewBag.Fichas = fichaService.ObtenerActivas();
             ViewBag.Programas = programaService.ObtenerTodos();
 
-            // Validar Nombre
             if (string.IsNullOrWhiteSpace(Nombre))
-            {
                 ViewBag.ErrorNombre = "El nombre es obligatorio.";
-            }
             else if (Nombre.Trim().Length < 3)
-            {
                 ViewBag.ErrorNombre = "El nombre debe tener al menos 3 caracteres.";
-            }
             else if (Nombre.Trim().Length > 100)
-            {
                 ViewBag.ErrorNombre = "El nombre no puede superar los 100 caracteres.";
-            }
 
-            // Validar Correo
             if (string.IsNullOrWhiteSpace(Correo))
-            {
                 ViewBag.ErrorCorreo = "El correo es obligatorio.";
-            }
             else if (!Correo.Contains("@") || !Correo.Contains("."))
-            {
                 ViewBag.ErrorCorreo = "El correo no tiene un formato válido.";
-            }
             else if (Correo.Length > 100)
-            {
                 ViewBag.ErrorCorreo = "El correo no puede superar los 100 caracteres.";
-            }
 
-            // Validar Contraseña
             if (string.IsNullOrWhiteSpace(Contrasena))
-            {
                 ViewBag.ErrorContrasena = "La contraseña es obligatoria.";
-            }
             else if (Contrasena.Length < 6)
-            {
                 ViewBag.ErrorContrasena = "La contraseña debe tener al menos 6 caracteres.";
-            }
             else if (Contrasena.Length > 50)
-            {
                 ViewBag.ErrorContrasena = "La contraseña no puede superar los 50 caracteres.";
-            }
             else if (Contrasena != ConfirmarContrasena)
-            {
                 ViewBag.ErrorContrasena = "Las contraseñas no coinciden.";
-            }
 
-            // Validar Cédula
             if (string.IsNullOrWhiteSpace(Cedula))
-            {
                 ViewBag.ErrorCedula = "La cédula es obligatoria.";
-            }
             else if (Cedula.Trim().Length < 6 || Cedula.Trim().Length > 15)
-            {
                 ViewBag.ErrorCedula = "La cédula debe tener entre 6 y 15 caracteres.";
-            }
 
-            // Si hay algún error, regresar la vista
             if (ViewBag.ErrorNombre != null || ViewBag.ErrorCorreo != null ||
                 ViewBag.ErrorContrasena != null || ViewBag.ErrorCedula != null)
-            {
                 return View();
-            }
 
-            // Crear usuario
             Usuario usuario = new Usuario();
             usuario.Nombre = Nombre.Trim();
             usuario.Correo = Correo.Trim();
-            usuario.Rol = "Usuario";
 
             bool registrado = usuarioService.Registrar(usuario, Contrasena);
 
@@ -177,17 +138,81 @@ namespace EventPlusWeb1.Controllers
             return RedirectToAction("Login");
         }
 
-        // GET: Usuarios/Index (solo Admin - listado de usuarios)
+        // GET: Usuarios/Index (solo Admin)
         [AuthFilter]
-        public ActionResult Index()
+        public ActionResult Index(int? programaId, int? fichaId)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index", "Eventos");
+
+            var administradores = usuarioService.ObtenerAdministradores();
+            var aprendices = usuarioService.ObtenerAprendices(programaId, fichaId);
+
+            ViewBag.Administradores = administradores;
+            ViewBag.Aprendices = aprendices;
+            ViewBag.Programas = new SelectList(programaService.ObtenerTodos(), "IdPrograma", "NombrePrograma", programaId);
+            ViewBag.Fichas = new SelectList(fichaService.ObtenerActivas(), "IdFicha", "CodigoFicha", fichaId);
+            ViewBag.ProgramaSeleccionado = programaId;
+            ViewBag.FichaSeleccionada = fichaId;
+
+            return View();
+        }
+
+        // GET: Usuarios/CrearAdmin (solo Admin)
+        [HttpGet]
+        [AuthFilter]
+        public ActionResult CrearAdmin()
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+                return RedirectToAction("Index", "Eventos");
+
+            return View();
+        }
+
+        // POST: Usuarios/CrearAdmin (solo Admin)
+        [HttpPost]
+        [AuthFilter]
+        [ValidateAntiForgeryToken]
+        public ActionResult CrearAdmin(string Nombre, string Correo, string Contrasena, string ConfirmarContrasena)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
+                return RedirectToAction("Index", "Eventos");
+
+            if (string.IsNullOrWhiteSpace(Nombre))
+                ViewBag.ErrorNombre = "El nombre es obligatorio.";
+            else if (Nombre.Trim().Length < 3)
+                ViewBag.ErrorNombre = "El nombre debe tener al menos 3 caracteres.";
+
+            if (string.IsNullOrWhiteSpace(Correo))
+                ViewBag.ErrorCorreo = "El correo es obligatorio.";
+            else if (!Correo.Contains("@") || !Correo.Contains("."))
+                ViewBag.ErrorCorreo = "El correo no tiene un formato válido.";
+
+            if (string.IsNullOrWhiteSpace(Contrasena))
+                ViewBag.ErrorContrasena = "La contraseña es obligatoria.";
+            else if (Contrasena.Length < 6)
+                ViewBag.ErrorContrasena = "La contraseña debe tener al menos 6 caracteres.";
+            else if (Contrasena != ConfirmarContrasena)
+                ViewBag.ErrorContrasena = "Las contraseñas no coinciden.";
+
+            if (ViewBag.ErrorNombre != null || ViewBag.ErrorCorreo != null || ViewBag.ErrorContrasena != null)
+                return View();
+
+            Usuario nuevoAdmin = new Usuario();
+            nuevoAdmin.Nombre = Nombre.Trim();
+            nuevoAdmin.Correo = Correo.Trim();
+
+            int creadoPorId = Convert.ToInt32(Session["UsuarioId"]);
+            bool creado = usuarioService.RegistrarAdministrador(nuevoAdmin, Contrasena, creadoPorId);
+
+            if (!creado)
+            {
+                ViewBag.ErrorCorreo = "El correo ya está registrado.";
+                return View();
             }
 
-            List<Usuario> usuarios = usuarioService.ObtenerTodos();
-            return View(usuarios);
+            TempData["Mensaje"] = "Administrador creado exitosamente.";
+            return RedirectToAction("Index");
         }
 
         // POST: Usuarios/CambiarEstado (solo Admin)
@@ -197,9 +222,7 @@ namespace EventPlusWeb1.Controllers
         public ActionResult CambiarEstado(int id, bool estado)
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
-            {
                 return RedirectToAction("Index", "Eventos");
-            }
 
             usuarioService.CambiarEstado(id, estado);
             TempData["Mensaje"] = "Estado del usuario actualizado.";

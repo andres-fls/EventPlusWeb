@@ -107,28 +107,45 @@ namespace EventPlusWeb1.Controllers
 
             // Mis inscripciones
             var misInscripciones = inscripcionService.ObtenerPorAprendiz(aprendiz.IdAprendiz);
+
             ViewBag.MisInscripcionesActivas = misInscripciones.Count(i => i.EstadoInscripcion == "Activa");
             ViewBag.MisInscripcionesCanceladas = misInscripciones.Count(i => i.EstadoInscripcion == "Cancelada");
             ViewBag.TotalMisInscripciones = misInscripciones.Count;
 
             // Próximos eventos disponibles
             var eventosActivos = eventoService.ObtenerActivos();
+
             ViewBag.EventosDisponibles = eventosActivos.Count;
-            ViewBag.ProximosEventos = eventosActivos.Take(5).ToList();
 
-            // Eventos por categoría (para gráfica)
-            var categorias = categoriaService.ObtenerTodas();
-            var eventosTodos = eventoService.ObtenerActivos();
-            var eventosPorCategoria = eventosTodos.GroupBy(e => e.NombreCategoria)
-                .Select(g => new { Categoria = g.Key, Cantidad = g.Count() })
+            ViewBag.ProximosEventos = eventosActivos
+                .OrderBy(e => e.FechaInicioEvento)
+                .Take(5)
                 .ToList();
-            ViewBag.CategoriasLabels = string.Join(",", eventosPorCategoria.Select(x => "'" + x.Categoria + "'"));
-            ViewBag.CategoriasData = string.Join(",", eventosPorCategoria.Select(x => x.Cantidad.ToString()));
 
-            // Últimas inscripciones
-            ViewBag.UltimasInscripciones = misInscripciones.Take(5).ToList();
+            // Eventos por categoría (gráfica)
+            var eventosPorCategoria = eventosActivos
+                .GroupBy(e => e.NombreCategoria)
+                .Select(g => new
+                {
+                    Categoria = g.Key,
+                    Cantidad = g.Count()
+                })
+                .ToList();
+
+            ViewBag.CategoriasLabels = string.Join(",",
+                eventosPorCategoria.Select(x => "'" + x.Categoria + "'"));
+
+            ViewBag.CategoriasData = string.Join(",",
+                eventosPorCategoria.Select(x => x.Cantidad.ToString()));
+
+            // Últimas inscripciones del aprendiz
+            ViewBag.UltimasInscripciones = misInscripciones
+                .OrderByDescending(i => i.FechaInscripcion)
+                .Take(5)
+                .ToList();
 
             ViewBag.EsDashboardAdmin = false;
+
             return View("Index");
         }
 
