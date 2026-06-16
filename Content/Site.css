@@ -1,271 +1,84 @@
 ﻿/* ================================================================================= */
-/* ===== ESTILOS BASE Y CONFIGURACIÓN DE LA PLANTILLA                          ===== */
+/* ===== 1. ESTILOS BASE Y CONFIGURACIÓN DE BOOTSTRAP                          ===== */
 /* ================================================================================= */
 
-/* Ajuste de margen superior y padding para el contenedor principal de contenido */
 .body-content {
     margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
 }
 
-/* Evita que los términos largos se corten en listas de descripción horizontales de Bootstrap */
 .dl-horizontal dt {
     white-space: normal;
 }
 
-/* Configuración de entradas de formularios. 
-   Se usa .form-control y .form-select para no romper componentes externos como el Chatbot
-*/
 .form-control,
 .form-select,
 textarea.form-control {
-    max-width: 100%; /* Cambiado a 100% para que herede el tamaño del sistema de grillas de Bootstrap */
+    max-width: 100%; /* Hereda el tamaño del grid de Bootstrap */
 }
 
 
 /* ================================================================================= */
-/* ===== PALETA DE COLORES CENTRALIZADA (SISTEMA DE TEMAS)                     ===== */
+/* ===== 2. SISTEMA DE TEMAS (VARIABLES CSS CENTRALIZADAS)                    ===== */
 /* ================================================================================= */
 
 :root {
-    /* --- Tema Oscuro (Por Defecto) --- */
-    --bg-principal: #121214;
+    /* --- TEMA OSCURO (por defecto) --- */
+    --bg-principal: #1e1e24;
     --bg-tarjetas: #16213e;
     --borde-morado: #7c3aed;
     --texto-blanco: #ffffff;
     --texto-mutado: #888888;
     --morado-resaltado: #a78bfa;
+    /* Gradientes y sombras para tarjetas (OSCURO) */
+    --card-bg-start: rgba(22, 33, 62, 0.9);
+    --card-bg-end: rgba(15, 52, 96, 0.8);
+    --card-border-color: rgba(124, 58, 237, 0.3);
+    --card-shadow-default: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 12px 40px rgba(124, 58, 237, 0.25);
+    /* Gradientes para evento-card (OSCURO) */
+    --evento-bg-start: rgba(22, 33, 62, 0.95);
+    --evento-bg-end: rgba(15, 52, 96, 0.85);
+    --evento-border: rgba(124, 58, 237, 0.25);
+    --evento-shadow-hover: 0 20px 50px rgba(124, 58, 237, 0.3);
+    /* Colores de botones */
+    --btn-primary-start: #7c3aed;
+    --btn-primary-end: #6d28d9;
+    --btn-success-start: #059669;
+    --btn-success-end: #047857;
+    --btn-danger-start: #dc2626;
+    --btn-danger-end: #b91c1c;
+    --btn-warning-start: #f59e0b;
+    --btn-warning-end: #d97706;
+    --btn-secondary-start: #4b5563;
+    --btn-secondary-end: #374151;
 }
 
+/* --- TEMA CLARO (Sobrescribe las variables) --- */
 [data-theme="light"] {
-    --bg-principal: #dde1e7;
+    --bg-principal: #eef2f7;
     --bg-tarjetas: #c8cdd6;
     --borde-morado: #5b21b6;
     --texto-blanco: #1a1a2e;
     --texto-mutado: #3d3d5c;
     --morado-resaltado: #4c1d95;
+    /* Gradientes y sombras para tarjetas (CLARO) */
+    --card-bg-start: rgba(255, 255, 255, 0.85);
+    --card-bg-end: rgba(220, 225, 235, 0.9);
+    --card-border-color: rgba(91, 33, 182, 0.2);
+    --card-shadow-default: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 12px 40px rgba(91, 33, 182, 0.2);
+    /* Gradientes para evento-card (CLARO) */
+    --evento-bg-start: rgba(255, 255, 255, 0.95);
+    --evento-bg-end: rgba(235, 240, 250, 0.9);
+    --evento-border: rgba(91, 33, 182, 0.2);
+    --evento-shadow-hover: 0 20px 50px rgba(91, 33, 182, 0.2);
 }
 
-    /* ================================================================================= */
-    /* ===== CORRECCIONES DE CONTRASTE MODO CLARO                                  ===== */
-    /* ================================================================================= */
-
-    /* Títulos de página (h2, h3 con color morado) */
-    [data-theme="light"] h2,
-    [data-theme="light"] h3,
-    [data-theme="light"] h4 {
-        color: #4c1d95 !important;
-    }
-
-    /* Títulos dentro de tarjetas de eventos */
-    [data-theme="light"] .card-title,
-    [data-theme="light"] .card h5 {
-        color: #3b0764 !important;
-        font-weight: 600;
-    }
-
-    /* Texto descriptivo dentro de tarjetas */
-    [data-theme="light"] .card-text,
-    [data-theme="light"] .card p {
-        color: #1e1b4b !important;
-    }
-
-        /* Metadatos de tarjetas (lugar, inscritos, tipo) */
-        [data-theme="light"] .card p[style*="color: #888"],
-        [data-theme="light"] .card p[style*="color:#888"] {
-            color: #374151 !important;
-        }
-
-    /* Forzar color en textos con style inline */
-    [data-theme="light"] .card [style*="color: #ccc"],
-    [data-theme="light"] .card [style*="color:#ccc"],
-    [data-theme="light"] .card [style*="color: #888"],
-    [data-theme="light"] .card [style*="color:#888"] {
-        color: #374151 !important;
-    }
-
-    /* Fecha en esquina superior de tarjetas de eventos */
-    [data-theme="light"] .card small,
-    [data-theme="light"] small[style*="color: #888"] {
-        color: #374151 !important;
-    }
-
-    /* Tarjetas — fondo más oscuro y bordes bien definidos */
-    [data-theme="light"] .card {
-        background-color: #b8bec9 !important;
-        border: 1.5px solid #5b21b6 !important;
-        border-radius: 12px !important;
-        box-shadow: 0 2px 8px rgba(91, 33, 182, 0.15) !important;
-    }
-
-    /* Navbar */
-    [data-theme="light"] .navbar {
-        background-color: #b8bec9 !important;
-        border-bottom: 2px solid #5b21b6 !important;
-    }
-
-    /* Links de navbar */
-    [data-theme="light"] .nav-link {
-        color: #1a1a2e !important;
-    }
-
-        [data-theme="light"] .nav-link:hover {
-            color: #4c1d95 !important;
-        }
-
-    /* Tabla de usuarios */
-    [data-theme="light"] .table {
-        color: #1a1a2e !important;
-    }
-
-        [data-theme="light"] .table thead {
-            background-color: #5b21b6 !important;
-            color: #ffffff !important;
-        }
-
-        [data-theme="light"] .table tbody tr {
-            background-color: #c8cdd6 !important;
-            border-bottom: 1px solid #9ca3af !important;
-        }
-
-            [data-theme="light"] .table tbody tr:hover {
-                background-color: #b0b7c3 !important;
-            }
-
-        [data-theme="light"] .table td,
-        [data-theme="light"] .table th {
-            color: #1a1a2e !important;
-        }
-
-    /* Formularios y selects */
-    [data-theme="light"] .form-select,
-    [data-theme="light"] .form-control {
-        background-color: #b8bec9 !important;
-        color: #1a1a2e !important;
-        border-color: #5b21b6 !important;
-    }
-
-        [data-theme="light"] .form-select option {
-            background-color: #c8cdd6;
-            color: #1a1a2e;
-        }
-
-    [data-theme="light"] .form-label {
-        color: #4c1d95 !important;
-    }
-
-    /* Modal */
-    [data-theme="light"] .modal-content {
-        background-color: #c8cdd6 !important;
-        color: #1a1a2e !important;
-        border: 1px solid #5b21b6 !important;
-    }
-
-    [data-theme="light"] .modal-body,
-    [data-theme="light"] .modal-title {
-        color: #1a1a2e !important;
-    }
-
-    /* Dropdown perfil */
-    [data-theme="light"] .profile-dropdown .dropdown-menu {
-        background-color: #c8cdd6 !important;
-        border: 1px solid #5b21b6 !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-    }
-
-        [data-theme="light"] .profile-dropdown .dropdown-menu .profile-header h6 {
-            color: #4c1d95 !important;
-        }
-
-        [data-theme="light"] .profile-dropdown .dropdown-menu .profile-info p {
-            color: #1a1a2e !important;
-        }
-
-        [data-theme="light"] .profile-dropdown .dropdown-menu small {
-            color: #3d3d5c !important;
-        }
-
-    /* Chatbot */
-    [data-theme="light"] .chatbot-panel {
-        background-color: #c8cdd6 !important;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.25) !important;
-    }
-
-    [data-theme="light"] .chat-msg.bot {
-        background-color: #b8bec9 !important;
-        color: #1a1a2e !important;
-        border: 1px solid #9ca3af;
-    }
-
-    [data-theme="light"] .chatbot-input input {
-        background-color: #b8bec9 !important;
-        color: #1a1a2e !important;
-        border-color: #5b21b6 !important;
-    }
-
-    [data-theme="light"] .chatbot-messages {
-        background-color: #c8cdd6 !important;
-    }
-
-    /* Alertas */
-    [data-theme="light"] .alert-success {
-        background-color: #d1fae5 !important;
-        border-color: #059669 !important;
-        color: #065f46 !important;
-    }
-
-    [data-theme="light"] .alert-danger {
-        background-color: #fee2e2 !important;
-        border-color: #dc2626 !important;
-        color: #991b1b !important;
-    }
-
-    /* Gráficas del dashboard — fondo de tarjeta */
-    [data-theme="light"] .card canvas {
-        background-color: transparent !important;
-    }
-
-    /* Dashboard - textos de gráficas */
-    [data-theme="light"] .card h5[style],
-    [data-theme="light"] .card .card-body h5,
-    [data-theme="light"] .card .card-body p,
-    [data-theme="light"] .card .card-body span {
-        color: #1a1a2e !important;
-    }
-
-    /* Etiquetas y títulos de las gráficas Chart.js */
-    [data-theme="light"] canvas {
-        filter: none;
-    }
-
-    /* Tarjetas del dashboard con títulos de sección */
-    [data-theme="light"] .card-body {
-        color: #1a1a2e !important;
-    }
-
-    /* Corregir esquinas cortadas - el border-radius debe coincidir */
-    [data-theme="light"] .card {
-        border-radius: 12px !important;
-        overflow: hidden;
-        border: 1.5px solid #5b21b6 !important;
-    }
-
-    /* Botón Editar en modo claro */
-    [data-theme="light"] .btn-outline-light {
-        color: #1a1a2e !important;
-        border-color: #4c1d95 !important;
-        background-color: transparent !important;
-    }
-
-        [data-theme="light"] .btn-outline-light:hover {
-            background-color: #4c1d95 !important;
-            color: #ffffff !important;
-            border-color: #4c1d95 !important;
-        }
 
 /* ================================================================================= */
-/* ===== APLICACIÓN DE LAS VARIABLES EN COMPONENTES                            ===== */
+/* ===== 3. APLICACIÓN GLOBAL DE VARIABLES Y ESTILOS BASE                    ===== */
 /* ================================================================================= */
 
 body {
@@ -274,21 +87,474 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Forzamos a que las tarjetas muten de color dinámicamente según el tema seleccionado */
-.card {
-    background-color: var(--bg-tarjetas) !important;
-    border: 1px solid var(--borde-morado) !important;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* Clase utilitaria global para títulos, enlaces destacados o iconos con identidad morada */
 .text-purple-custom {
-    color: var(--morado-resaltado) !important;
+    color: var(--morado-resaltado);
     transition: color 0.3s ease;
 }
 
-/* Tabla de usuarios - fix modo oscuro */
-.table td,
-.table th {
-    color: var(--texto-blanco) !important;
+
+/* ================================================================================= */
+/* ===== 4. TARJETAS Y GLASSMORPHISM (UNIFICADO)                            ===== */
+/* ================================================================================= */
+
+/* --- Tarjeta estándar (Bootstrap .card) --- */
+.card {
+    background: linear-gradient(135deg, var(--card-bg-start), var(--card-bg-end)) !important;
+    border: 1px solid var(--card-border-color) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--card-shadow-default), 0 1px 0 rgba(255, 255, 255, 0.05) inset !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease !important;
+    overflow: hidden; /* Para respetar el border-radius */
+}
+
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--card-shadow-hover), var(--card-shadow-default), 0 1px 0 rgba(255, 255, 255, 0.08) inset !important;
+        z-index: 10;
+    }
+
+    /* --- Tarjeta de Eventos (específica) --- */
+    .card.evento-card {
+        background: linear-gradient(145deg, var(--evento-bg-start), var(--evento-bg-end)) !important;
+        border: 1px solid var(--evento-border) !important;
+        border-radius: 16px !important;
+        box-shadow: var(--card-shadow-default), 0 1px 0 rgba(255, 255, 255, 0.05) inset !important;
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.35s ease !important;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        z-index: 1;
+    }
+
+        /* Línea decorativa superior (efecto brillo) - común para todas las .evento-card */
+        .card.evento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        /* Línea morada a la izquierda (efecto de categorías) */
+        .card.evento-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #7c3aed, #a78bfa);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0 4px 4px 0;
+            z-index: 2;
+        }
+
+        .card.evento-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #7c3aed !important;
+            border-width: 2px !important;
+            box-shadow: var(--evento-shadow-hover), 0 8px 20px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.08) inset !important;
+            z-index: 10;
+        }
+
+            .card.evento-card:hover::before,
+            .card.evento-card:hover::after {
+                opacity: 1;
+            }
+
+/* Ajuste fino para el MODO CLARO en evento-card */
+[data-theme="light"] .card.evento-card:hover {
+    box-shadow: 0 20px 50px rgba(91, 33, 182, 0.25), 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    background: rgba(220, 225, 235, 0.98) !important;
+}
+
+
+/* ================================================================================= */
+/* ===== 5. NAVBAR MEJORADA (con glassmorphism en ambos temas)              ===== */
+/* ================================================================================= */
+
+/* --- TEMA OSCURO (por defecto) --- */
+.navbar {
+    background-color: #4f5a78 !important; /* Más claro que antes (#16213e) */
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    -moz-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3) !important;
+    border-bottom: 2px solid var(--borde-morado);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+    .navbar .nav-link {
+        color: var(--texto-blanco);
+        transition: color 0.2s ease;
+    }
+
+        .navbar .nav-link:hover {
+            color: var(--morado-resaltado);
+        }
+
+.navbar-brand {
+    color: var(--texto-blanco);
+    font-weight: 700;
+}
+
+/* --- TEMA CLARO (mejorado) --- */
+[data-theme="light"] .navbar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    -moz-backdrop-filter: blur(16px) !important;
+    border-bottom: 2px solid rgba(91, 33, 182, 0.25) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+    [data-theme="light"] .navbar .nav-link {
+        color: #1a1a2e !important;
+        font-weight: 500;
+    }
+
+        [data-theme="light"] .navbar .nav-link:hover {
+            color: #4c1d95 !important;
+        }
+
+[data-theme="light"] .navbar-brand {
+    color: #4c1d95 !important; /* MORADO como en modo oscuro */
+    font-weight: 700;
+}
+
+/* Dropdown dentro de la navbar (modo claro) */
+[data-theme="light"] .navbar .dropdown-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(91, 33, 182, 0.2) !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+[data-theme="light"] .navbar .dropdown-item {
+    color: #1a1a2e !important;
+}
+
+    [data-theme="light"] .navbar .dropdown-item:hover {
+        background: rgba(91, 33, 182, 0.1) !important;
+        color: #4c1d95 !important;
+    }
+
+/* Botón hamburguesa (toggler) modo claro */
+[data-theme="light"] .navbar-toggler {
+    border-color: rgba(91, 33, 182, 0.3) !important;
+}
+
+[data-theme="light"] .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(26, 26, 46, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Íconos de perfil en navbar (modo claro) */
+[data-theme="light"] .navbar .bi-person-circle,
+[data-theme="light"] .navbar .bi-person {
+    color: #1a1a2e !important;
+}
+
+
+/* ================================================================================= */
+/* ===== 6. BOTONES CON EFECTO MODERNO                                       ===== */
+/* ================================================================================= */
+
+[class^="btn-"]:not(.btn-outline-light):not(.btn-link) {
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+    [class^="btn-"]:not(.btn-outline-light):not(.btn-link):hover {
+        transform: translateY(-2px);
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--btn-primary-start), var(--btn-primary-end)) !important;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4) !important;
+}
+
+    .btn-primary:hover {
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6) !important;
+    }
+
+.btn-success {
+    background: linear-gradient(135deg, var(--btn-success-start), var(--btn-success-end)) !important;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3) !important;
+}
+
+    .btn-success:hover {
+        box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5) !important;
+    }
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--btn-danger-start), var(--btn-danger-end)) !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
+}
+
+    .btn-danger:hover {
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5) !important;
+    }
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--btn-warning-start), var(--btn-warning-end)) !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+}
+
+    .btn-warning:hover {
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+    }
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--btn-secondary-start), var(--btn-secondary-end)) !important;
+    box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3) !important;
+}
+
+    .btn-secondary:hover {
+        box-shadow: 0 6px 20px rgba(75, 85, 99, 0.5) !important;
+    }
+
+.btn-outline-light {
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+    .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        transform: translateY(-2px);
+    }
+
+/* Modo claro: botón Editar (outline-light) */
+[data-theme="light"] .btn-outline-light {
+    color: #1a1a2e !important;
+    border-color: #4c1d95 !important;
+}
+
+    [data-theme="light"] .btn-outline-light:hover {
+        background-color: #4c1d95 !important;
+        color: #ffffff !important;
+        border-color: #4c1d95 !important;
+    }
+
+
+/* ================================================================================= */
+/* ===== 7. FORMULARIOS Y TABLAS                                             ===== */
+/* ================================================================================= */
+
+.form-control,
+.form-select {
+    background-color: var(--bg-tarjetas);
+    color: var(--texto-blanco);
+    border: 1px solid var(--borde-morado);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease !important;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25), 0 4px 12px rgba(124, 58, 237, 0.1) !important;
+        transform: translateY(-1px);
+        border-color: var(--morado-resaltado);
+    }
+
+.form-label {
+    color: var(--morado-resaltado);
+}
+
+/* Tablas */
+.table {
+    color: var(--texto-blanco);
+}
+
+    .table thead {
+        background-color: var(--borde-morado);
+        color: var(--texto-blanco);
+    }
+
+    .table tbody tr {
+        background-color: var(--bg-tarjetas);
+        border-bottom: 1px solid var(--texto-mutado);
+        transition: all 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            background-color: rgba(124, 58, 237, 0.15);
+            transform: translateX(4px);
+            box-shadow: -4px 0 0 var(--borde-morado);
+        }
+
+    .table td,
+    .table th {
+        color: var(--texto-blanco) !important;
+    }
+
+/* Modo claro para tablas */
+[data-theme="light"] .table {
+    color: #1a1a2e !important;
+}
+
+    [data-theme="light"] .table thead {
+        background-color: #5b21b6 !important;
+        color: #ffffff !important;
+    }
+
+    [data-theme="light"] .table tbody tr {
+        background-color: #c8cdd6 !important;
+        border-bottom: 1px solid #9ca3af !important;
+    }
+
+        [data-theme="light"] .table tbody tr:hover {
+            background-color: #b0b7c3 !important;
+        }
+
+    [data-theme="light"] .table td,
+    [data-theme="light"] .table th {
+        color: #1a1a2e !important;
+    }
+
+
+/* ================================================================================= */
+/* ===== 8. CORRECCIONES ESPECÍFICAS PARA MODO CLARO                        ===== */
+/* ================================================================================= */
+
+/* Títulos */
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4 {
+    color: #4c1d95;
+}
+
+/* Texto de tarjetas */
+[data-theme="light"] .card-title,
+[data-theme="light"] .card h5 {
+    color: #3b0764 !important;
+    font-weight: 600;
+}
+
+[data-theme="light"] .card-text,
+[data-theme="light"] .card p {
+    color: #1e1b4b !important;
+}
+
+[data-theme="light"] .card small,
+[data-theme="light"] .card .text-muted,
+[data-theme="light"] .card .card-text small {
+    color: #374151 !important;
+}
+
+/* Formularios modo claro */
+[data-theme="light"] .form-control,
+[data-theme="light"] .form-select {
+    background-color: #b8bec9 !important;
+    color: #1a1a2e !important;
+    border-color: #5b21b6 !important;
+}
+
+    [data-theme="light"] .form-select option {
+        background-color: #c8cdd6;
+        color: #1a1a2e;
+    }
+
+[data-theme="light"] .form-label {
+    color: #4c1d95;
+}
+
+/* Modales modo claro */
+[data-theme="light"] .modal-content {
+    background-color: #c8cdd6 !important;
+    color: #1a1a2e !important;
+    border: 1px solid #5b21b6 !important;
+}
+
+[data-theme="light"] .modal-body,
+[data-theme="light"] .modal-title {
+    color: #1a1a2e !important;
+}
+
+/* Dropdown de perfil (fuera de navbar) */
+[data-theme="light"] .profile-dropdown .dropdown-menu {
+    background-color: #c8cdd6 !important;
+    border: 1px solid #5b21b6 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+    [data-theme="light"] .profile-dropdown .dropdown-menu .profile-header h6 {
+        color: #4c1d95 !important;
+    }
+
+    [data-theme="light"] .profile-dropdown .dropdown-menu .profile-info p {
+        color: #1a1a2e !important;
+    }
+
+    [data-theme="light"] .profile-dropdown .dropdown-menu small {
+        color: #3d3d5c !important;
+    }
+
+/* Chatbot modo claro */
+[data-theme="light"] .chatbot-panel {
+    background-color: #c8cdd6 !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .chat-msg.bot {
+    background-color: #b8bec9 !important;
+    color: #1a1a2e !important;
+    border: 1px solid #9ca3af;
+}
+
+[data-theme="light"] .chatbot-input input {
+    background-color: #b8bec9 !important;
+    color: #1a1a2e !important;
+    border-color: #5b21b6 !important;
+}
+
+[data-theme="light"] .chatbot-messages {
+    background-color: #c8cdd6 !important;
+}
+
+/* Alertas modo claro */
+[data-theme="light"] .alert-success {
+    background-color: #d1fae5 !important;
+    border-color: #059669 !important;
+    color: #065f46 !important;
+}
+
+[data-theme="light"] .alert-danger {
+    background-color: #fee2e2 !important;
+    border-color: #dc2626 !important;
+    color: #991b1b !important;
+}
+
+
+/* ================================================================================= */
+/* ===== 9. UTILIDADES Y MICROINTERACCIONES                                 ===== */
+/* ================================================================================= */
+
+.badge {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Alertas con glass */
+.alert {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -moz-backdrop-filter: blur(8px);
+    border-radius: 12px !important;
+    border-left: 4px solid !important;
+}
+
+.alert-success {
+    border-left-color: #059669 !important;
+}
+
+.alert-danger {
+    border-left-color: #dc2626 !important;
 }
