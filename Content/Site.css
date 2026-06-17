@@ -558,3 +558,61 @@ body {
 .alert-danger {
     border-left-color: #dc2626 !important;
 }
+
+/* Fix z-index dropdown perfil sobre tarjetas */
+.navbar {
+    z-index: 1050 !important;
+    position: relative;
+}
+
+.profile-dropdown {
+    position: relative;
+    z-index: 1060 !important;
+}
+
+    .profile-dropdown .dropdown-menu {
+        z-index: 1070 !important;
+    }
+
+.card,
+.evento-card {
+    z-index: 1;
+    position: relative;
+}
+
+/* ================================================================================= */
+/* ===== 10. CORRECCIONES PARA CLASES BOOTSTRAP EN MODO CLARO              ===== */
+/* ================================================================================= */
+
+/* Clases de Bootstrap que usan color blanco fijo */
+[data-theme="light"] .text-white {
+    color: var(--texto-blanco) !important; /* Ahora usa #1a1a2e en modo claro */
+}
+
+[data-theme="light"] .text-white-50 {
+    color: var(--texto-mutado) !important; /* Ahora usa #3d3d5c en modo claro */
+}
+
+/* ===== NAVBAR A ANCHO COMPLETO ===== */
+.navbar {
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.navbar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px; /* Espaciado interno, NO limita ancho */
+    width: 100%;
+    max-width: none;
+}
+
+/* En pantallas grandes, agrega padding lateral a navbar-inner si lo deseas */
+@media (min-width: 1200px) {
+    .navbar-inner {
+        padding: 12px 40px;
+    }
+}
