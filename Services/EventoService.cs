@@ -19,7 +19,7 @@ namespace EventPlusWeb1.Services
                 {
                     string query = @"SELECT e.idEvento, e.Usuario_idUsuario, e.Categoria_idCategoria, e.NombreEvento, 
                                      e.DescripcionEvento, e.LugarEvento, e.FechaInicioEvento, e.FechaFinEvento, 
-                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento,
+                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento, e.MaxIntegrantesGrupo,
                                      c.NombreCategoria, u.Nombre AS NombreCreador,
                                      (SELECT COUNT(*) FROM Inscripcion i WHERE i.Evento_idEvento = e.idEvento AND i.EstadoInscripcion = 'Activa') AS Inscritos
                                      FROM Evento e
@@ -53,7 +53,7 @@ namespace EventPlusWeb1.Services
                 {
                     string query = @"SELECT e.idEvento, e.Usuario_idUsuario, e.Categoria_idCategoria, e.NombreEvento, 
                                      e.DescripcionEvento, e.LugarEvento, e.FechaInicioEvento, e.FechaFinEvento, 
-                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento,
+                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento, e.MaxIntegrantesGrupo,
                                      c.NombreCategoria, u.Nombre AS NombreCreador,
                                      (SELECT COUNT(*) FROM Inscripcion i WHERE i.Evento_idEvento = e.idEvento AND i.EstadoInscripcion = 'Activa') AS Inscritos
                                      FROM Evento e
@@ -87,7 +87,7 @@ namespace EventPlusWeb1.Services
                 {
                     string query = @"SELECT e.idEvento, e.Usuario_idUsuario, e.Categoria_idCategoria, e.NombreEvento, 
                                      e.DescripcionEvento, e.LugarEvento, e.FechaInicioEvento, e.FechaFinEvento, 
-                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento,
+                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento, e.MaxIntegrantesGrupo,
                                      c.NombreCategoria, u.Nombre AS NombreCreador,
                                      (SELECT COUNT(*) FROM Inscripcion i WHERE i.Evento_idEvento = e.idEvento AND i.EstadoInscripcion = 'Activa') AS Inscritos
                                      FROM Evento e
@@ -121,10 +121,10 @@ namespace EventPlusWeb1.Services
                 {
                     string query = @"INSERT INTO Evento (Usuario_idUsuario, Categoria_idCategoria, NombreEvento, DescripcionEvento, 
                                      LugarEvento, FechaInicioEvento, FechaFinEvento, FechaInicioInscripcion, FechaFinInscripcion, 
-                                     CupoMaximo, TipoEvento, EstadoEvento) 
+                                     CupoMaximo, TipoEvento, EstadoEvento, MaxIntegrantesGrupo) 
                                      VALUES (@Usuario_idUsuario, @Categoria_idCategoria, @NombreEvento, @DescripcionEvento, 
                                      @LugarEvento, @FechaInicioEvento, @FechaFinEvento, @FechaInicioInscripcion, @FechaFinInscripcion, 
-                                     @CupoMaximo, @TipoEvento, @EstadoEvento)";
+                                     @CupoMaximo, @TipoEvento, @EstadoEvento, @MaxIntegrantesGrupo)";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.Add("@Usuario_idUsuario", SqlDbType.Int).Value = evento.Usuario_idUsuario;
                     cmd.Parameters.Add("@Categoria_idCategoria", SqlDbType.Int).Value = evento.Categoria_idCategoria;
@@ -138,6 +138,7 @@ namespace EventPlusWeb1.Services
                     cmd.Parameters.Add("@CupoMaximo", SqlDbType.Int).Value = evento.CupoMaximo;
                     cmd.Parameters.Add("@TipoEvento", SqlDbType.VarChar, 20).Value = evento.TipoEvento;
                     cmd.Parameters.Add("@EstadoEvento", SqlDbType.VarChar, 20).Value = evento.EstadoEvento;
+                    cmd.Parameters.Add("@MaxIntegrantesGrupo", SqlDbType.Int).Value = evento.TipoEvento == "Grupal" ? (object)evento.MaxIntegrantesGrupo ?? DBNull.Value : DBNull.Value;
                     conn.Open();
                     int resultado = cmd.ExecuteNonQuery();
                     return resultado > 0;
@@ -165,7 +166,7 @@ namespace EventPlusWeb1.Services
                                      DescripcionEvento = @DescripcionEvento, LugarEvento = @LugarEvento, 
                                      FechaInicioEvento = @FechaInicioEvento, FechaFinEvento = @FechaFinEvento, 
                                      FechaInicioInscripcion = @FechaInicioInscripcion, FechaFinInscripcion = @FechaFinInscripcion, 
-                                     CupoMaximo = @CupoMaximo, TipoEvento = @TipoEvento, EstadoEvento = @EstadoEvento 
+                                     CupoMaximo = @CupoMaximo, TipoEvento = @TipoEvento, EstadoEvento = @EstadoEvento, MaxIntegrantesGrupo = @MaxIntegrantesGrupo 
                                      WHERE idEvento = @Id";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.Add("@Categoria_idCategoria", SqlDbType.Int).Value = evento.Categoria_idCategoria;
@@ -179,6 +180,7 @@ namespace EventPlusWeb1.Services
                     cmd.Parameters.Add("@CupoMaximo", SqlDbType.Int).Value = evento.CupoMaximo;
                     cmd.Parameters.Add("@TipoEvento", SqlDbType.VarChar, 20).Value = evento.TipoEvento;
                     cmd.Parameters.Add("@EstadoEvento", SqlDbType.VarChar, 20).Value = evento.EstadoEvento;
+                    cmd.Parameters.Add("@MaxIntegrantesGrupo", SqlDbType.Int).Value = evento.TipoEvento == "Grupal" ? (object)evento.MaxIntegrantesGrupo ?? DBNull.Value : DBNull.Value;
                     cmd.Parameters.Add("@Id", SqlDbType.Int).Value = evento.IdEvento;
                     conn.Open();
                     int resultado = cmd.ExecuteNonQuery();
@@ -244,7 +246,7 @@ namespace EventPlusWeb1.Services
                 {
                     string query = @"SELECT e.idEvento, e.Usuario_idUsuario, e.Categoria_idCategoria, e.NombreEvento, 
                                      e.DescripcionEvento, e.LugarEvento, e.FechaInicioEvento, e.FechaFinEvento, 
-                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento,
+                                     e.FechaInicioInscripcion, e.FechaFinInscripcion, e.CupoMaximo, e.TipoEvento, e.EstadoEvento, e.MaxIntegrantesGrupo,
                                      c.NombreCategoria, u.Nombre AS NombreCreador,
                                      (SELECT COUNT(*) FROM Inscripcion i WHERE i.Evento_idEvento = e.idEvento AND i.EstadoInscripcion = 'Activa') AS Inscritos
                                      FROM Evento e
@@ -290,6 +292,7 @@ namespace EventPlusWeb1.Services
             evento.NombreCategoria = reader["NombreCategoria"].ToString();
             evento.NombreCreador = reader["NombreCreador"].ToString();
             evento.Inscritos = Convert.ToInt32(reader["Inscritos"]);
+            evento.MaxIntegrantesGrupo = reader["MaxIntegrantesGrupo"] != DBNull.Value ? Convert.ToInt32(reader["MaxIntegrantesGrupo"]) : (int?)null;
             return evento;
         }
     }

@@ -125,6 +125,22 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
+            // Validaciones de MaxIntegrantesGrupo para eventos grupales
+            if (evento.TipoEvento != "Grupal")
+            {
+                evento.MaxIntegrantesGrupo = null;
+            }
+            else if (evento.TipoEvento == "Grupal" && (!evento.MaxIntegrantesGrupo.HasValue || evento.MaxIntegrantesGrupo.Value <= 0))
+            {
+                ModelState.AddModelError("MaxIntegrantesGrupo", "Debes indicar el número de integrantes por grupo.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
+                return View(evento);
+            }
+
             // Validar fechas
             DateTime ahora = DateTimeHelper.AhoraEnColombia();
 
@@ -197,6 +213,22 @@ namespace EventPlusWeb1.Controllers
         {
             if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Admin")
                 return RedirectToAction("Index");
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
+                return View(evento);
+            }
+
+            // Validaciones de MaxIntegrantesGrupo para eventos grupales
+            if (evento.TipoEvento != "Grupal")
+            {
+                evento.MaxIntegrantesGrupo = null;
+            }
+            else if (evento.TipoEvento == "Grupal" && (!evento.MaxIntegrantesGrupo.HasValue || evento.MaxIntegrantesGrupo.Value <= 0))
+            {
+                ModelState.AddModelError("MaxIntegrantesGrupo", "Debes indicar el número de integrantes por grupo.");
+            }
 
             if (!ModelState.IsValid)
             {

@@ -4,11 +4,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using EventPlusWeb1.Models.Entities;
+using EventPlusWeb1.Models;
 
 namespace EventPlusWeb1.Services
 {
     public class InscripcionService
     {
+        public string UltimoError { get; private set; }
         public List<Inscripcion> ObtenerTodas()
         {
             List<Inscripcion> inscripciones = new List<Inscripcion>();
@@ -258,6 +260,7 @@ namespace EventPlusWeb1.Services
             }
         }
 
+        // R3: indica si el aprendiz ya tiene una inscripcion Activa en el evento.
         public bool YaEstaInscrito(int aprendizId, int eventoId)
         {
             try
@@ -286,6 +289,123 @@ namespace EventPlusWeb1.Services
                 Trace.TraceError("[InscripcionService.YaEstaInscrito] Error inesperado: {0}", ex.Message);
                 return false;
             }
+        }
+
+        // Alias semantico (R3) usado por la funcionalidad de grupos. Reutiliza YaEstaInscrito.
+        public bool YaInscritoEnEvento(int aprendizId, int eventoId)
+        {
+            return YaEstaInscrito(aprendizId, eventoId);
+        }
+
+
+
+        public ResultadoInscripcion InscribirGrupal(int aprendizId, int eventoId, string codigoGrupo)
+        {
+            ResultadoInscripcion resultado = new ResultadoInscripcion();
+            try
+            {
+                // R4: Si el aprendiz ya está inscrito en el evento (sea individual o grupal), devuelve error.
+                if (YaInscritoEnEvento(aprendizId, eventoId))
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "Ya estás inscrito en este evento.";
+                    return resultado;
+                }
+
+                GrupoService grupoService = new GrupoService();
+                Grupo grupo = grupoService.ObtenerPorCodigo(eventoId, codigoGrupo);
+
+                // R5: Si el código de grupo no existe para el evento, devuelve error.
+                if (grupo == null)
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "El código de grupo no existe para este evento.";
+                    return resultado;
+                }
+
+                // R6: Si el grupo ya está lleno (MaxIntegrantesGrupo), devuelve error.
+                EventoService eventoService = new EventoService();
+                Evento evento = eventoService.ObtenerPorId(eventoId);
+
+                if (evento != null && evento.MaxIntegrantesGrupo.HasValue)
+                {
+                    int integrantesActuales = grupoService.ContarIntegrantes(grupo.IdGrupo);
+                    if (integrantesActuales >= evento.MaxIntegrantesGrupo.Value)
+                    {
+                        resultado.Exito = false;
+                        resultado.Mensaje = "El grupo ha alcanzado su número máximo de integrantes.";
+                        return resultado;
+                    }
+                }
+
+                // R7: Si el aprendiz es el líder del grupo, devuelve error.
+                if (grupo.LiderAprendiz_idAprendiz.HasValue && grupo.LiderAprendiz_idAprendiz.Value == aprendizId)
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "Ya eres el líder de este grupo.";
+                    return resultado;
+                }
+
+                // R8: Si todo ok, crea la inscripción (reutiliza CrearGrupal) y devuelve Exito=true, "Te uniste al grupo " + NombreGrupo.
+                if (CrearGrupal(aprendizId, eventoId, grupo.IdGrupo))
+                {
+                    resultado.Exito = true;
+                    resultado.Mensaje = "Te uniste al grupo \"" + grupo.NombreGrupo + "\".";
+                }
+                else
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "Error al unirse al grupo. Inténtalo de nuevo.";
+                    if (!string.IsNullOrEmpty(UltimoError))
+                    {
+                        resultado.Mensaje += " " + UltimoError;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[InscripcionService.InscribirGrupal] Error inesperado: {0}", ex.Message);
+                resultado.Exito = false;
+                resultado.Mensaje = "Error inesperado al intentar unirse al grupo.";
+            }
+            return resultado;
+        }
+
+        public ResultadoInscripcion InscribirIndividual(int aprendizId, int eventoId)
+        {
+            ResultadoInscripcion resultado = new ResultadoInscripcion();
+            try
+            {
+                // R9: si ya inscrito -> error; si no, CrearIndividual y Exito.
+                if (YaInscritoEnEvento(aprendizId, eventoId))
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "Ya estás inscrito en este evento.";
+                    return resultado;
+                }
+
+                if (CrearIndividual(aprendizId, eventoId))
+                {
+                    resultado.Exito = true;
+                    resultado.Mensaje = "Inscripción individual exitosa.";
+                }
+                else
+                {
+                    resultado.Exito = false;
+                    resultado.Mensaje = "Error al realizar la inscripción individual. Inténtalo de nuevo.";
+                    if (!string.IsNullOrEmpty(UltimoError))
+                    {
+                        resultado.Mensaje += " " + UltimoError;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[InscripcionService.InscribirIndividual] Error inesperado: {0}", ex.Message);
+                resultado.Exito = false;
+                resultado.Mensaje = "Error inesperado al intentar la inscripción individual.";
+            }
+            return resultado;
         }
 
         public int ContarInscritosPorEvento(int eventoId)
