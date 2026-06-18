@@ -1,0 +1,118 @@
+﻿@model EventPlusWeb1.Models.Entities.Evento
+@{
+    ViewBag.Title = "Crear Grupo - " + Model.NombreEvento;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white"><i class="bi bi-plus-circle"></i> Crear un nuevo grupo</h2>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i>
+            @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Tarjeta del evento -->
+            <div class="card p-4 mb-4">
+                <h5 class="text-white mb-3"><i class="bi bi-calendar-event"></i> Información del evento</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <span class="text-white-50">Evento:</span>
+                            <strong class="text-white">@Model.NombreEvento</strong>
+                        </p>
+                        <p class="mb-2">
+                            <span class="text-white-50">Categoría:</span>
+                            <strong class="text-white">@Model.NombreCategoria</strong>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <span class="text-white-50">Máximo de integrantes por grupo:</span>
+                            <strong class="text-white">@Model.MaxIntegrantesGrupo integrantes</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario crear grupo -->
+            <div class="card p-4 mb-4">
+                <h5 class="text-white mb-4"><i class="bi bi-pencil-square"></i> Detalles del grupo</h5>
+
+                <form action="@Url.Action("CrearGrupo", "Eventos")" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="eventoId" value="@Model.IdEvento" />
+
+                    <div class="mb-4">
+                        <label for="nombreGrupo" class="form-label">
+                            <i class="bi bi-person-badge"></i> Nombre del grupo
+                        </label>
+                        <input 
+                            type="text" 
+                            id="nombreGrupo" 
+                            name="nombreGrupo" 
+                            class="form-control form-control-lg" 
+                            placeholder="Ej: Los Desarrolladores, Equipo A, etc." 
+                            required 
+                            maxlength="100"
+                            autofocus />
+                        <small class="form-text text-white-50 d-block mt-2">
+                            Elige un nombre descriptivo para tu grupo. Máximo 100 caracteres.
+                        </small>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Crear grupo
+                        </button>
+                        <a href="@Url.Action("Detalle", "Eventos", new { id = Model.IdEvento })" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sidebar: información adicional -->
+        <div class="col-lg-4">
+            <div class="card p-4 mb-4 border-info">
+                <h6 class="card-title text-white mb-3">
+                    <i class="bi bi-info-circle"></i> ¿Cómo funciona?
+                </h6>
+                <ol class="text-white-50 small">
+                    <li>Ingresa el nombre de tu grupo</li>
+                    <li>Haz clic en "Crear grupo"</li>
+                    <li>Recibirás un código único (ej: GRP-7K2X)</li>
+                    <li>Comparte el código con tus compañeros</li>
+                    <li>Ellos podrán unirse usando el código</li>
+                </ol>
+            </div>
+
+            <div class="card p-4 border-warning">
+                <h6 class="card-title text-white mb-3">
+                    <i class="bi bi-exclamation-triangle"></i> Importante
+                </h6>
+                <ul class="list-unstyled text-white-50 small mb-0">
+                    <li><i class="bi bi-check"></i> Serás el líder del grupo</li>
+                    <li><i class="bi bi-check"></i> El grupo tendrá máximo @Model.MaxIntegrantesGrupo integrantes</li>
+                    <li><i class="bi bi-check"></i> Guarda el código que recibirás</li>
+                    <li><i class="bi bi-check"></i> Solo puedes pertenecer a un grupo por evento</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Eventos")" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left"></i> Volver a eventos
+        </a>
+    </div>
+</div>

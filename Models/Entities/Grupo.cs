@@ -19,5 +19,16 @@ namespace EventPlusWeb1.Models.Entities
         // Propiedad extra para mostrar en vistas (JOIN con Evento)
         [Display(Name = "Evento")]
         public string NombreEvento { get; set; }
+
+        public string CodigoGrupo { get; set; }
+        public int? LiderAprendiz_idAprendiz { get; set; }
+
+        public DateTime? FechaCreacion { get; set; }
+        // Propiedades auxiliares (no mapeadas a columnas) útiles para las vistas:
+        public int IntegrantesActuales { get; set; } 
+        // conteo de inscripciones activas
+        public string NombreLider { get; set; }
+        // nombre del aprendiz líder
+        public bool TieneCupo { get; set; }
     }
 }

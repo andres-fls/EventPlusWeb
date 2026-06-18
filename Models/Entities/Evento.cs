@@ -63,6 +63,9 @@ namespace EventPlusWeb1.Models.Entities
         [Display(Name = "Estado")]
         public string EstadoEvento { get; set; }
 
+        // Máximo de integrantes por grupo (solo eventos Grupales). Nullable.
+        public int? MaxIntegrantesGrupo { get; set; }
+
         // Propiedades extra para mostrar en vistas (JOINs)
         [Display(Name = "Categoría")]
         public string NombreCategoria { get; set; }

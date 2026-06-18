@@ -10,422 +10,31 @@
 
     @Styles.Render("~/Content/css")
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        /* ===== APLICACIÓN DEL SISTEMA DE TEMAS DINÁMICOS ===== */
-        body {
-            background-color: var(--bg-principal);
-            color: var(--texto-blanco);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+    /* Forzamos el cambio de variables directamente en el HTML */
+    :root {
+        --bg-principal: #1e1e24 !important; /* Gris oscuro/antracita más suave (Modo Oscuro) */
+    }
 
-        .navbar {
-            background-color: var(--bg-tarjetas) !important; /* Muta con el tema */
-            border-bottom: 2px solid var(--borde-morado);
-            padding: 12px 0;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
+    [data-theme="light"] {
+        --bg-principal: #eef2f7 !important; /* Gris claro limpio y moderno (Modo Claro) */
+    }
 
-        .navbar-brand {
-            color: var(--morado-resaltado) !important;
-            font-weight: bold;
-            font-size: 1.4rem;
-        }
-
-        .navbar-brand:hover {
-            color: var(--borde-morado) !important;
-        }
-
-        .nav-link {
-            color: var(--texto-blanco) !important; /* Cambia dinámicamente */
-            margin: 0 5px;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: var(--morado-resaltado) !important;
-        }
-
-        .nav-link.active {
-            color: var(--borde-morado) !important;
-            font-weight: bold;
-        }
-
-        .container-main {
-            padding: 30px 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* ===== BOTONES (IDENTIDAD FIJA) ===== */
-        .btn-primary {
-            background-color: #7c3aed;
-            border-color: #7c3aed;
-        }
-
-        .btn-primary:hover {
-            background-color: #6d28d9;
-            border-color: #6d28d9;
-        }
-
-        .btn-danger {
-            background-color: #dc2626;
-            border-color: #dc2626;
-        }
-
-        .btn-success {
-            background-color: #059669;
-            border-color: #059669;
-        }
-
-        /* ===== COMPONENTES QUE MUTAN ===== */
-        .card {
-            background-color: var(--bg-tarjetas) !important;
-            border: 1px solid var(--borde-morado) !important;
-            border-radius: 12px;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-
-        .table {
-            color: var(--texto-blanco);
-        }
-
-        .table thead {
-            background-color: var(--borde-morado);
-            color: white;
-        }
-
-        .table tbody tr {
-            background-color: var(--bg-tarjetas);
-            border-bottom: 1px solid var(--texto-mutado);
-        }
-
-        .form-control, .form-select {
-            background-color: var(--bg-tarjetas);
-            border: 1px solid var(--texto-mutado);
-            color: var(--texto-blanco);
-        }
-
-        .form-control:focus, .form-select:focus {
-            background-color: var(--bg-tarjetas);
-            border-color: var(--borde-morado);
-            color: var(--texto-blanco);
-            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
-        }
-
-        .form-label {
-            color: var(--morado-resaltado);
-            font-weight: 500;
-        }
-
-        .alert-danger {
-            background-color: #4a1515;
-            border-color: #dc2626;
-            color: #fca5a5;
-        }
-
-        .alert-success {
-            background-color: #0f3d2e;
-            border-color: #059669;
-            color: #6ee7b7;
-        }
-
-        .user-info {
-            color: var(--morado-resaltado);
-            font-size: 0.9rem;
-        }
-
-        /* ===== DROPDOWN PERFIL ===== */
-        .profile-dropdown .dropdown-menu {
-            background-color: var(--bg-tarjetas);
-            border: 1px solid var(--borde-morado);
-            border-radius: 12px;
-            padding: 15px;
-            min-width: 280px;
-        }
-
-        .profile-dropdown .dropdown-menu .profile-header {
-            text-align: center;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--texto-mutado);
-            margin-bottom: 12px;
-        }
-
-        .profile-dropdown .dropdown-menu .profile-header i {
-            font-size: 3rem;
-            color: var(--borde-morado);
-        }
-
-        .profile-dropdown .dropdown-menu .profile-header h6 {
-            color: var(--morado-resaltado);
-            margin-top: 8px;
-            margin-bottom: 2px;
-        }
-
-        .profile-dropdown .dropdown-menu .profile-header small {
-            color: var(--texto-mutado);
-        }
-
-        .profile-dropdown .dropdown-menu .profile-info p {
-            color: var(--texto-blanco);
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-        }
-
-        .profile-dropdown .dropdown-menu .profile-info p i {
-            color: var(--borde-morado);
-            width: 20px;
-        }
-
-        /* ===== CHATBOT FLOTANTE ===== */
-        .chatbot-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #7c3aed, #a78bfa);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-            z-index: 9999;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .chatbot-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
-        }
-
-        .chatbot-panel {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            width: 370px;
-            height: 500px;
-            background-color: var(--bg-tarjetas);
-            border: 1px solid var(--borde-morado);
-            border-radius: 16px;
-            display: none;
-            flex-direction: column;
-            z-index: 9999;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-        }
-
-        .chatbot-panel.active {
-            display: flex;
-        }
-
-        .chatbot-header {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            padding: 15px;
-            color: white;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chatbot-header button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        .chatbot-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .chatbot-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chatbot-messages::-webkit-scrollbar-thumb {
-            background: var(--borde-morado);
-            border-radius: 3px;
-        }
-
-        .chat-msg {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .chat-msg.user {
-            align-self: flex-end;
-            background-color: #7c3aed;
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-msg.bot {
-            align-self: flex-start;
-            background-color: var(--bg-principal);
-            color: var(--texto-blanco);
-            border-bottom-left-radius: 4px;
-        }
-
-        .chatbot-input {
-            display: flex;
-            padding: 12px;
-            border-top: 1px solid var(--texto-mutado);
-            gap: 8px;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            min-width: 0;
-            width: 100%;
-            max-width: none;
-            background-color: var(--bg-principal);
-            border: 1px solid var(--texto-mutado);
-            color: var(--texto-blanco);
-            border-radius: 8px;
-            padding: 10px 12px;
-            outline: none;
-        }
-
-        .chatbot-input input:focus {
-            border-color: var(--borde-morado);
-        }
-
-        .chatbot-input button {
-            background-color: #7c3aed;
-            border: none;
-            color: white;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            min-width: 46px;
-        }
-
-        .chatbot-input button:hover {
-            background-color: #6d28d9;
-        }
-
-        .chatbot-input button:disabled {
-            cursor: not-allowed;
-            opacity: 0.65;
-        }
-
-        .typing-indicator {
-            display: none;
-            align-self: flex-start;
-            padding: 10px 14px;
-            background-color: var(--bg-principal);
-            border-radius: 12px;
-            font-size: 0.85rem;
-            color: var(--morado-resaltado);
-        }
-
-        /* ===== CHATBOT RESPONSIVE (MÓVILES Y TABLETAS) ===== */
-        @@media (max-width: 768px) {
-            .chatbot-btn {
-                bottom: 15px;
-                right: 15px;
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-            }
-
-            .chatbot-panel {
-                bottom: 80px;
-                right: 15px;
-                left: 15px;
-                width: calc(100% - 30px);
-                height: 65vh;
-                max-height: 450px;
-                border-radius: 12px;
-            }
-
-            .chatbot-header {
-                padding: 12px;
-                font-size: 0.95rem;
-            }
-
-            .chatbot-messages {
-                padding: 10px;
-                gap: 8px;
-            }
-
-            .chat-msg {
-                max-width: 85%;
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-
-            .chatbot-input {
-                padding: 10px;
-                gap: 6px;
-            }
-
-            .chatbot-input input {
-                padding: 8px 10px;
-                font-size: 0.9rem;
-            }
-
-            .chatbot-input button {
-                padding: 8px 12px;
-            }
-        }
-        /* Ajustes específicos de contraste para el modo claro */
-        small, .text-muted, .profile-dropdown .dropdown-menu .profile-header small {
-            color: var(--texto-mutado) !important;
-        }
-
-        /* Asegura que los textos dentro de las tarjetas de KPI tengan buena lectura */
-        .card p, .card span, .card h3 {
-            color: var(--texto-blanco);
-        }
-        /* Refuerzo para asegurar el contraste de textos en Modo Claro */
-        [data-theme="light"] .card,
-        [data-theme="light"] .card-body,
-        [data-theme="light"] .table tbody tr {
-            background-color: var(--bg-tarjetas) !important;
-        }
-
-        [data-theme="light"] h3,
-        [data-theme="light"] h6,
-        [data-theme="light"] span,
-        [data-theme="light"] p,
-        [data-theme="light"] small,
-        [data-theme="light"] .text-muted {
-            color: var(--texto-blanco) !important;
-        }
-
-        [data-theme="light"] .nav-link {
-            color: var(--texto-blanco) !important;
-        }
-
-            [data-theme="light"] .nav-link:hover {
-                color: var(--morado-resaltado) !important;
-            }
-    </style>
+    /* Aplicamos el fondo tanto a html como a body para asegurar que cambie */
+    html, body {
+        background-color: var(--bg-principal) !important;
+    }
+</style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
+        <div class="navbar-inner">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                 <i class="bi bi-calendar-event"></i> EventPlus
             </a>
@@ -435,7 +44,7 @@
                     <i id="themeIcon" class="bi bi-moon-stars-fill"></i>
                 </button>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #7c3aed;">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
@@ -457,9 +66,6 @@
                                     <i class="bi bi-file-earmark-pdf"></i> Reportes
                                 </a>
                             </li>
-                        }
-                        @if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Admin")
-                        {
                             <li class="nav-item">
                                 <a class="nav-link" href="@Url.Action("Index", "Usuarios")"><i class="bi bi-people"></i> Usuarios</a>
                             </li>
@@ -509,15 +115,15 @@
         <div class="chatbot-panel" id="chatbotPanel">
             <div class="chatbot-header">
                 <span><i class="bi bi-robot"></i> EventBot</span>
-                <button id="chatbotClose"><i class="bi bi-x-lg"></i></button>
+                <button id="chatbotClose" type="button" aria-label="Cerrar chatbot"><i class="bi bi-x-lg"></i></button>
             </div>
             <div class="chatbot-messages" id="chatbotMessages">
                 <div class="chat-msg bot">¡Hola! Soy EventBot, tu asistente de EventPlus. ¿En qué puedo ayudarte?</div>
             </div>
             <div class="typing-indicator" id="typingIndicator">EventBot está escribiendo...</div>
             <div class="chatbot-input">
-                <input type="text" id="chatbotInput" placeholder="Escribe tu mensaje..." />
-                <button id="chatbotSend"><i class="bi bi-send"></i></button>
+                <input type="text" id="chatbotInput" placeholder="Escribe tu mensaje..." aria-label="Mensaje para EventBot" />
+                <button id="chatbotSend" type="button" aria-label="Enviar mensaje"><i class="bi bi-send"></i></button>
             </div>
         </div>
     }
@@ -531,40 +137,41 @@
             const themeIcon = document.getElementById('themeIcon');
             const htmlElement = document.documentElement;
 
-            // Leer preferencia o asignar Modo Oscuro (removiendo atributo) por defecto
+            // Leer preferencia guardada o asignar Modo Oscuro por defecto
             const temaGuardado = localStorage.getItem('theme') || 'dark';
 
-            if (temaGuardado === 'light') {
-                htmlElement.setAttribute('data-theme', 'light');
-                if (themeIcon) themeIcon.className = 'bi bi-sun-fill';
-            } else {
-                htmlElement.removeAttribute('data-theme');
-                if (themeIcon) themeIcon.className = 'bi bi-moon-stars-fill';
+            function aplicarTema(tema) {
+                if (tema === 'light') {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    if (themeIcon) themeIcon.className = 'bi bi-sun-fill';
+                } else {
+                    htmlElement.removeAttribute('data-theme');
+                    if (themeIcon) themeIcon.className = 'bi bi-moon-stars-fill';
+                }
             }
 
+            // Aplicar tema al cargar
+            aplicarTema(temaGuardado);
+
+            // Toggle de tema
             if (btnToggle) {
                 btnToggle.addEventListener('click', function () {
                     const temaActual = htmlElement.getAttribute('data-theme');
-                    if (temaActual === 'light') {
-                        htmlElement.removeAttribute('data-theme');
-                        localStorage.setItem('theme', 'dark');
-                        if (themeIcon) themeIcon.className = 'bi bi-moon-stars-fill';
-                    } else {
-                        htmlElement.setAttribute('data-theme', 'light');
-                        localStorage.setItem('theme', 'light');
-                        if (themeIcon) themeIcon.className = 'bi bi-sun-fill';
-                    }
+                    const nuevoTema = temaActual === 'light' ? 'dark' : 'light';
+
+                    aplicarTema(nuevoTema);
+                    localStorage.setItem('theme', nuevoTema);
                 });
             }
 
             // ===== LOGICA DEL CHATBOT =====
-            var chatbotBtn = document.getElementById('chatbotBtn');
-            var chatbotPanel = document.getElementById('chatbotPanel');
-            var chatbotClose = document.getElementById('chatbotClose');
-            var chatbotInput = document.getElementById('chatbotInput');
-            var chatbotSend = document.getElementById('chatbotSend');
-            var chatbotMessages = document.getElementById('chatbotMessages');
-            var typingIndicator = document.getElementById('typingIndicator');
+            const chatbotBtn = document.getElementById('chatbotBtn');
+            const chatbotPanel = document.getElementById('chatbotPanel');
+            const chatbotClose = document.getElementById('chatbotClose');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const chatbotSend = document.getElementById('chatbotSend');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
 
             if (chatbotBtn) {
                 chatbotBtn.addEventListener('click', function () {
@@ -580,14 +187,15 @@
 
                 chatbotSend.addEventListener('click', enviarMensaje);
                 chatbotInput.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
                         enviarMensaje();
                     }
                 });
             }
 
             function enviarMensaje() {
-                var mensaje = chatbotInput.value.trim();
+                const mensaje = chatbotInput.value.trim();
                 if (mensaje === '') return;
 
                 chatbotSend.disabled = true;
@@ -599,7 +207,7 @@
                 typingIndicator.style.display = 'block';
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
-                var xhr = new XMLHttpRequest();
+                const xhr = new XMLHttpRequest();
                 xhr.timeout = 25000;
                 xhr.open('POST', '/Chatbot/Enviar', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -613,7 +221,7 @@
 
                         if (xhr.status === 200) {
                             try {
-                                var data = JSON.parse(xhr.responseText);
+                                const data = JSON.parse(xhr.responseText);
                                 agregarMensaje(data.respuesta || 'No recibí una respuesta válida.', 'bot');
                             } catch (error) {
                                 agregarMensaje('El servidor respondió con un formato inesperado.', 'bot');
@@ -636,7 +244,7 @@
             }
 
             function agregarMensaje(texto, tipo) {
-                var div = document.createElement('div');
+                const div = document.createElement('div');
                 div.className = 'chat-msg ' + tipo;
                 div.textContent = texto;
                 chatbotMessages.appendChild(div);

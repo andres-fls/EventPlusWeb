@@ -175,6 +175,7 @@
     <Compile Include="Models\Entities\Grupo.cs" />
     <Compile Include="Models\Entities\Inscripcion.cs" />
     <Compile Include="Models\Entities\Programa.cs" />
+    <Compile Include="Models\Entities\ResultadoInscripcion.cs" />
     <Compile Include="Models\Entities\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AprendizService.cs" />
@@ -276,6 +277,8 @@
     <Content Include="Views\Shared\_LandingLayout.cshtml" />
     <Content Include="Views\Home\Landing.cshtml" />
     <Content Include="Views\Usuarios\CrearAdmin.cshtml" />
+    <Content Include="Views\Eventos\CrearGrupo.cshtml" />
+    <Content Include="Views\Eventos\UnirseGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
