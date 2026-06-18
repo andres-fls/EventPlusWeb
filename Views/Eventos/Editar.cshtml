@@ -22,74 +22,80 @@
         </div>
     }
 
-    <div class="card p-4">
-        @using (Html.BeginForm("Editar", "Eventos", FormMethod.Post, new { @class = "row g-3" }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.IdEvento)
+<div class="card p-4">
+    @using (Html.BeginForm("Editar", "Eventos", FormMethod.Post, new { @class = "row g-3" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.IdEvento)
 
-            <div class="col-md-6">
-                <label for="NombreEvento" class="form-label">@Html.DisplayNameFor(model => model.NombreEvento)</label>
-                @Html.EditorFor(model => model.NombreEvento, new { htmlAttributes = new { @class = "form-control", oninput = "this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '')" } })
-                @Html.ValidationMessageFor(model => model.NombreEvento, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-6">
-                <label for="Categoria_idCategoria" class="form-label">Categoría</label>
-                @Html.DropDownListFor(model => model.Categoria_idCategoria, categorias, "-- Seleccione una Categoría --", new { @class = "form-select" })
-                @Html.ValidationMessageFor(model => model.Categoria_idCategoria, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <label for="NombreEvento" class="form-label">@Html.DisplayNameFor(model => model.NombreEvento)</label>
+            @Html.EditorFor(model => model.NombreEvento, new { htmlAttributes = new { @class = "form-control", oninput = "this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]/g, '')" } })
+            @Html.ValidationMessageFor(model => model.NombreEvento, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            <label for="Categoria_idCategoria" class="form-label">Categoría</label>
+            @Html.DropDownListFor(model => model.Categoria_idCategoria, categorias, "-- Seleccione una Categoría --", new { @class = "form-select" })
+            @Html.ValidationMessageFor(model => model.Categoria_idCategoria, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-12">
-                <label for="DescripcionEvento" class="form-label">@Html.DisplayNameFor(model => model.DescripcionEvento)</label>
-                @Html.TextAreaFor(model => model.DescripcionEvento, new { @class = "form-control", rows = 5 })
-                @Html.ValidationMessageFor(model => model.DescripcionEvento, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-12">
+            <label for="DescripcionEvento" class="form-label">@Html.DisplayNameFor(model => model.DescripcionEvento)</label>
+            @Html.TextAreaFor(model => model.DescripcionEvento, new { @class = "form-control", rows = 5 })
+            @Html.ValidationMessageFor(model => model.DescripcionEvento, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-md-6">
-                <label for="LugarEvento" class="form-label">@Html.DisplayNameFor(model => model.LugarEvento)</label>
-                @Html.EditorFor(model => model.LugarEvento, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.LugarEvento, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-6">
-                <label for="CupoMaximo" class="form-label">@Html.DisplayNameFor(model => model.CupoMaximo)</label>
-                @Html.EditorFor(model => model.CupoMaximo, new { htmlAttributes = new { @class = "form-control", type = "number" } })
-                @Html.ValidationMessageFor(model => model.CupoMaximo, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <label for="LugarEvento" class="form-label">@Html.DisplayNameFor(model => model.LugarEvento)</label>
+            @Html.EditorFor(model => model.LugarEvento, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.LugarEvento, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            <label for="CupoMaximo" class="form-label">@Html.DisplayNameFor(model => model.CupoMaximo)</label>
+            @Html.EditorFor(model => model.CupoMaximo, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+            @Html.ValidationMessageFor(model => model.CupoMaximo, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-md-6">
-                <label for="FechaInicioEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioEvento)</label>
-                @Html.EditorFor(model => model.FechaInicioEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioEvento", Value = Model.FechaInicioEvento.ToString("yyyy-MM-ddTHH:mm") } })
-                @Html.ValidationMessageFor(model => model.FechaInicioEvento, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-6">
-                <label for="FechaFinEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaFinEvento)</label>
-                @Html.EditorFor(model => model.FechaFinEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinEvento", Value = Model.FechaFinEvento.ToString("yyyy-MM-ddTHH:mm") } })
-                @Html.ValidationMessageFor(model => model.FechaFinEvento, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <label for="FechaInicioEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioEvento)</label>
+            @Html.EditorFor(model => model.FechaInicioEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioEvento", Value = Model.FechaInicioEvento.ToString("yyyy-MM-ddTHH:mm") } })
+            @Html.ValidationMessageFor(model => model.FechaInicioEvento, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            <label for="FechaFinEvento" class="form-label">@Html.DisplayNameFor(model => model.FechaFinEvento)</label>
+            @Html.EditorFor(model => model.FechaFinEvento, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinEvento", Value = Model.FechaFinEvento.ToString("yyyy-MM-ddTHH:mm") } })
+            @Html.ValidationMessageFor(model => model.FechaFinEvento, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-md-6">
-                <label for="FechaInicioInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioInscripcion)</label>
-                @Html.EditorFor(model => model.FechaInicioInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioInscripcion", Value = Model.FechaInicioInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
-                @Html.ValidationMessageFor(model => model.FechaInicioInscripcion, "", new { @class = "text-danger" })
-            </div>
-            <div class="col-md-6">
-                <label for="FechaFinInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaFinInscripcion)</label>
-                @Html.EditorFor(model => model.FechaFinInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinInscripcion", Value = Model.FechaFinInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
-                @Html.ValidationMessageFor(model => model.FechaFinInscripcion, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <label for="FechaInicioInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaInicioInscripcion)</label>
+            @Html.EditorFor(model => model.FechaInicioInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaInicioInscripcion", Value = Model.FechaInicioInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
+            @Html.ValidationMessageFor(model => model.FechaInicioInscripcion, "", new { @class = "text-danger" })
+        </div>
+        <div class="col-md-6">
+            <label for="FechaFinInscripcion" class="form-label">@Html.DisplayNameFor(model => model.FechaFinInscripcion)</label>
+            @Html.EditorFor(model => model.FechaFinInscripcion, new { htmlAttributes = new { @class = "form-control", type = "datetime-local", id = "FechaFinInscripcion", Value = Model.FechaFinInscripcion.ToString("yyyy-MM-ddTHH:mm") } })
+            @Html.ValidationMessageFor(model => model.FechaFinInscripcion, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-md-6">
-                <label for="TipoEvento" class="form-label">@Html.DisplayNameFor(model => model.TipoEvento)</label>
-                @Html.DropDownListFor(model => model.TipoEvento, new SelectList(tiposEvento, "Value", "Text", Model.TipoEvento), "-- Seleccione Tipo --", new { @class = "form-select" })
-                @Html.ValidationMessageFor(model => model.TipoEvento, "", new { @class = "text-danger" })
-            </div>
+        <div class="col-md-6">
+            <label for="TipoEvento" class="form-label">@Html.DisplayNameFor(model => model.TipoEvento)</label>
+            @Html.DropDownListFor(model => model.TipoEvento, new SelectList(tiposEvento, "Value", "Text", Model.TipoEvento), "-- Seleccione Tipo --", new { @class = "form-select", id = "TipoEvento" })
+            @Html.ValidationMessageFor(model => model.TipoEvento, "", new { @class = "text-danger" })
+        </div>
 
-            <div class="col-12 mt-4">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
-                <a href="@Url.Action("Index", "Eventos")" class="btn btn-secondary ms-2"><i class="bi bi-arrow-left"></i> Cancelar</a>
-            </div>
-        }
-    </div>
+        <div class="col-md-6" id="campoMaxIntegrantes" style="display:none;">
+            <label for="MaxIntegrantesGrupo" class="form-label">N&#250;mero de integrantes por grupo</label>
+            @Html.EditorFor(model => model.MaxIntegrantesGrupo, new { htmlAttributes = new { @class = "form-control", type = "number", min = "2" } })
+            @Html.ValidationMessageFor(model => model.MaxIntegrantesGrupo, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
+            <a href="@Url.Action("Index", "Eventos")" class="btn btn-secondary ms-2"><i class="bi bi-arrow-left"></i> Cancelar</a>
+        </div>
+    }
+</div>
 </div>
 
 @section Scripts {
@@ -134,6 +140,21 @@
                     });
                 }
             });
+
+            // Toggle campo MaxIntegrantesGrupo según TipoEvento
+            var tipoEvento = document.getElementById('TipoEvento');
+            var campoMax = document.getElementById('campoMaxIntegrantes');
+
+            function toggleMaxIntegrantes() {
+                if (tipoEvento.value === 'Grupal') {
+                    campoMax.style.display = 'block';
+                } else {
+                    campoMax.style.display = 'none';
+                }
+            }
+
+            tipoEvento.addEventListener('change', toggleMaxIntegrantes);
+            toggleMaxIntegrantes();
         });
     </script>
 }

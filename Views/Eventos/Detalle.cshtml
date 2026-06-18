@@ -24,28 +24,38 @@
         </div>
     }
 
+    @if (TempData["CodigoGrupo"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>¡Grupo creado exitosamente!</strong><br />
+            Codigo: <strong>@TempData["CodigoGrupo"]</strong><br />
+            Nombre: <strong>@TempData["NombreGrupoCreado"]</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="card p-4 mb-4">
         <h3 class="text-white mb-3">@Html.DisplayFor(model => model.NombreEvento)</h3>
         <hr class="border-secondary" />
         <div class="row">
             <div class="col-md-6">
                 <dl class="row">
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.NombreCategoria)</dt>
+                    <dt class="col-sm-4 text-white-50">Categoria</dt>
                     <dd class="col-sm-8 text-white">@Html.DisplayFor(model => model.NombreCategoria)</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.LugarEvento)</dt>
+                    <dt class="col-sm-4 text-white-50">Lugar</dt>
                     <dd class="col-sm-8 text-white">@Html.DisplayFor(model => model.LugarEvento)</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.FechaInicioEvento)</dt>
+                    <dt class="col-sm-4 text-white-50">Inicio</dt>
                     <dd class="col-sm-8 text-white">@Model.FechaInicioEvento.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.FechaFinEvento)</dt>
+                    <dt class="col-sm-4 text-white-50">Fin</dt>
                     <dd class="col-sm-8 text-white">@Model.FechaFinEvento.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.TipoEvento)</dt>
+                    <dt class="col-sm-4 text-white-50">Tipo</dt>
                     <dd class="col-sm-8 text-white">@Html.DisplayFor(model => model.TipoEvento)</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.EstadoEvento)</dt>
+                    <dt class="col-sm-4 text-white-50">Estado</dt>
                     <dd class="col-sm-8 text-white">
                         @if (Model.EstadoEvento == "Activo")
                         {
@@ -60,30 +70,131 @@
             </div>
             <div class="col-md-6">
                 <dl class="row">
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.FechaInicioInscripcion)</dt>
+                    <dt class="col-sm-4 text-white-50">Inscrip. Inicio</dt>
                     <dd class="col-sm-8 text-white">@Model.FechaInicioInscripcion.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.FechaFinInscripcion)</dt>
+                    <dt class="col-sm-4 text-white-50">Inscrip. Fin</dt>
                     <dd class="col-sm-8 text-white">@Model.FechaFinInscripcion.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.CupoMaximo)</dt>
+                    <dt class="col-sm-4 text-white-50">Cupo Maximo</dt>
                     <dd class="col-sm-8 text-white">@Html.DisplayFor(model => model.CupoMaximo)</dd>
 
                     <dt class="col-sm-4 text-white-50">Inscritos</dt>
                     <dd class="col-sm-8 text-white">@Model.Inscritos</dd>
 
-                    <dt class="col-sm-4 text-white-50">@Html.DisplayNameFor(model => model.NombreCreador)</dt>
+                    <dt class="col-sm-4 text-white-50">Creador</dt>
                     <dd class="col-sm-8 text-white">@Html.DisplayFor(model => model.NombreCreador)</dd>
                 </dl>
             </div>
         </div>
         <div class="mt-3">
-            <h5 class="text-white-50">@Html.DisplayNameFor(model => model.DescripcionEvento)</h5>
+            <h5 class="text-white-50">Descripcion</h5>
             <p class="text-white">@Html.Raw(Model.DescripcionEvento.Replace("\n", "<br/>"))</p>
         </div>
     </div>
 
+    @{
+        bool tienePerfilAprendiz = ViewBag.TienePerfilAprendiz != null && (bool)ViewBag.TienePerfilAprendiz;
+        bool yaInscrito = ViewBag.YaInscrito != null && (bool)ViewBag.YaInscrito;
+        bool esIndividual = Model.TipoEvento == "Individual";
+        bool esGrupal = Model.TipoEvento == "Grupal";
+    }
+
+    @if (!tienePerfilAprendiz)
+    {
+        <div class="alert alert-warning">
+            <strong>No puedes inscribirte.</strong> Completa tu perfil de aprendiz.
+        </div>
+    }
+    else if (yaInscrito)
+    {
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i> <strong>¡Ya estas inscrito!</strong>
+        </div>
+    }
+    else if (esIndividual)
+    {
+        <div class="card p-4 mb-4 border-primary">
+            <h5 class="text-white mb-3"><i class="bi bi-person-plus"></i> Inscribirse</h5>
+            <p class="text-white-50 mb-3">Evento individual. Haz clic para inscribirte.</p>
+            <form action="@Url.Action("Inscribirse", "Eventos")" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="eventoId" value="@Model.IdEvento" />
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-pencil-square"></i> Inscribirme
+                </button>
+            </form>
+        </div>
+    }
+    else if (esGrupal)
+    {
+        <div class="card p-4 mb-4 border-primary">
+            <h5 class="text-white mb-3"><i class="bi bi-people"></i> Unirse a un grupo</h5>
+            <p class="text-white-50 mb-4">Evento grupal. Crea un grupo nuevo o unete a uno existente.</p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-plus-circle text-primary mb-3" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title text-white mb-2">Crear grupo</h6>
+                            <p class="card-text text-white-50 small mb-3">Seras el lider. Recibiras un codigo.</p>
+                            <a href="@Url.Action("CrearGrupo", "Eventos", new { eventoId = Model.IdEvento })" class="btn btn-success">
+                                <i class="bi bi-plus-lg"></i> Crear
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-key text-info mb-3" style="font-size: 2.5rem;"></i>
+                            <h6 class="card-title text-white mb-2">Unirme</h6>
+                            <p class="card-text text-white-50 small mb-3">Ingresa el codigo del grupo.</p>
+                            <a href="@Url.Action("UnirseGrupo", "Eventos", new { eventoId = Model.IdEvento })" class="btn btn-info">
+                                <i class="bi bi-arrow-right-circle"></i> Unirme
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        if (ViewBag.Grupos != null && ((System.Collections.ICollection)ViewBag.Grupos).Count > 0)
+        {
+            <div class="card p-4 mb-4">
+                <h5 class="text-white mb-3">Grupos existentes</h5>
+                <div class="row">
+                    @foreach (var grupo in ViewBag.Grupos)
+                    {
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-white">@grupo.NombreGrupo</h6>
+                                    <p class="card-text text-white-50 mb-2">
+                                        <small>Codigo: @grupo.CodigoGrupo<br />Integrantes: @grupo.IntegrantesActuales / @grupo.MaxIntegrantesGrupo</small>
+                                    </p>
+                                    @if (grupo.TieneCupo)
+                                    {
+                                        <span class="badge bg-success">Hay cupo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Lleno</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+
     <div class="mt-4">
-        <a href="@Url.Action("Index", "Eventos")" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver a la lista</a>
+        <a href="@Url.Action("Index", "Eventos")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
     </div>
 </div>

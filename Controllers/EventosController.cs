@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using EventPlusWeb1.Filters;
+﻿using EventPlusWeb1.Filters;
+using EventPlusWeb1.Helpers;
+using EventPlusWeb1.Models;
 using EventPlusWeb1.Models.Entities;
 using EventPlusWeb1.Services;
-using EventPlusWeb1.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 
 namespace EventPlusWeb1.Controllers
@@ -69,7 +70,7 @@ namespace EventPlusWeb1.Controllers
             // Obtener grupos si es grupal
             if (evento.TipoEvento == "Grupal")
             {
-                ViewBag.Grupos = grupoService.ObtenerPorEvento(id);
+                ViewBag.Grupos = grupoService.ObtenerGruposPorEvento(id);
             }
 
             // Verificar si el usuario actual ya está inscrito
@@ -334,6 +335,119 @@ namespace EventPlusWeb1.Controllers
                 TempData["Error"] = "Error al realizar la inscripción.";
             }
 
+            return RedirectToAction("Detalle", new { id = eventoId });
+        }
+
+        // GET: Eventos/CrearGrupo
+        [HttpGet]
+        public ActionResult CrearGrupo(int eventoId)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+                return RedirectToAction("Index");
+
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+            if (evento == null || evento.TipoEvento != "Grupal")
+                return RedirectToAction("Index");
+
+            ViewBag.Evento = evento;
+            return View();
+        }
+
+        // POST: Eventos/CrearGrupo
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CrearGrupo(int eventoId, string nombreGrupo)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+                return RedirectToAction("Index");
+
+            int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+            Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+
+            if (aprendiz == null)
+            {
+                TempData["Error"] = "Debes completar tu perfil de aprendiz antes de crear un grupo.";
+                return RedirectToAction("Crear", "Aprendiz");
+            }
+
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+            if (evento == null || evento.TipoEvento != "Grupal")
+                return RedirectToAction("Index");
+
+            if (string.IsNullOrWhiteSpace(nombreGrupo))
+            {
+                ViewBag.Error = "El nombre del grupo es obligatorio.";
+                ViewBag.Evento = evento;
+                return View();
+            }
+
+            string codigo = grupoService.CrearGrupoConLider(eventoId, nombreGrupo.Trim(), aprendiz.IdAprendiz, evento.MaxIntegrantesGrupo.Value);
+
+            if (codigo == null)
+            {
+                ViewBag.Error = grupoService.UltimoError ?? "No se pudo crear el grupo.";
+                ViewBag.Evento = evento;
+                return View();
+            }
+
+            TempData["CodigoGrupo"] = codigo;
+            TempData["NombreGrupoCreado"] = nombreGrupo.Trim();
+            return RedirectToAction("Detalle", new { id = eventoId });
+        }
+
+        // GET: Eventos/UnirseGrupo
+        [HttpGet]
+        public ActionResult UnirseGrupo(int eventoId)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+                return RedirectToAction("Index");
+
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+            if (evento == null || evento.TipoEvento != "Grupal")
+                return RedirectToAction("Index");
+
+            ViewBag.Evento = evento;
+            return View();
+        }
+
+        // POST: Eventos/UnirseGrupo
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UnirseGrupo(int eventoId, string codigo)
+        {
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+                return RedirectToAction("Index");
+
+            int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+            Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+
+            if (aprendiz == null)
+            {
+                TempData["Error"] = "Debes completar tu perfil de aprendiz antes de unirte a un grupo.";
+                return RedirectToAction("Crear", "Aprendiz");
+            }
+
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+            if (evento == null || evento.TipoEvento != "Grupal")
+                return RedirectToAction("Index");
+
+            if (string.IsNullOrWhiteSpace(codigo))
+            {
+                ViewBag.Error = "Debes ingresar un código de grupo.";
+                ViewBag.Evento = evento;
+                return View();
+            }
+
+            ResultadoInscripcion resultado = inscripcionService.InscribirGrupal(aprendiz.IdAprendiz, eventoId, codigo.Trim().ToUpper());
+
+            if (!resultado.Exito)
+            {
+                ViewBag.Error = resultado.Mensaje;
+                ViewBag.Evento = evento;
+                return View();
+            }
+
+            TempData["Mensaje"] = resultado.Mensaje;
             return RedirectToAction("Detalle", new { id = eventoId });
         }
 
