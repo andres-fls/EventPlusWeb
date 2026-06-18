@@ -191,6 +191,7 @@ namespace EventPlusWeb1.Controllers
             ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
             return View(evento);
         }
+
         // GET: Eventos/Editar/5
         [HttpGet]
         public ActionResult Editar(int id)
@@ -284,6 +285,20 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index");
             }
 
+            Evento evento = eventoService.ObtenerPorId(eventoId);
+
+            if (evento == null)
+            {
+                return HttpNotFound();
+            }
+
+            // BLINDAJE CRÍTICO: Si el evento es grupal y no se provee un grupoId, rechazamos la inscripción directa.
+            if (string.Equals(evento.TipoEvento, "Grupal", StringComparison.OrdinalIgnoreCase) && !grupoId.HasValue)
+            {
+                TempData["Error"] = "Este evento es grupal. Debes crear un grupo o unerte a uno existente desde el detalle.";
+                return RedirectToAction("Detalle", new { id = eventoId });
+            }
+
             int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
             Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
 
@@ -298,13 +313,6 @@ namespace EventPlusWeb1.Controllers
             {
                 TempData["Error"] = "Ya estás inscrito en este evento.";
                 return RedirectToAction("Detalle", new { id = eventoId });
-            }
-
-            Evento evento = eventoService.ObtenerPorId(eventoId);
-
-            if (evento == null)
-            {
-                return HttpNotFound();
             }
 
             // Verificar cupo
@@ -350,7 +358,9 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index");
 
             ViewBag.Evento = evento;
-            return View();
+
+            // SOLUCIÓN: Pasamos el objeto "evento" como el modelo principal de la vista
+            return View(evento);
         }
 
         // POST: Eventos/CrearGrupo
@@ -378,7 +388,9 @@ namespace EventPlusWeb1.Controllers
             {
                 ViewBag.Error = "El nombre del grupo es obligatorio.";
                 ViewBag.Evento = evento;
-                return View();
+
+                // SOLUCIÓN: Si falla, también le volvemos a pasar el "evento" a la vista
+                return View(evento);
             }
 
             string codigo = grupoService.CrearGrupoConLider(eventoId, nombreGrupo.Trim(), aprendiz.IdAprendiz, evento.MaxIntegrantesGrupo.Value);
@@ -387,7 +399,9 @@ namespace EventPlusWeb1.Controllers
             {
                 ViewBag.Error = grupoService.UltimoError ?? "No se pudo crear el grupo.";
                 ViewBag.Evento = evento;
-                return View();
+
+                // SOLUCIÓN: Si la base de datos rebota la creación, le pasamos el "evento" para que no de NullReference
+                return View(evento);
             }
 
             TempData["CodigoGrupo"] = codigo;
@@ -407,7 +421,9 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index");
 
             ViewBag.Evento = evento;
-            return View();
+
+            // CORREGIDO: Pasamos el modelo correcto que usará tu vista UnirseGrupo.cshtml
+            return View(evento);
         }
 
         // POST: Eventos/UnirseGrupo
@@ -435,16 +451,20 @@ namespace EventPlusWeb1.Controllers
             {
                 ViewBag.Error = "Debes ingresar un código de grupo.";
                 ViewBag.Evento = evento;
-                return View();
+                return View(evento);
             }
 
+            // CORREGIDO: Usamos el método real de tu servicio 'inscripcionService.InscribirGrupal' 
+            // y el parámetro exacto 'codigo' que recibe tu formulario.
             ResultadoInscripcion resultado = inscripcionService.InscribirGrupal(aprendiz.IdAprendiz, eventoId, codigo.Trim().ToUpper());
 
             if (!resultado.Exito)
             {
                 ViewBag.Error = resultado.Mensaje;
                 ViewBag.Evento = evento;
-                return View();
+
+                // CORREGIDO: Si falla la validación, recargamos pasando el objeto evento real
+                return View(evento);
             }
 
             TempData["Mensaje"] = resultado.Mensaje;

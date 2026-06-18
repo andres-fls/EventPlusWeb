@@ -124,13 +124,22 @@ else
                                 }
                                 else if (evento.EstadoEvento == "Activo" && evento.FechaFinInscripcion >= EventPlusWeb1.Helpers.DateTimeHelper.AhoraEnColombia())
                                 {
-                                    using (Html.BeginForm("Inscribirse", "Eventos", FormMethod.Post))
+                                    if (string.Equals(evento.TipoEvento, "Individual", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="eventoId" value="@evento.IdEvento" />
-                                        <button type="submit" class="btn btn-sm btn-success">
-                                            <i class="bi bi-person-plus"></i> Inscribirse
-                                        </button>
+                                        using (Html.BeginForm("Inscribirse", "Eventos", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="eventoId" value="@evento.IdEvento" />
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="bi bi-person-plus"></i> Inscribirse
+                                            </button>
+                                        }
+                                    }
+                                    else if (string.Equals(evento.TipoEvento, "Grupal", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <a href="@Url.Action("Detalle", "Eventos", new { id = evento.IdEvento })" class="btn btn-sm btn-info">
+                                            <i class="bi bi-people"></i> Ver Grupos
+                                        </a>
                                     }
                                 }
                             </div>
