@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-
 namespace EventPlusWeb1.Controllers
 {
     [AuthFilter]
@@ -20,12 +19,10 @@ namespace EventPlusWeb1.Controllers
         private GrupoService grupoService = new GrupoService();
 
         // GET: Eventos
-        // 1. Agregamos el parámetro opcional 'int? mes'
         public ActionResult Index(int? mes)
         {
             List<Evento> eventos;
 
-            // Admin ve todos, Usuario ve solo activos
             if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Admin")
             {
                 eventos = eventoService.ObtenerTodos();
@@ -35,22 +32,16 @@ namespace EventPlusWeb1.Controllers
                 eventos = eventoService.ObtenerActivos();
             }
 
-            // 2. Aplicamos el filtro por mes si el usuario seleccionó uno válido (mayor a 0)
             if (mes.HasValue && mes.Value > 0)
             {
-                // Filtramos usando la propiedad FechaInicioEvento
                 eventos = eventos.FindAll(e => e.FechaInicioEvento.Month == mes.Value);
-
-                // Enviamos el mes de vuelta a la vista mediante el ViewBag
                 ViewBag.MesSeleccionado = mes.Value;
             }
             else
             {
-                // Si no se selecciona un mes o es "Todos", enviamos un 0
                 ViewBag.MesSeleccionado = 0;
             }
 
-            // Retornamos la lista (ya filtrada si aplica) a la vista
             return View(eventos);
         }
 
@@ -64,16 +55,13 @@ namespace EventPlusWeb1.Controllers
                 return HttpNotFound();
             }
 
-            // Obtener inscripciones del evento para mostrar
             ViewBag.Inscripciones = inscripcionService.ObtenerPorEvento(id);
 
-            // Obtener grupos si es grupal
             if (evento.TipoEvento == "Grupal")
             {
                 ViewBag.Grupos = grupoService.ObtenerGruposPorEvento(id);
             }
 
-            // Verificar si el usuario actual ya está inscrito
             if (Session["UsuarioRol"] != null && Session["UsuarioRol"].ToString() == "Usuario")
             {
                 int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
@@ -126,7 +114,6 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
-            // Validaciones de MaxIntegrantesGrupo para eventos grupales
             if (evento.TipoEvento != "Grupal")
             {
                 evento.MaxIntegrantesGrupo = null;
@@ -142,7 +129,6 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
-            // Validar fechas
             DateTime ahora = DateTimeHelper.AhoraEnColombia();
 
             if (evento.FechaInicioEvento < ahora)
@@ -175,9 +161,6 @@ namespace EventPlusWeb1.Controllers
                 ViewBag.Categorias = new SelectList(categoriaService.ObtenerTodas(), "IdCategoria", "NombreCategoria");
                 return View(evento);
             }
-
-            evento.Usuario_idUsuario = Convert.ToInt32(Session["UsuarioId"]);
-            evento.EstadoEvento = "Activo";
 
             bool creado = eventoService.Crear(evento);
 
@@ -222,7 +205,6 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
-            // Validaciones de MaxIntegrantesGrupo para eventos grupales
             if (evento.TipoEvento != "Grupal")
             {
                 evento.MaxIntegrantesGrupo = null;
@@ -251,7 +233,7 @@ namespace EventPlusWeb1.Controllers
             return View(evento);
         }
 
-        // POST: Eventos/Eliminar (solo Admin)
+        // POST: Eventos/Eliminar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Eliminar(int id)
@@ -275,7 +257,7 @@ namespace EventPlusWeb1.Controllers
             return RedirectToAction("Index");
         }
 
-        // POST: Eventos/Inscribirse (solo Usuario con perfil de aprendiz)
+        // POST: Eventos/Inscribirse
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Inscribirse(int eventoId, int? grupoId)
@@ -292,7 +274,6 @@ namespace EventPlusWeb1.Controllers
                 return HttpNotFound();
             }
 
-            // BLINDAJE CRÍTICO: Si el evento es grupal y no se provee un grupoId, rechazamos la inscripción directa.
             if (string.Equals(evento.TipoEvento, "Grupal", StringComparison.OrdinalIgnoreCase) && !grupoId.HasValue)
             {
                 TempData["Error"] = "Este evento es grupal. Debes crear un grupo o unerte a uno existente desde el detalle.";
@@ -308,14 +289,12 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Crear", "Aprendiz");
             }
 
-            // Verificar si ya está inscrito
             if (inscripcionService.YaEstaInscrito(aprendiz.IdAprendiz, eventoId))
             {
                 TempData["Error"] = "Ya estás inscrito en este evento.";
                 return RedirectToAction("Detalle", new { id = eventoId });
             }
 
-            // Verificar cupo
             int inscritos = inscripcionService.ContarInscritosPorEvento(eventoId);
             if (inscritos >= evento.CupoMaximo)
             {
@@ -358,8 +337,6 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index");
 
             ViewBag.Evento = evento;
-
-            // SOLUCIÓN: Pasamos el objeto "evento" como el modelo principal de la vista
             return View(evento);
         }
 
@@ -388,8 +365,6 @@ namespace EventPlusWeb1.Controllers
             {
                 ViewBag.Error = "El nombre del grupo es obligatorio.";
                 ViewBag.Evento = evento;
-
-                // SOLUCIÓN: Si falla, también le volvemos a pasar el "evento" a la vista
                 return View(evento);
             }
 
@@ -399,8 +374,6 @@ namespace EventPlusWeb1.Controllers
             {
                 ViewBag.Error = grupoService.UltimoError ?? "No se pudo crear el grupo.";
                 ViewBag.Evento = evento;
-
-                // SOLUCIÓN: Si la base de datos rebota la creación, le pasamos el "evento" para que no de NullReference
                 return View(evento);
             }
 
@@ -421,8 +394,6 @@ namespace EventPlusWeb1.Controllers
                 return RedirectToAction("Index");
 
             ViewBag.Evento = evento;
-
-            // CORREGIDO: Pasamos el modelo correcto que usará tu vista UnirseGrupo.cshtml
             return View(evento);
         }
 
@@ -454,16 +425,12 @@ namespace EventPlusWeb1.Controllers
                 return View(evento);
             }
 
-            // CORREGIDO: Usamos el método real de tu servicio 'inscripcionService.InscribirGrupal' 
-            // y el parámetro exacto 'codigo' que recibe tu formulario.
             ResultadoInscripcion resultado = inscripcionService.InscribirGrupal(aprendiz.IdAprendiz, eventoId, codigo.Trim().ToUpper());
 
             if (!resultado.Exito)
             {
                 ViewBag.Error = resultado.Mensaje;
                 ViewBag.Evento = evento;
-
-                // CORREGIDO: Si falla la validación, recargamos pasando el objeto evento real
                 return View(evento);
             }
 
@@ -474,12 +441,66 @@ namespace EventPlusWeb1.Controllers
         // POST: Eventos/CancelarInscripcion
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CancelarInscripcion(int inscripcionId, int eventoId)
+        public ActionResult CancelarInscripcion(int eventoId)
         {
-            inscripcionService.Cancelar(inscripcionId);
-            TempData["Mensaje"] = "Inscripción cancelada.";
+            if (Session["UsuarioRol"] == null || Session["UsuarioRol"].ToString() != "Usuario")
+                return RedirectToAction("Index");
+
+            int usuarioId = Convert.ToInt32(Session["UsuarioId"]);
+            Aprendiz aprendiz = aprendizService.ObtenerPorUsuarioId(usuarioId);
+
+            if (aprendiz == null)
+            {
+                TempData["Error"] = "No se encontró el perfil del aprendiz.";
+                return RedirectToAction("Index");
+            }
+
+            // 1. Traemos la lista como una colección dinámica para saltarnos la restricción del compilador
+            System.Collections.IEnumerable inscripcionesDelEvento = inscripcionService.ObtenerPorEvento(eventoId);
+            int inscripcionIdEncontrada = 0;
+
+            if (inscripcionesDelEvento != null)
+            {
+                // 2. Recorremos con dynamic para evaluar las propiedades en caliente
+                foreach (dynamic ins in inscripcionesDelEvento)
+                {
+                    try
+                    {
+                        // Probamos con ambos nombres posibles (con o sin prefijo) de forma segura
+                        if (ins.Aprendiz_idAprendiz == aprendiz.IdAprendiz || ins.IdAprendiz == aprendiz.IdAprendiz)
+                        {
+                            inscripcionIdEncontrada = ins.IdInscripcion;
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                        // Si falla la primera propiedad por nombre, intentamos con minúscula por si acaso
+                        try
+                        {
+                            if (ins.idAprendiz == aprendiz.IdAprendiz)
+                            {
+                                inscripcionIdEncontrada = ins.idInscripcion;
+                                break;
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+
+            // 3. Ejecutamos la cancelación con el ID que encontramos
+            if (inscripcionIdEncontrada > 0)
+            {
+                inscripcionService.Cancelar(inscripcionIdEncontrada);
+                TempData["Mensaje"] = "Inscripción cancelada exitosamente. Tu cupo ha sido liberado.";
+            }
+            else
+            {
+                TempData["Error"] = "No se pudo procesar la cancelación de la inscripción de forma automática.";
+            }
+
             return RedirectToAction("Detalle", new { id = eventoId });
         }
-
     }
 }

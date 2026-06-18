@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "Detalle del Evento";
 }
-
 @{
     bool tienePerfilAprendiz = ViewBag.TienePerfilAprendiz != null && (bool)ViewBag.TienePerfilAprendiz;
     bool yaInscrito = ViewBag.YaInscrito != null && (bool)ViewBag.YaInscrito;
@@ -16,7 +15,6 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-white"><i class="bi bi-info-circle"></i> Detalle del Evento</h2>
     </div>
-
 
     @if (TempData["Mensaje"] != null)
     {
@@ -111,8 +109,19 @@
     }
     else if (yaInscrito)
     {
-        <div class="alert alert-success">
-            <i class="bi bi-check-circle"></i> <strong>¡Ya estas inscrito!</strong>
+        <div class="card p-4 mb-4 border-success bg-dark">
+            <h5 class="text-success mb-3"><i class="bi bi-check-circle"></i> Inscripción Confirmada</h5>
+            <p class="text-white-50 mb-3">Ya te encuentras registrado en este evento. Si no puedes asistir, recuerda cancelar tu inscripción para liberar el cupo a tus compañeros.</p>
+
+            <form action="@Url.Action("CancelarInscripcion", "Eventos")" method="post" onsubmit="return confirm('¿Estás seguro de que deseas cancelar tu inscripción a este evento? Si perteneces a un grupo, serás desvinculado automáticamente.');">
+                @Html.AntiForgeryToken()
+                @* IMPORTANTE: El atributo name debe ser "eventoId" para coincidir con el controlador *@
+                <input type="hidden" name="eventoId" value="@Model.IdEvento" />
+
+                <button type="submit" class="btn btn-outline-danger btn-lg">
+                    <i class="bi bi-x-circle"></i> Cancelar Inscripción
+                </button>
+            </form>
         </div>
     }
     else if (esIndividual)
@@ -176,7 +185,7 @@
                                 <div class="card-body">
                                     <h6 class="card-title text-white">@grupo.NombreGrupo</h6>
                                     <p class="card-text text-white-50 mb-2">
-                                        <small>Codigo: @grupo.CodigoGrupo<br />Integrantes: @grupo.IntegrantesActuales / @grupo.MaxIntegrantesGrupo</small>
+                                        <small>Integrantes: @grupo.IntegrantesActuales / @Model.MaxIntegrantesGrupo</small>
                                     </p>
                                     @if (grupo.TieneCupo)
                                     {
